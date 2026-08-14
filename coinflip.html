@@ -1,40 +1,86 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Coin Flip</title><style>*{box-sizing:border-box}body{margin:0;background:#f6f0e5;color:#29231d;font-family:Arial,sans-serif}.wrap{width:min(1180px,92%);margin:auto}.top{height:68px;background:#fffdf9;border-bottom:1px solid #e5dbcc}.head{height:100%;display:flex;align-items:center;justify-content:space-between;gap:15px}.brand{font-weight:900;color:#8d632b;letter-spacing:.5px}.nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.nav a{color:#6e522d;text-decoration:none;font-weight:800;font-size:13px}.page{padding:28px 0 55px}.card{background:#fffdf9;border:1px solid #e5dbcc;border-radius:18px;padding:22px;box-shadow:0 10px 28px #51391a12;margin-bottom:18px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.tile{padding:17px;border:1px solid #e5dbcc;border-radius:13px;background:#faf6ef}.tile span{font-size:12px;color:#81786d}.tile b{display:block;font-size:24px;color:#8d632b;margin-top:4px}.field{margin:11px 0}.field label{display:block;font-size:12px;font-weight:800;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;padding:11px;border:1px solid #e5dbcc;border-radius:9px;background:#fff;color:#29231d}.field textarea{min-height:90px;resize:vertical}.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer}.primary{background:linear-gradient(135deg,#c49b5d,#8d632b);color:#fff}.soft{background:#eee6da;color:#392d20}.danger{background:#b63e39;color:#fff}.msg{display:none;padding:11px;border-radius:10px;margin-bottom:14px;font-size:13px;font-weight:700}.show{display:block}.ok{background:#edf8f1;color:#286f43}.err{background:#fff0ef;color:#963530}.small{font-size:12px;color:#81786d}.muted{color:#81786d}.table{overflow:auto}table{width:100%;border-collapse:collapse;min-width:720px}th,td{text-align:left;padding:10px;border-bottom:1px solid #eee6da;font-size:13px}th{font-size:11px;color:#81786d;text-transform:uppercase}.actions{display:flex;gap:6px;flex-wrap:wrap}.coin{width:150px;height:150px;border-radius:50%;margin:25px auto 15px;display:grid;place-items:center;font-size:44px;font-weight:900;color:#855d26;background:radial-gradient(circle at 30% 25%,#fff,#ead5ab 55%,#a77430);border:8px solid #b78a4b;box-shadow:0 12px 28px #62441b22}.spin{animation:spin .8s ease}@keyframes spin{0%{transform:rotateY(0)}50%{transform:rotateY(900deg)}100%{transform:rotateY(1800deg)}}.center{text-align:center}.gamecard{cursor:pointer;transition:.15s}.gamecard:hover{transform:translateY(-2px)}.badge{display:inline-block;padding:5px 9px;border-radius:20px;font-size:11px;font-weight:800;background:#eee6da}.active{background:#edf8f1;color:#286f43}.soon{background:#f2eadc;color:#8d632b}.adminnav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.adminnav a{padding:9px 12px;border-radius:9px;background:#eee6da;text-decoration:none;color:#392d20;font-size:12px;font-weight:800}@media(max-width:780px){.grid,.tiles{grid-template-columns:1fr}.head{height:auto;min-height:68px;padding:10px 0}.top{height:auto}.nav{justify-content:flex-end}.page{padding-top:20px}}
-</style></head><body><header class="top"><div class="wrap head"><div class="brand">COIN FLIP</div><div class="nav"><a href="index.html">Lobby</a><a href="profile.html">Profile</a><a href="deposit.html">Deposit</a><a href="withdrawal.html">Withdrawal</a><button id="logout" class="btn soft">Logout</button></div></div></header><main class="wrap page"><section class="card center"><h1>Coin Flip</h1><p class="small">Apni bet amount enter karo aur Heads ya Tails choose karo.</p><div class="tiles"><div class="tile"><span>Balance</span><b id="bal">0</b></div><div class="tile"><span>Min Bet</span><b id="min">1</b></div><div class="tile"><span>Max Bet</span><b id="max">100</b></div></div><div class="field" style="max-width:380px;margin:20px auto"><label>Bet Amount</label><input id="bet" type="number" min="1" step=".01" value="1"></div><div id="coin" class="coin">?</div><h3 id="result">Choose your side</h3><button id="heads" class="btn primary">Heads</button> <button id="tails" class="btn soft">Tails</button></section><section class="card"><h2>Statistics</h2><div class="tiles"><div class="tile"><span>Total Games</span><b id="games">0</b></div><div class="tile"><span>Wins</span><b id="wins">0</b></div><div class="tile"><span>Losses</span><b id="losses">0</b></div><div class="tile"><span>Win Rate</span><b id="rate">0%</b></div></div></section><section class="card"><h2>Recent Games</h2><div class="table"><table><thead><tr><th>Time</th><th>Choice</th><th>Result</th><th>Outcome</th><th>Stake</th></tr></thead><tbody id="history"></tbody></table></div></section></main><script type="module">const firebaseConfig={
-  apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",
-  authDomain:"mr777-c72fc.firebaseapp.com",
-  projectId:"mr777-c72fc",
-  storageBucket:"mr777-c72fc.firebasestorage.app",
-  messagingSenderId:"1027130368908",
-  appId:"1:1027130368908:web:7e3cf883e137935523eca9",
-  measurementId:"G-3GTQHMNF9"
-};
-
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Coin Flip</title><style>*{box-sizing:border-box}body{margin:0;background:#f6f0e5;color:#29231d;font-family:Arial,sans-serif}.wrap{width:min(1180px,92%);margin:auto}.top{height:68px;background:#fffdf9;border-bottom:1px solid #e5dbcc}.head{height:100%;display:flex;align-items:center;justify-content:space-between;gap:15px}.brand{font-weight:900;color:#8d632b;letter-spacing:.5px}.nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.nav a{color:#6e522d;text-decoration:none;font-weight:800;font-size:13px}.page{padding:28px 0 55px}.card{background:#fffdf9;border:1px solid #e5dbcc;border-radius:18px;padding:22px;box-shadow:0 10px 28px #51391a12;margin-bottom:18px}.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.tile{padding:17px;border:1px solid #e5dbcc;border-radius:13px;background:#faf6ef}.tile span{font-size:12px;color:#81786d}.tile b{display:block;font-size:24px;color:#8d632b;margin-top:4px}.field{margin:11px 0}.field label{display:block;font-size:12px;font-weight:800;margin-bottom:6px}.field input{width:100%;padding:11px;border:1px solid #e5dbcc;border-radius:9px;background:#fff;color:#29231d}.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer}.primary{background:linear-gradient(135deg,#c49b5d,#8d632b);color:#fff}.soft{background:#eee6da;color:#392d20}.table{overflow:auto}table{width:100%;border-collapse:collapse;min-width:720px}th,td{text-align:left;padding:10px;border-bottom:1px solid #eee6da;font-size:13px}th{font-size:11px;color:#81786d;text-transform:uppercase}.coin{width:150px;height:150px;border-radius:50%;margin:25px auto 15px;display:grid;place-items:center;font-size:44px;font-weight:900;color:#855d26;background:radial-gradient(circle at 30% 25%,#fff,#ead5ab 55%,#a77430);border:8px solid #b78a4b;box-shadow:0 12px 28px #62441b22}.spin{animation:spin .8s ease}@keyframes spin{0%{transform:rotateY(0)}50%{transform:rotateY(900deg)}100%{transform:rotateY(1800deg)}}.center{text-align:center}.msg{padding:11px;border-radius:10px;margin-bottom:14px;font-size:13px;font-weight:700}.ok{background:#edf8f1;color:#286f43}.err{background:#fff0ef;color:#963530}@media(max-width:780px){.tiles{grid-template-columns:1fr}.head{height:auto;min-height:68px;padding:10px 0}.top{height:auto}.nav{justify-content:flex-end}.page{padding-top:20px}}</style></head><body><header class="top"><div class="wrap head"><div class="brand">COIN FLIP</div><div class="nav"><a href="index.html">Lobby</a><a href="profile.html">Profile</a><button id="logout" class="btn soft">Logout</button></div></div></header><main class="wrap page"><section class="card center"><h1>Coin Flip</h1><p class="small">Virtual coins ke saath apni bet amount enter karo aur Heads ya Tails choose karo.</p><div id="msg" class="msg"></div><div class="tiles"><div class="tile"><span>Virtual Balance</span><b id="bal">0</b></div><div class="tile"><span>Min Bet</span><b id="min">1</b></div><div class="tile"><span>Max Bet</span><b id="max">100</b></div></div><div class="field" style="max-width:380px;margin:20px auto"><label>Bet Amount</label><input id="bet" type="number" min="1" step=".01" value="1"></div><div id="coin" class="coin">?</div><h3 id="result">Choose your side</h3><button id="heads" class="btn primary">Heads</button> <button id="tails" class="btn soft">Tails</button></section><section class="card"><h2>Statistics</h2><div class="tiles"><div class="tile"><span>Total Games</span><b id="games">0</b></div><div class="tile"><span>Wins</span><b id="wins">0</b></div><div class="tile"><span>Losses</span><b id="losses">0</b></div><div class="tile"><span>Win Rate</span><b id="rate">0%</b></div></div></section><section class="card"><h2>Recent Games</h2><div class="table"><table><thead><tr><th>Time</th><th>Choice</th><th>Result</th><th>Outcome</th><th>Stake</th></tr></thead><tbody id="history"></tbody></table></div></section></main><script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 import{getAuth,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
-import{getFirestore,doc,getDoc,onSnapshot,collection,query,where,orderBy,limit}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+import{getFirestore,doc,getDoc}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 
-const app=initializeApp(firebaseConfig);
-const auth=getAuth(app);
-const db=getFirestore(app);
+const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
 const $=id=>document.getElementById(id);
 
 $("logout").onclick=async()=>{await signOut(auth);location.replace("login.html")};
 
-function readBalanceCaseInsensitive(balances, coinId){
-  const wanted=String(coinId||"").trim().toLowerCase();
-  for(const [key,value] of Object.entries(balances||{})){
-    if(String(key).trim().toLowerCase()===wanted) return Number(value)||0;
-  }
-  return 0;
+function showMsg(text,type="ok"){const m=$("msg");m.textContent=text;m.className="msg "+type}
+function getKey(uid){return "virtualCoinFlip_"+uid}
+function loadState(uid){
+  try{
+    const raw=localStorage.getItem(getKey(uid));
+    if(raw)return JSON.parse(raw);
+  }catch{}
+  return {balance:200,totalGames:0,wins:0,losses:0,history:[]};
+}
+function saveState(uid,state){localStorage.setItem(getKey(uid),JSON.stringify(state))}
+function render(state,cfg){
+  $("bal").textContent=Number(state.balance).toLocaleString();
+  $("min").textContent=cfg.minBet;
+  $("max").textContent=cfg.maxBet;
+  $("bet").min=cfg.minBet;
+  $("bet").max=cfg.maxBet;
+  $("games").textContent=state.totalGames;
+  $("wins").textContent=state.wins;
+  $("losses").textContent=state.losses;
+  $("rate").textContent=(state.totalGames?(state.wins/state.totalGames*100).toFixed(1):"0")+"%";
+  $("history").innerHTML=state.history.length?state.history.map(x=>`<tr><td>${x.time}</td><td>${x.choice}</td><td>${x.result}</td><td>${x.outcome}</td><td>${x.stake}</td></tr>`).join(""):'<tr><td colspan="5">No games yet.</td></tr>';
 }
 
-function readBalanceKey(balances, coinId){
-  const wanted=String(coinId||"").trim().toLowerCase();
-  for(const key of Object.keys(balances||{})){
-    if(String(key).trim().toLowerCase()===wanted) return key;
+onAuthStateChanged(auth,async user=>{
+ if(!user){location.replace("login.html");return}
+ try{
+  const us=await getDoc(doc(db,"users",user.uid));
+  if(!us.exists()||us.data().status==="blocked"){await signOut(auth);location.replace("login.html");return}
+
+  let cfg={gameStatus:"enabled",minBet:1,maxBet:100,winChance:50};
+  const ss=await getDoc(doc(db,"settings","coinflip"));
+  if(ss.exists())cfg={...cfg,...ss.data()};
+
+  const state=loadState(user.uid);
+  render(state,cfg);
+
+  async function play(choice){
+    if(cfg.gameStatus!=="enabled"){showMsg("Game disabled hai.","err");return}
+    const stake=Number($("bet").value);
+    if(!Number.isFinite(stake)||stake<Number(cfg.minBet)||stake>Number(cfg.maxBet)){showMsg("Bet amount limits ke andar enter karo.","err");return}
+    if(stake>state.balance){showMsg("Insufficient virtual balance.","err");return}
+
+    $("heads").disabled=true;$("tails").disabled=true;
+    $("coin").classList.remove("spin");void $("coin").offsetWidth;$("coin").classList.add("spin");
+    $("result").textContent="Flipping...";
+
+    await new Promise(r=>setTimeout(r,800));
+
+    const configuredWin=Math.max(0,Math.min(100,Number(cfg.winChance)));
+    const won=Math.random()*100<configuredWin;
+    const result=won?choice:(choice==="Heads"?"Tails":"Heads");
+    const outcome=won?"Win":"Loss";
+
+    state.balance += won?stake:-stake;
+    state.totalGames++;
+    if(won)state.wins++;else state.losses++;
+    state.history.unshift({time:new Date().toLocaleString(),choice,result,outcome,stake});
+    state.history=state.history.slice(0,30);
+    saveState(user.uid,state);
+    render(state,cfg);
+
+    $("coin").textContent=result==="Heads"?"H":"T";
+    $("result").textContent=`${result} — ${outcome}`;
+    showMsg(won?`You won ${stake} virtual coins.`:`You lost ${stake} virtual coins.`,won?"ok":"err");
+    $("heads").disabled=false;$("tails").disabled=false;
   }
-  return String(coinId||"").trim().toLowerCase();
-}
+
+  $("heads").onclick=()=>play("Heads");
+  $("tails").onclick=()=>play("Tails");
+ }catch(e){console.error(e);showMsg("Game load nahi ho saka.","err")}
+});
+</script></body></html>}
 
 onAuthStateChanged(auth,async user=>{
   if(!user){location.replace("login.html");return}
