@@ -1,0 +1,42 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Coin Flip Admin</title><style>*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f6f1e8;color:#29251f}
+.container{width:min(1100px,92%);margin:auto}.nav{background:#fffaf2;border-bottom:1px solid #e6ded0;padding:17px 0}
+.brand{font-weight:800;font-size:22px;color:#94652c}.hero{padding:32px 0}.card{background:#fff;border:1px solid #e6ded0;border-radius:18px;padding:22px;box-shadow:0 8px 25px #0000000b}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}.flex{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.space{justify-content:space-between}
+.btn{border:0;border-radius:11px;padding:11px 16px;background:#94652c;color:#fff;font-weight:700;cursor:pointer}.secondary{background:#eee7db;color:#40382e}.danger{background:#a33b35}
+input,select{width:100%;padding:12px;border:1px solid #d8cfc0;border-radius:10px;background:#fff}label{display:block;font-weight:700;font-size:13px;margin:12px 0 6px}
+.muted{color:#766f65}.msg{padding:11px;border-radius:10px;margin:10px 0;background:#f1ece3}.error{background:#fdebea;color:#8c2925}.success{background:#e9f6ea;color:#24682b}
+.hidden{display:none!important}.coin{font-weight:800;color:#94652c}.stat{font-size:30px;font-weight:800}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #eee7dd;text-align:left;font-size:14px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.tab{border:1px solid #ddd3c5;background:#fff;padding:10px 13px;border-radius:10px;cursor:pointer}.tab.active{background:#94652c;color:#fff}</style></head>
+<body><div class="nav"><div class="container flex space"><div class="brand">Coin Flip Admin</div><button id="logout" class="btn danger">Logout</button></div></div>
+<main class="container hero"><div id="msg"></div><div class="grid"><div class="card"><div class="muted">Users</div><div id="usersCount" class="stat">0</div></div><div class="card"><div class="muted">Games</div><div id="gamesCount" class="stat">—</div></div><div class="card"><div class="muted">Current coin</div><div id="coinStat" class="stat">—</div></div></div>
+<div class="tabs"><button class="tab active" data-t="dashboard">Dashboard</button><button class="tab" data-t="users">Users</button><button class="tab" data-t="game">Coin Flip Settings</button><button class="tab" data-t="coin">Coin</button></div>
+<section id="dashboard" class="pane"><div class="card"><h2>Dashboard</h2><p>Firestore-backed test admin dashboard.</p><p class="muted">Virtual coins only. No real-money deposits/withdrawals are included.</p></div></section>
+<section id="users" class="pane hidden"><div class="card"><h2>User Management</h2><div class="table-wrap"><table><thead><tr><th>User</th><th>Email</th><th>Status</th><th>Balance</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table></div></div></section>
+<section id="game" class="pane hidden"><div class="card"><h2>Coin Flip Settings</h2><label>Status</label><select id="gameStatus"><option value="enabled">Enabled</option><option value="disabled">Disabled</option></select><label>Winning chance (%)</label><input id="winChance" type="number" min="0" max="100" step=".1"><label>Loss chance (%)</label><input id="lossChance" disabled><p class="muted">Loss chance = 100 − winning chance.</p><button id="saveGame" class="btn">Save</button></div></section>
+<section id="coin" class="pane hidden"><div class="card"><h2>Coin Management</h2><label>Coin ID</label><input id="coinId"><label>Coin name</label><input id="coinName"><label>Reference value</label><input id="coinValue" type="number" min="0" step=".000001"><button id="saveCoin" class="btn">Save</button></div></section></main>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import{getAuth,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+import{getFirestore,doc,getDoc,setDoc,updateDoc,collection,onSnapshot,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+const firebaseConfig={
+apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",
+authDomain:"mr777-c72fc.firebaseapp.com",
+projectId:"mr777-c72fc",
+storageBucket:"mr777-c72fc.firebasestorage.app",
+messagingSenderId:"1027130368908",
+appId:"1:1027130368908:web:7e3cf883e137935523eca9",
+measurementId:"G-3GTQHMNF9L"};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);let users=[],coinIdValue="demo";
+const $=x=>document.getElementById(x);function msg(t,e=false){$("msg").className="msg "+(e?"error":"success");$("msg").textContent=t}
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.querySelectorAll(".pane").forEach(x=>x.classList.add("hidden"));$(b.dataset.t).classList.remove("hidden")});
+async function access(u){const s=await getDoc(doc(db,"users",u.uid));if(!s.exists()||s.data().isAdmin!==true){msg("Admin access denied.",true);setTimeout(()=>location.href="login.html",1000);return false}return true}
+async function loadGame(){const s=await getDoc(doc(db,"settings","coinflip"));const d=s.exists()?s.data():{winChance:50,gameStatus:"enabled",coinId:"demo",coinName:"Demo Coin",coinValue:1};coinIdValue=d.coinId||"demo";$("winChance").value=d.winChance??50;$("lossChance").value=100-Number(d.winChance??50);$("gameStatus").value=d.gameStatus||"enabled";$("coinId").value=coinIdValue;$("coinName").value=d.coinName||"Demo Coin";$("coinValue").value=d.coinValue??1;$("coinStat").textContent=d.coinName||"Demo Coin"}
+function render(){$("usersCount").textContent=users.length;$("rows").innerHTML=users.map(u=>{const b=Number((u.coins||{})[coinIdValue]||0);return "<tr><td><b>"+(u.username||"")+"</b><br>"+u.uid.slice(0,10)+"...</td><td>"+(u.email||"")+"</td><td>"+(u.status||"active")+"</td><td class='coin'>"+b+"</td><td><button class='btn' data-a='"+u.uid+"'>+ Coin</button> <button class='btn danger' data-r='"+u.uid+"'>− Coin</button> <button class='btn secondary' data-b='"+u.uid+"'>"+(u.status==="blocked"?"Unblock":"Block")+"</button></td></tr>"}).join("");document.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>adjust(b.dataset.a,1));document.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>adjust(b.dataset.r,-1));document.querySelectorAll("[data-b]").forEach(b=>b.onclick=()=>block(b.dataset.b))}
+async function adjust(uid,dir){const n=Number(prompt((dir>0?"Add":"Remove")+" coins","1"));if(!Number.isFinite(n)||n<=0)return;const r=doc(db,"users",uid),s=await getDoc(r);if(!s.exists())return;const d=s.data(),c={...(d.coins||{})},old=Number(c[coinIdValue]||0),next=old+dir*n;if(next<0)return alert("Balance cannot be negative.");c[coinIdValue]=next;await updateDoc(r,{coins:c,updatedAt:serverTimestamp()});msg("Balance updated.")}
+async function block(uid){const r=doc(db,"users",uid),s=await getDoc(r);if(s.exists())await updateDoc(r,{status:s.data().status==="blocked"?"active":"blocked",updatedAt:serverTimestamp()})}
+$("winChance").oninput=()=>$("lossChance").value=100-Number($("winChance").value||0);
+$("saveGame").onclick=async()=>{const w=Number($("winChance").value);if(w<0||w>100)return msg("Winning chance must be 0–100.",true);await setDoc(doc(db,"settings","coinflip"),{winChance:w,gameStatus:$("gameStatus").value,coinId:$("coinId").value.trim()||"demo",coinName:$("coinName").value.trim()||"Demo Coin",coinValue:Number($("coinValue").value)||1,updatedAt:serverTimestamp()},{merge:true});await loadGame();render();msg("Game settings saved.")};
+$("saveCoin").onclick=async()=>{await setDoc(doc(db,"settings","coinflip"),{coinId:$("coinId").value.trim()||"demo",coinName:$("coinName").value.trim()||"Demo Coin",coinValue:Number($("coinValue").value)||1,updatedAt:serverTimestamp()},{merge:true});await loadGame();render();msg("Coin saved.")};
+$("logout").onclick=async()=>{await signOut(auth);location.href="login.html"};
+onAuthStateChanged(auth,async u=>{if(!u)return location.href="login.html";if(!(await access(u)))return;await loadGame();onSnapshot(collection(db,"users"),s=>{users=[];s.forEach(d=>users.push(d.data()));render()})});
+</script></body></html>

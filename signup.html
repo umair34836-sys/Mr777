@@ -1,0 +1,27 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Coin Flip Sign Up</title><style>*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f6f1e8;color:#29251f}
+.container{width:min(1100px,92%);margin:auto}.nav{background:#fffaf2;border-bottom:1px solid #e6ded0;padding:17px 0}
+.brand{font-weight:800;font-size:22px;color:#94652c}.hero{padding:32px 0}.card{background:#fff;border:1px solid #e6ded0;border-radius:18px;padding:22px;box-shadow:0 8px 25px #0000000b}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}.flex{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.space{justify-content:space-between}
+.btn{border:0;border-radius:11px;padding:11px 16px;background:#94652c;color:#fff;font-weight:700;cursor:pointer}.secondary{background:#eee7db;color:#40382e}.danger{background:#a33b35}
+input,select{width:100%;padding:12px;border:1px solid #d8cfc0;border-radius:10px;background:#fff}label{display:block;font-weight:700;font-size:13px;margin:12px 0 6px}
+.muted{color:#766f65}.msg{padding:11px;border-radius:10px;margin:10px 0;background:#f1ece3}.error{background:#fdebea;color:#8c2925}.success{background:#e9f6ea;color:#24682b}
+.hidden{display:none!important}.coin{font-weight:800;color:#94652c}.stat{font-size:30px;font-weight:800}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #eee7dd;text-align:left;font-size:14px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.tab{border:1px solid #ddd3c5;background:#fff;padding:10px 13px;border-radius:10px;cursor:pointer}.tab.active{background:#94652c;color:#fff}</style></head>
+<body><div class="nav"><div class="container brand">Coin Flip</div></div><main class="container hero"><div class="card" style="max-width:500px;margin:auto"><h1>Create account</h1><div id="msg"></div>
+<label>Username</label><input id="username"><label>Phone number</label><input id="phone" type="tel" placeholder="+92..."><label>Email</label><input id="email" type="email"><label>Password</label><input id="password" type="password" minlength="6">
+<button id="signupBtn" class="btn" style="width:100%;margin-top:18px">Sign Up</button><div style="margin-top:15px"><a href="login.html">Already have an account?</a></div></div></main>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import{getAuth,createUserWithEmailAndPassword}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+import{getFirestore,doc,setDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+const firebaseConfig={
+apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",
+authDomain:"mr777-c72fc.firebaseapp.com",
+projectId:"mr777-c72fc",
+storageBucket:"mr777-c72fc.firebasestorage.app",
+messagingSenderId:"1027130368908",
+appId:"1:1027130368908:web:7e3cf883e137935523eca9",
+measurementId:"G-3GTQHMNF9L"};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),msg=document.getElementById("msg");
+signupBtn.onclick=async()=>{const u=username.value.trim(),p=phone.value.trim(),e=email.value.trim(),pw=password.value;if(!u||!p||!e||pw.length<6){msg.className="msg error";msg.textContent="Fill all fields. Password: 6+ characters.";return}try{msg.textContent="Creating...";const c=await createUserWithEmailAndPassword(auth,e,pw);await setDoc(doc(db,"users",c.user.uid),{uid:c.user.uid,username:u,email:e,phone:p,status:"active",coins:{},totalGames:0,wins:0,losses:0,createdAt:serverTimestamp(),updatedAt:serverTimestamp()});location.href="index.html"}catch(err){msg.className="msg error";msg.textContent=err.message}};
+</script></body></html>
