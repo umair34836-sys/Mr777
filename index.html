@@ -1,9 +1,112 @@
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lobby</title><style>*{box-sizing:border-box}body{margin:0;background:#f6f0e5;color:#29231d;font-family:Arial,sans-serif}.wrap{width:min(1180px,92%);margin:auto}.top{height:68px;background:#fffdf9;border-bottom:1px solid #e5dbcc}.head{height:100%;display:flex;align-items:center;justify-content:space-between;gap:15px}.brand{font-weight:900;color:#8d632b;letter-spacing:.5px}.nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.nav a{color:#6e522d;text-decoration:none;font-weight:800;font-size:13px}.page{padding:28px 0 55px}.card{background:#fffdf9;border:1px solid #e5dbcc;border-radius:18px;padding:22px;box-shadow:0 10px 28px #51391a12;margin-bottom:18px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.tile{padding:17px;border:1px solid #e5dbcc;border-radius:13px;background:#faf6ef}.tile span{font-size:12px;color:#81786d}.tile b{display:block;font-size:24px;color:#8d632b;margin-top:4px}.field{margin:11px 0}.field label{display:block;font-size:12px;font-weight:800;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;padding:11px;border:1px solid #e5dbcc;border-radius:9px;background:#fff;color:#29231d}.field textarea{min-height:90px;resize:vertical}.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer}.primary{background:linear-gradient(135deg,#c49b5d,#8d632b);color:#fff}.soft{background:#eee6da;color:#392d20}.danger{background:#b63e39;color:#fff}.msg{display:none;padding:11px;border-radius:10px;margin-bottom:14px;font-size:13px;font-weight:700}.show{display:block}.ok{background:#edf8f1;color:#286f43}.err{background:#fff0ef;color:#963530}.small{font-size:12px;color:#81786d}.muted{color:#81786d}.table{overflow:auto}table{width:100%;border-collapse:collapse;min-width:720px}th,td{text-align:left;padding:10px;border-bottom:1px solid #eee6da;font-size:13px}th{font-size:11px;color:#81786d;text-transform:uppercase}.actions{display:flex;gap:6px;flex-wrap:wrap}.coin{width:150px;height:150px;border-radius:50%;margin:25px auto 15px;display:grid;place-items:center;font-size:44px;font-weight:900;color:#855d26;background:radial-gradient(circle at 30% 25%,#fff,#ead5ab 55%,#a77430);border:8px solid #b78a4b;box-shadow:0 12px 28px #62441b22}.spin{animation:spin .8s ease}@keyframes spin{0%{transform:rotateY(0)}50%{transform:rotateY(900deg)}100%{transform:rotateY(1800deg)}}.center{text-align:center}.gamecard{cursor:pointer;transition:.15s}.gamecard:hover{transform:translateY(-2px)}.badge{display:inline-block;padding:5px 9px;border-radius:20px;font-size:11px;font-weight:800;background:#eee6da}.active{background:#edf8f1;color:#286f43}.soon{background:#f2eadc;color:#8d632b}.adminnav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.adminnav a{padding:9px 12px;border-radius:9px;background:#eee6da;text-decoration:none;color:#392d20;font-size:12px;font-weight:800}@media(max-width:780px){.grid,.tiles{grid-template-columns:1fr}.head{height:auto;min-height:68px;padding:10px 0}.top{height:auto}.nav{justify-content:flex-end}.page{padding-top:20px}}
-</style></head><body><header class="top"><div class="wrap head"><div class="brand">COIN FLIP</div><div class="nav"><a href="index.html">Lobby</a><a href="profile.html">Profile</a><a href="deposit.html">Deposit</a><a href="withdrawal.html">Withdrawal</a><button id="logout" class="btn soft">Logout</button></div></div></header><main class="wrap page"><section class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap"><div><h1 id="welcome">Welcome</h1><p class="small">Games lobby</p></div><div><span class="small">Selected Coin Balance</span><h2><span id="bal">0</span> <span id="coin">HFC</span></h2></div></div><div class="tiles"><div class="tile"><span>Total Games</span><b id="games">0</b></div><div class="tile"><span>Wins</span><b id="wins">0</b></div><div class="tile"><span>Losses</span><b id="losses">0</b></div></div></section><section><h2>Games</h2><div class="tiles"><div class="card gamecard" onclick="location.href='coinflip.html'"><span class="badge active">Active</span><h2>Coin Flip</h2><p class="small">Choose Heads or Tails and enter your bet.</p><button class="btn primary">Play Now</button></div><div class="card"><span class="badge soon">Coming Soon</span><h2>Future Game</h2><p class="small">Admin baad mein game enable karega.</p></div><div class="card"><span class="badge soon">Coming Soon</span><h2>Future Game</h2><p class="small">No extra game mechanics added.</p></div></div></section></main><script type="module">const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
-import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-import{getAuth,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
-import{getFirestore,doc,getDoc,collection,query,where,orderBy,limit,onSnapshot,addDoc,setDoc,updateDoc,serverTimestamp,getDocs}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
-const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
-if($("logout"))$("logout").onclick=async()=>{await signOut(auth);location.href="login.html"};
-onAuthStateChanged(auth,async u=>{if(!u)return location.href="login.html";const s=await getDoc(doc(db,"users",u.uid));if(!s.exists()||s.data().status==="blocked"){await signOut(auth);return location.href="login.html"};window.ME={...s.data(),uid:u.uid};window.DB=db;const s=await getDoc(doc(DB,"settings","coinflip"));const x=s.exists()?s.data():{coinId:"hfc",coinName:"HFC"};$("welcome").textContent="Welcome, "+(ME.username||"User");$("coin").textContent=x.coinName||x.coinId;$("bal").textContent=Number((ME.coins||{})[x.coinId]||0);$("games").textContent=ME.totalGames||0;$("wins").textContent=ME.wins||0;$("losses").textContent=ME.losses||0;});
+</style></head><body><header class="top"><div class="wrap head"><div class="brand">COIN FLIP</div><div class="nav"><a href="index.html">Lobby</a><a href="profile.html">Profile</a><a href="deposit.html">Deposit</a><a href="withdrawal.html">Withdrawal</a><button id="logout" class="btn soft">Logout</button></div></div></header><main class="wrap page"><section class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap"><div><h1 id="welcome">Welcome</h1><p class="small">Games lobby</p></div><div><span class="small">Selected Coin Balance</span><h2><span id="bal">0</span> <span id="coin">HFC</span></h2></div></div><div class="tiles"><div class="tile"><span>Total Games</span><b id="games">0</b></div><div class="tile"><span>Wins</span><b id="wins">0</b></div><div class="tile"><span>Losses</span><b id="losses">0</b></div></div></section><section><h2>Games</h2><div class="tiles"><div class="card gamecard" onclick="location.href='coinflip.html'"><span class="badge active">Active</span><h2>Coin Flip</h2><p class="small">Choose Heads or Tails and enter your bet.</p><button class="btn primary">Play Now</button></div><div class="card"><span class="badge soon">Coming Soon</span><h2>Future Game</h2><p class="small">Admin baad mein game enable karega.</p></div><div class="card"><span class="badge soon">Coming Soon</span><h2>Future Game</h2><p class="small">No extra game mechanics added.</p></div></div></section></main><script type="module">
+const firebaseConfig = {
+  apiKey: "AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",
+  authDomain: "mr777-c72fc.firebaseapp.com",
+  projectId: "mr777-c72fc",
+  storageBucket: "mr777-c72fc.firebasestorage.app",
+  messagingSenderId: "1027130368908",
+  appId: "1:1027130368908:web:7e3cf883e137935523eca9",
+  measurementId: "G-3GTQHMNF9"
+};
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+import {
+  getFirestore, doc, getDoc, onSnapshot
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const $ = id => document.getElementById(id);
+
+$("logout").onclick = async () => {
+  await signOut(auth);
+  location.replace("login.html");
+};
+
+let stopped = false;
+
+onAuthStateChanged(auth, async (user) => {
+  if (stopped) return;
+
+  if (!user) {
+    location.replace("login.html");
+    return;
+  }
+
+  try {
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      await signOut(auth);
+      location.replace("login.html");
+      return;
+    }
+
+    const userData = userSnap.data();
+
+    if (userData.status === "blocked") {
+      await signOut(auth);
+      location.replace("login.html");
+      return;
+    }
+
+    $("welcome").textContent = "Welcome, " + (userData.username || "User");
+
+    // Game settings: admin-selected coin for Coin Flip
+    onSnapshot(doc(db, "gameSettings", "coinflip"), (settingsSnap) => {
+      if (!settingsSnap.exists()) {
+        $("coin").textContent = "HFC";
+        $("bal").textContent = "0";
+        return;
+      }
+
+      const settings = settingsSnap.data();
+      const coinId = String(settings.coinId || "hfc");
+      const coinName = settings.coinName || coinId.toUpperCase();
+
+      $("coin").textContent = coinName;
+
+      // Wallet is the source of truth for balance.
+      onSnapshot(doc(db, "wallets", user.uid), (walletSnap) => {
+        if (!walletSnap.exists()) {
+          $("bal").textContent = "0";
+          return;
+        }
+
+        const wallet = walletSnap.data();
+        const balances = wallet.balances || wallet.coins || {};
+        $("bal").textContent = Number(balances[coinId] || 0).toLocaleString();
+      }, (error) => {
+        console.error("Wallet listener:", error);
+        $("bal").textContent = "—";
+      });
+    }, (error) => {
+      console.error("Game settings listener:", error);
+      $("coin").textContent = "HFC";
+      $("bal").textContent = "0";
+    });
+
+    // Game stats are stored separately from the public user profile.
+    onSnapshot(doc(db, "gameStats", user.uid), (statsSnap) => {
+      const stats = statsSnap.exists() ? statsSnap.data() : {};
+      $("games").textContent = Number(stats.totalGames || userData.totalGames || 0).toLocaleString();
+      $("wins").textContent = Number(stats.wins || userData.wins || 0).toLocaleString();
+      $("losses").textContent = Number(stats.losses || userData.losses || 0).toLocaleString();
+    }, (error) => {
+      console.error("Stats listener:", error);
+      $("games").textContent = "0";
+      $("wins").textContent = "0";
+      $("losses").textContent = "0";
+    });
+
+  } catch (error) {
+    console.error("Lobby error:", error);
+    $("welcome").textContent = "Unable to load account";
+    $("bal").textContent = "—";
+  }
+});
 </script></body></html>
