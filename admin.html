@@ -1,42 +1,47 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Coin Flip Admin</title><style>*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f6f1e8;color:#29251f}
-.container{width:min(1100px,92%);margin:auto}.nav{background:#fffaf2;border-bottom:1px solid #e6ded0;padding:17px 0}
-.brand{font-weight:800;font-size:22px;color:#94652c}.hero{padding:32px 0}.card{background:#fff;border:1px solid #e6ded0;border-radius:18px;padding:22px;box-shadow:0 8px 25px #0000000b}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}.flex{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.space{justify-content:space-between}
-.btn{border:0;border-radius:11px;padding:11px 16px;background:#94652c;color:#fff;font-weight:700;cursor:pointer}.secondary{background:#eee7db;color:#40382e}.danger{background:#a33b35}
-input,select{width:100%;padding:12px;border:1px solid #d8cfc0;border-radius:10px;background:#fff}label{display:block;font-weight:700;font-size:13px;margin:12px 0 6px}
-.muted{color:#766f65}.msg{padding:11px;border-radius:10px;margin:10px 0;background:#f1ece3}.error{background:#fdebea;color:#8c2925}.success{background:#e9f6ea;color:#24682b}
-.hidden{display:none!important}.coin{font-weight:800;color:#94652c}.stat{font-size:30px;font-weight:800}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #eee7dd;text-align:left;font-size:14px}
-.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.tab{border:1px solid #ddd3c5;background:#fff;padding:10px 13px;border-radius:10px;cursor:pointer}.tab.active{background:#94652c;color:#fff}</style></head>
-<body><div class="nav"><div class="container flex space"><div class="brand">Coin Flip Admin</div><button id="logout" class="btn danger">Logout</button></div></div>
-<main class="container hero"><div id="msg"></div><div class="grid"><div class="card"><div class="muted">Users</div><div id="usersCount" class="stat">0</div></div><div class="card"><div class="muted">Games</div><div id="gamesCount" class="stat">—</div></div><div class="card"><div class="muted">Current coin</div><div id="coinStat" class="stat">—</div></div></div>
-<div class="tabs"><button class="tab active" data-t="dashboard">Dashboard</button><button class="tab" data-t="users">Users</button><button class="tab" data-t="game">Coin Flip Settings</button><button class="tab" data-t="coin">Coin</button></div>
-<section id="dashboard" class="pane"><div class="card"><h2>Dashboard</h2><p>Firestore-backed test admin dashboard.</p><p class="muted">Virtual coins only. No real-money deposits/withdrawals are included.</p></div></section>
-<section id="users" class="pane hidden"><div class="card"><h2>User Management</h2><div class="table-wrap"><table><thead><tr><th>User</th><th>Email</th><th>Status</th><th>Balance</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table></div></div></section>
-<section id="game" class="pane hidden"><div class="card"><h2>Coin Flip Settings</h2><label>Status</label><select id="gameStatus"><option value="enabled">Enabled</option><option value="disabled">Disabled</option></select><label>Winning chance (%)</label><input id="winChance" type="number" min="0" max="100" step=".1"><label>Loss chance (%)</label><input id="lossChance" disabled><p class="muted">Loss chance = 100 − winning chance.</p><button id="saveGame" class="btn">Save</button></div></section>
-<section id="coin" class="pane hidden"><div class="card"><h2>Coin Management</h2><label>Coin ID</label><input id="coinId"><label>Coin name</label><input id="coinName"><label>Reference value</label><input id="coinValue" type="number" min="0" step=".000001"><button id="saveCoin" class="btn">Save</button></div></section></main>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin</title><style>
+*{box-sizing:border-box}body{margin:0;background:#f6f0e5;color:#2b261f;font-family:Inter,Arial,sans-serif}
+.wrap{width:min(1120px,92%);margin:auto}.top{height:68px;background:#fffdf9;border-bottom:1px solid #e4dacb;display:flex;align-items:center}
+.head{display:flex;align-items:center;justify-content:space-between}.brand{font-weight:900;color:#8b622b;letter-spacing:.4px}
+main{padding:28px 0 50px}.card{background:#fffdf9;border:1px solid #e4dacb;border-radius:18px;padding:22px;box-shadow:0 10px 28px #50371912}
+.grid{display:grid;grid-template-columns:1.4fr .8fr;gap:18px}.btn{border:0;border-radius:10px;padding:11px 15px;font-weight:800;cursor:pointer}
+.primary{background:linear-gradient(135deg,#c39a5c,#8b622b);color:#fff}.soft{background:#eee6da;color:#40382d}.danger{background:#b53e39;color:#fff}
+.small{font-size:12px;color:#81786d}.title{text-align:center;margin:0}.sub{text-align:center;color:#81786d;font-size:13px}
+.msg{display:none;padding:11px;border-radius:10px;margin-bottom:14px;font-size:13px;font-weight:700}.show{display:block}.err{background:#fff0ef;color:#963530}.ok{background:#edf8f1;color:#286f43}
+.account{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:18px}.user{display:flex;gap:11px;align-items:center}.avatar{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:#a77b3b;color:#fff;font-weight:900}
+.balance{text-align:right}.balance b{font-size:24px;color:#8b622b;display:block}.coin{width:155px;height:155px;border-radius:50%;margin:28px auto 18px;display:grid;place-items:center;font-size:45px;font-weight:900;color:#855d26;background:radial-gradient(circle at 30% 25%,#fff,#ead5ab 55%,#a77430);border:8px solid #b78a4b;box-shadow:0 12px 28px #62441b22}
+.spin{animation:spin .8s ease}@keyframes spin{0%{transform:rotateY(0)}50%{transform:rotateY(900deg)}100%{transform:rotateY(1800deg)}}
+.choices{display:flex;justify-content:center;gap:9px}.bet{max-width:380px;margin:18px auto}.bet label,.field label{display:block;font-size:12px;font-weight:800;margin-bottom:6px}.field{margin:11px 0}.field input,.field select{width:100%;padding:11px;border:1px solid #e4dacb;border-radius:9px;background:#fff}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{padding:12px;border:1px solid #e7ddcf;border-radius:11px;background:#faf6ef}.stat span{display:block;font-size:11px;color:#81786d}.stat b{font-size:19px}
+.green{color:#25814b}.red{color:#b53e39}.table{overflow:auto}table{width:100%;border-collapse:collapse;min-width:620px}th,td{text-align:left;padding:10px;border-bottom:1px solid #eee6da;font-size:13px}th{font-size:11px;color:#81786d;text-transform:uppercase}
+.form{max-width:450px;margin:35px auto}.form h1{text-align:center}.form .btn{width:100%}.tabs{display:flex;gap:7px;flex-wrap:wrap;margin:18px 0}.tab{border:1px solid #e4dacb;background:#fff;padding:10px 12px;border-radius:9px;font-weight:800;cursor:pointer}.active{background:#8b622b;color:#fff}.hide{display:none!important}
+.adminstats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.action{display:flex;gap:6px;flex-wrap:wrap}.action .btn{padding:7px 9px;font-size:12px}
+@media(max-width:780px){.grid,.adminstats{grid-template-columns:1fr}.account{flex-direction:column;align-items:flex-start}.balance{text-align:left}}
+</style></head>
+<body><header class="top"><div class="wrap head"><div class="brand">ADMIN DASHBOARD</div><button id="logout" class="btn danger">Logout</button></div></header><main class="wrap">
+<div id="msg" class="msg"></div><div class="adminstats"><div class="card"><span class="small">Users</span><h2 id="count">0</h2></div><div class="card"><span class="small">Game</span><h2>Coin Flip</h2></div><div class="card"><span class="small">Coin</span><h2 id="coinStat">—</h2></div></div>
+<div class="tabs"><button class="tab active" data-p="dashboard">Dashboard</button><button class="tab" data-p="users">Users</button><button class="tab" data-p="game">Game Settings</button><button class="tab" data-p="coin">Coin Settings</button></div>
+<section id="dashboard" class="card pane"><h2>Dashboard</h2><p class="small">Secure architecture: admin UI yahan se settings manage karega. Wallet/game mutations production mein trusted backend se honi chahiye.</p></section>
+<section id="users" class="card pane hide"><h2>User Management</h2><div class="table"><table><thead><tr><th>User</th><th>Email</th><th>Status</th><th>Coin Balance</th><th>Actions</th></tr></thead><tbody id="users"></tbody></table></div></section>
+<section id="game" class="card pane hide"><h2>Coin Flip Settings</h2><div class="grid"><div class="field"><label>Status</label><select id="status"><option>enabled</option><option>disabled</option></select></div><div class="field"><label>Winning Chance %</label><input id="win" type="number" min="0" max="100" step=".01"></div><div class="field"><label>Loss Chance %</label><input id="loss" disabled></div><div class="field"><label>Minimum Bet</label><input id="min" type="number" step=".01"></div><div class="field"><label>Maximum Bet</label><input id="max" type="number" step=".01"></div><div class="field"><label>Payout Multiplier</label><input id="payout" type="number" min="1" step=".01"></div></div><button id="saveGame" class="btn primary">Save Game Settings</button></section>
+<section id="coin" class="card pane hide"><h2>Coin Settings</h2><div class="grid"><div class="field"><label>Coin ID</label><input id="coinId"></div><div class="field"><label>Coin Name</label><input id="coinName"></div><div class="field"><label>PKR Value</label><input id="value" type="number" min=".000001" step=".000001"></div></div><p class="small">Example: HFC value 2 => 1 HFC = 2 PKR.</p><button id="saveCoin" class="btn primary">Save Coin</button></section></main>
 <script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-import{getAuth,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
-import{getFirestore,doc,getDoc,setDoc,updateDoc,collection,onSnapshot,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
-const firebaseConfig={
-apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",
-authDomain:"mr777-c72fc.firebaseapp.com",
-projectId:"mr777-c72fc",
-storageBucket:"mr777-c72fc.firebasestorage.app",
-messagingSenderId:"1027130368908",
-appId:"1:1027130368908:web:7e3cf883e137935523eca9",
-measurementId:"G-3GTQHMNF9L"};
-const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);let users=[],coinIdValue="demo";
-const $=x=>document.getElementById(x);function msg(t,e=false){$("msg").className="msg "+(e?"error":"success");$("msg").textContent=t}
-document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.querySelectorAll(".pane").forEach(x=>x.classList.add("hidden"));$(b.dataset.t).classList.remove("hidden")});
-async function access(u){const s=await getDoc(doc(db,"users",u.uid));if(!s.exists()||s.data().isAdmin!==true){msg("Admin access denied.",true);setTimeout(()=>location.href="login.html",1000);return false}return true}
-async function loadGame(){const s=await getDoc(doc(db,"settings","coinflip"));const d=s.exists()?s.data():{winChance:50,gameStatus:"enabled",coinId:"demo",coinName:"Demo Coin",coinValue:1};coinIdValue=d.coinId||"demo";$("winChance").value=d.winChance??50;$("lossChance").value=100-Number(d.winChance??50);$("gameStatus").value=d.gameStatus||"enabled";$("coinId").value=coinIdValue;$("coinName").value=d.coinName||"Demo Coin";$("coinValue").value=d.coinValue??1;$("coinStat").textContent=d.coinName||"Demo Coin"}
-function render(){$("usersCount").textContent=users.length;$("rows").innerHTML=users.map(u=>{const b=Number((u.coins||{})[coinIdValue]||0);return "<tr><td><b>"+(u.username||"")+"</b><br>"+u.uid.slice(0,10)+"...</td><td>"+(u.email||"")+"</td><td>"+(u.status||"active")+"</td><td class='coin'>"+b+"</td><td><button class='btn' data-a='"+u.uid+"'>+ Coin</button> <button class='btn danger' data-r='"+u.uid+"'>− Coin</button> <button class='btn secondary' data-b='"+u.uid+"'>"+(u.status==="blocked"?"Unblock":"Block")+"</button></td></tr>"}).join("");document.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>adjust(b.dataset.a,1));document.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>adjust(b.dataset.r,-1));document.querySelectorAll("[data-b]").forEach(b=>b.onclick=()=>block(b.dataset.b))}
-async function adjust(uid,dir){const n=Number(prompt((dir>0?"Add":"Remove")+" coins","1"));if(!Number.isFinite(n)||n<=0)return;const r=doc(db,"users",uid),s=await getDoc(r);if(!s.exists())return;const d=s.data(),c={...(d.coins||{})},old=Number(c[coinIdValue]||0),next=old+dir*n;if(next<0)return alert("Balance cannot be negative.");c[coinIdValue]=next;await updateDoc(r,{coins:c,updatedAt:serverTimestamp()});msg("Balance updated.")}
-async function block(uid){const r=doc(db,"users",uid),s=await getDoc(r);if(s.exists())await updateDoc(r,{status:s.data().status==="blocked"?"active":"blocked",updatedAt:serverTimestamp()})}
-$("winChance").oninput=()=>$("lossChance").value=100-Number($("winChance").value||0);
-$("saveGame").onclick=async()=>{const w=Number($("winChance").value);if(w<0||w>100)return msg("Winning chance must be 0–100.",true);await setDoc(doc(db,"settings","coinflip"),{winChance:w,gameStatus:$("gameStatus").value,coinId:$("coinId").value.trim()||"demo",coinName:$("coinName").value.trim()||"Demo Coin",coinValue:Number($("coinValue").value)||1,updatedAt:serverTimestamp()},{merge:true});await loadGame();render();msg("Game settings saved.")};
-$("saveCoin").onclick=async()=>{await setDoc(doc(db,"settings","coinflip"),{coinId:$("coinId").value.trim()||"demo",coinName:$("coinName").value.trim()||"Demo Coin",coinValue:Number($("coinValue").value)||1,updatedAt:serverTimestamp()},{merge:true});await loadGame();render();msg("Coin saved.")};
-$("logout").onclick=async()=>{await signOut(auth);location.href="login.html"};
-onAuthStateChanged(auth,async u=>{if(!u)return location.href="login.html";if(!(await access(u)))return;await loadGame();onSnapshot(collection(db,"users"),s=>{users=[];s.forEach(d=>users.push(d.data()));render()})});
+const firebaseConfig = {
+  apiKey: "AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",
+  authDomain: "mr777-c72fc.firebaseapp.com",
+  projectId: "mr777-c72fc",
+  storageBucket: "mr777-c72fc.firebasestorage.app",
+  messagingSenderId: "1027130368908",
+  appId: "1:1027130368908:web:7e3cf883e137935523eca9",
+  measurementId: "G-3GTQHMNF9L"
+};
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";import{getAuth,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";import{getFirestore,doc,getDoc,setDoc,collection,onSnapshot,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);let cid="hfc",all=[];
+const $=x=>document.getElementById(x),msg=(t,e=false)=>{$("msg").textContent=t;$("msg").className="msg show "+(e?"err":"ok")};
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.querySelectorAll(".pane").forEach(x=>x.classList.add("hide"));$(b.dataset.p).classList.remove("hide")});
+async function load(){const s=await getDoc(doc(db,"settings","coinflip"));const d=s.exists()?s.data():{gameStatus:"enabled",coinId:"hfc",coinName:"HFC",coinValuePKR:1,minBet:1,maxBet:100,winChance:50,payoutMultiplier:2};cid=d.coinId;$("status").value=d.gameStatus;$("coinId").value=d.coinId;$("coinName").value=d.coinName;$("value").value=d.coinValuePKR;$("min").value=d.minBet;$("max").value=d.maxBet;$("win").value=d.winChance;$("loss").value=100-d.winChance;$("payout").value=d.payoutMultiplier;$("coinStat").textContent=d.coinName+" · "+d.coinValuePKR+" PKR"}
+function render(){$("count").textContent=all.length;$("users").innerHTML=all.map(u=>{const b=Number((u.coins||{})[cid]||0);return `<tr><td>${u.username||""}</td><td>${u.email||""}</td><td>${u.status||"active"}</td><td>${b} ${cid}</td><td><button class="btn soft" data-block="${u.uid}">${u.status==="blocked"?"Unblock":"Block"}</button></td></tr>`}).join("")}
+$("win").oninput=()=>$("loss").value=(100-Number($("win").value||0)).toFixed(2);
+$("saveGame").onclick=async()=>{const w=Number($("win").value),mi=Number($("min").value),ma=Number($("max").value),po=Number($("payout").value);if(w<0||w>100||mi<=0||ma<mi||po<1)return msg("Settings invalid hain.",true);await setDoc(doc(db,"settings","coinflip"),{gameStatus:$("status").value,coinId:$("coinId").value,coinName:$("coinName").value,coinValuePKR:Number($("value").value),minBet:mi,maxBet:ma,winChance:w,payoutMultiplier:po,updatedAt:serverTimestamp()},{merge:true});await load();msg("Game settings save ho gayi.")};
+$("saveCoin").onclick=()=>$("saveGame").click();$("logout").onclick=async()=>{await signOut(auth);location.href="login.html"};
+onAuthStateChanged(auth,async u=>{if(!u)return location.href="login.html";const s=await getDoc(doc(db,"users",u.uid));if(!s.exists()||s.data().isAdmin!==true)return location.href="index.html";await load();onSnapshot(collection(db,"users"),s=>{all=s.docs.map(x=>x.data());render()})});
 </script></body></html>
