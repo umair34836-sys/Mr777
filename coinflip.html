@@ -39,10 +39,11 @@ function readBalanceKey(balances,coinId){
   }
   return String(coinId||"").trim().toLowerCase();
 }
-function fairFlip(winChance){
+// FIX: Ab winChance = PLAYER ke jeetne ka chance (Heads ya Tails dono par same)
+function rollWin(winChance){
   const a=new Uint32Array(1);
   crypto.getRandomValues(a);
-  return (a[0]%100) < Number(winChance??50) ? "Heads" : "Tails";
+  return (a[0]%100) < Number(winChance??50);
 }
 
 onAuthStateChanged(auth,async user=>{
@@ -113,8 +114,10 @@ onAuthStateChanged(auth,async user=>{
       $("coin").textContent="…";
       $("coin").classList.add("spin");
 
-      const result=fairFlip(cfg.winChance);
-      const won=choice===result;
+      // FIX: Pehle win/loss decide hota hai winChance se,
+      // phir result usi ke mutabiq (win = choice, loss = opposite)
+      const won=rollWin(cfg.winChance);
+      const result=won ? choice : (choice==="Heads"?"Tails":"Heads");
 
       try{
         await runTransaction(db,async tx=>{
