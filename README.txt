@@ -1,19 +1,27 @@
-SECURE COIN FLIP - STARTER
+COIN FLIP TEST VERSION
+
+Files:
+- login.html
+- signup.html
+- index.html
+- admin.html
+
+Firebase setup:
+1. Firebase Authentication me Email/Password enable karo.
+2. Firestore Database enable karo.
+3. Signup se account banao.
+4. Firestore > users > apne UID ke document me isAdmin = true (Boolean) set karo.
+5. admin.html open karo.
 
 Included:
-index.html
-login.html
-signup.html
-admin.html
-firestore.rules
+- Login / Signup
+- Lobby-style Coin Flip screen
+- User-entered bet
+- Admin dashboard
+- User management
+- Coin add/remove
+- Admin-set PKR coin value
+- Admin-set win/loss chance
+- Real-time Firestore listeners
 
-Firebase:
-1) Authentication > Sign-in method > Email/Password enable.
-2) Firestore Database create.
-3) Deploy firestore.rules.
-4) Signup se account banao.
-5) Firestore users/{UID} mein isAdmin=true Boolean set karo.
-6) admin.html open karo.
-
-Important:
-Frontend intentionally game result ya wallet mutation nahi karta. Production mein isko trusted Firebase Cloud Function / server-side transaction se connect karna hoga. Isi wajah se current package security foundation hai, fake "real" wallet/game nahi.
+Note: Ye intentionally TEST version hai, production-security version nahi.
