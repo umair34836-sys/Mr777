@@ -1,31 +1,49 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /users/{uid} {
-      allow read: if request.auth != null && (request.auth.uid == uid || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true);
-      allow create: if request.auth != null && request.auth.uid == uid;
-      allow update: if request.auth != null && (
-        request.auth.uid == uid &&
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-          "username","phone","email","updatedAt"
-        ])
-      ) || (
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true
-      );
-    }
-
-    match /settings/{docId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null &&
+    function signedIn() { return request.auth != null; }
+    function admin() {
+      return signedIn() &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
     }
 
-    match /games/{gameId} {
-      allow read: if request.auth != null && (
-        resource.data.uid == request.auth.uid ||
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true
+    match /users/{uid} {
+      allow create: if signedIn() && request.auth.uid == uid;
+      allow read: if signedIn() && (request.auth.uid == uid || admin());
+      allow update: if admin() || (
+        signedIn() && request.auth.uid == uid &&
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(["username","phone","email","updatedAt"])
       );
-      allow create, update, delete: if false;
+    }
+
+    match /coins/{coinId} {
+      allow read: if signedIn();
+      allow write: if admin();
+    }
+
+    match /settings/{id} {
+      allow read: if signedIn();
+      allow write: if admin();
+    }
+
+    match /games/{gameId} {
+      allow read: if signedIn() && (resource.data.uid == request.auth.uid || admin());
+      // Firebase-only mode: client records the game. This is NOT equivalent to trusted server execution.
+      allow create: if signedIn() && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if admin();
+    }
+
+    match /deposits/{id} {
+      allow create: if signedIn() && request.resource.data.uid == request.auth.uid;
+      allow read: if signedIn() && (resource.data.uid == request.auth.uid || admin());
+      allow update, delete: if admin();
+    }
+
+    match /withdrawals/{id} {
+      allow create: if signedIn() && request.resource.data.uid == request.auth.uid;
+      allow read: if signedIn() && (resource.data.uid == request.auth.uid || admin());
+      allow update, delete: if admin();
     }
   }
 }
