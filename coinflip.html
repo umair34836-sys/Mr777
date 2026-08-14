@@ -120,8 +120,8 @@ onAuthStateChanged(auth,async user=>{
         await runTransaction(db,async tx=>{
           const walletRef=doc(db,"wallets",user.uid);
           const statsRef=doc(db,"gameStats",user.uid);
-          const wSnap=tx.get(walletRef);
-          const sSnap=tx.get(statsRef);
+          const wSnap=await tx.get(walletRef);
+          const sSnap=await tx.get(statsRef);
           if(!wSnap.exists()) throw new Error("Wallet document not found.");
 
           const wData=wSnap.data();
@@ -190,7 +190,7 @@ onAuthStateChanged(auth,async user=>{
         $("result").textContent="Choose your side";
         showMsg("err",
           err?.code==="permission-denied"
-            ? "Rules ne transaction reject kar diya. Firebase console mein NAYE function-based rules publish karein."
+            ? "Rules ne transaction reject kar diya. Firebase console mein function-based rules Publish karein."
             : (err?.message||"Transaction fail ho gayi. Dobara try karo."));
       }finally{
         busy=false;setButtons(false);
