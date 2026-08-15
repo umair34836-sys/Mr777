@@ -1,9 +1,123 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Deposit</title><style>*{box-sizing:border-box}body{margin:0;background:#f6f0e5;color:#29231d;font-family:Arial,sans-serif}.wrap{width:min(1180px,92%);margin:auto}.top{height:68px;background:#fffdf9;border-bottom:1px solid #e5dbcc}.head{height:100%;display:flex;align-items:center;justify-content:space-between;gap:15px}.brand{font-weight:900;color:#8d632b;letter-spacing:.5px}.nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.nav a{color:#6e522d;text-decoration:none;font-weight:800;font-size:13px}.page{padding:28px 0 55px}.card{background:#fffdf9;border:1px solid #e5dbcc;border-radius:18px;padding:22px;box-shadow:0 10px 28px #51391a12;margin-bottom:18px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.tile{padding:17px;border:1px solid #e5dbcc;border-radius:13px;background:#faf6ef}.tile span{font-size:12px;color:#81786d}.tile b{display:block;font-size:24px;color:#8d632b;margin-top:4px}.field{margin:11px 0}.field label{display:block;font-size:12px;font-weight:800;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;padding:11px;border:1px solid #e5dbcc;border-radius:9px;background:#fff;color:#29231d}.field textarea{min-height:90px;resize:vertical}.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer}.primary{background:linear-gradient(135deg,#c49b5d,#8d632b);color:#fff}.soft{background:#eee6da;color:#392d20}.danger{background:#b63e39;color:#fff}.msg{display:none;padding:11px;border-radius:10px;margin-bottom:14px;font-size:13px;font-weight:700}.show{display:block}.ok{background:#edf8f1;color:#286f43}.err{background:#fff0ef;color:#963530}.small{font-size:12px;color:#81786d}.muted{color:#81786d}.table{overflow:auto}table{width:100%;border-collapse:collapse;min-width:720px}th,td{text-align:left;padding:10px;border-bottom:1px solid #eee6da;font-size:13px}th{font-size:11px;color:#81786d;text-transform:uppercase}.actions{display:flex;gap:6px;flex-wrap:wrap}.coin{width:150px;height:150px;border-radius:50%;margin:25px auto 15px;display:grid;place-items:center;font-size:44px;font-weight:900;color:#855d26;background:radial-gradient(circle at 30% 25%,#fff,#ead5ab 55%,#a77430);border:8px solid #b78a4b;box-shadow:0 12px 28px #62441b22}.spin{animation:spin .8s ease}@keyframes spin{0%{transform:rotateY(0)}50%{transform:rotateY(900deg)}100%{transform:rotateY(1800deg)}}.center{text-align:center}.gamecard{cursor:pointer;transition:.15s}.gamecard:hover{transform:translateY(-2px)}.badge{display:inline-block;padding:5px 9px;border-radius:20px;font-size:11px;font-weight:800;background:#eee6da}.active{background:#edf8f1;color:#286f43}.soon{background:#f2eadc;color:#8d632b}.adminnav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.adminnav a{padding:9px 12px;border-radius:9px;background:#eee6da;text-decoration:none;color:#392d20;font-size:12px;font-weight:800}@media(max-width:780px){.grid,.tiles{grid-template-columns:1fr}.head{height:auto;min-height:68px;padding:10px 0}.top{height:auto}.nav{justify-content:flex-end}.page{padding-top:20px}}
-</style></head><body><header class="top"><div class="wrap head"><div class="brand">COIN FLIP</div><div class="nav"><a href="index.html">Lobby</a><a href="profile.html">Profile</a><a href="deposit.html">Deposit</a><a href="withdrawal.html">Withdrawal</a><button id="logout" class="btn soft">Logout</button></div></div></header><main class="wrap page"><section class="card"><h1>Deposit</h1><p class="small">Real PKR ko app balance ke taur par process nahi kiya ja raha. Admin se WhatsApp par payment instructions/confirmation lo.</p><p><a class="btn primary" href="https://wa.me/" target="_blank">WhatsApp Admin</a></p><div id="msg" class="msg"></div><div class="grid"><div class="field"><label>Coin</label><input id="coin"></div><div class="field"><label>Requested Amount</label><input id="amount" type="number" min="1"></div></div><div class="field"><label>Reference / Note</label><textarea id="note"></textarea></div><button id="send" class="btn primary">Submit Request</button></section><section class="card"><h2>My Requests</h2><div class="table"><table><thead><tr><th>Date</th><th>Coin</th><th>Amount</th><th>Status</th></tr></thead><tbody id="rows"></tbody></table></div></section></main><script type="module">const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Deposit</title><style>*{box-sizing:border-box}body{margin:0;background:#f6f0e5;color:#29231d;font-family:Arial,sans-serif}.wrap{width:min(1180px,92%);margin:auto}.top{height:68px;background:#fffdf9;border-bottom:1px solid #e5dbcc}.head{height:100%;display:flex;align-items:center;justify-content:space-between;gap:15px}.brand{font-weight:900;color:#8d632b;letter-spacing:.5px}.nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.nav a{color:#6e522d;text-decoration:none;font-weight:800;font-size:13px}.page{padding:28px 0 55px}.card{background:#fffdf9;border:1px solid #e5dbcc;border-radius:18px;padding:22px;box-shadow:0 10px 28px #51391a12;margin-bottom:18px}.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.tile{padding:17px;border:1px solid #e5dbcc;border-radius:13px;background:#faf6ef}.tile span{font-size:12px;color:#81786d}.tile b{display:block;font-size:24px;color:#8d632b;margin-top:4px}.field{margin:11px 0}.field label{display:block;font-size:12px;font-weight:800;margin-bottom:6px}.field input,.field select{width:100%;padding:11px;border:1px solid #e5dbcc;border-radius:9px;background:#fff;color:#29231d}.btn{border:0;border-radius:10px;padding:12px 18px;font-weight:800;cursor:pointer;font-size:14px}.primary{background:linear-gradient(135deg,#c49b5d,#8d632b);color:#fff}.soft{background:#eee6da;color:#392d20}.msg{display:none;padding:11px;border-radius:10px;margin:14px 0;font-size:13px;font-weight:700}.show{display:block}.ok{background:#edf8f1;color:#286f43}.err{background:#fff0ef;color:#963530}.small{font-size:12px;color:#81786d}.vip-badge{display:inline-block;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:800;background:linear-gradient(135deg,#ffd700,#ffed4e);color:#8d632b;margin-left:10px}@media(max-width:780px){.tiles{grid-template-columns:1fr}.head{height:auto;min-height:68px;padding:10px 0}.top{height:auto}.nav{justify-content:flex-end}.page{padding-top:20px}}</style></head><body><header class="top"><div class="wrap head"><div class="brand">COIN FLIP</div><div class="nav"><a href="index.html">Lobby</a><a href="profile.html">Profile</a><a href="deposit.html">Deposit</a><a href="withdrawal.html">Withdrawal</a><button id="logout" class="btn soft">Logout</button></div></div></header><main class="wrap page"><section class="card"><h1>Deposit <span id="vipBadge" class="vip-badge">VIP 0</span></h1><p class="small">Deposit karein aur VIP rank unlock karein. Higher VIP = Better daily rewards!</p><div class="tiles"><div class="tile"><span>Current Balance</span><b id="bal">0</b></div><div class="tile"><span>Total Deposited</span><b id="total">0</b></div><div class="tile"><span>Current VIP</span><b id="vip">0</b></div></div><div id="msg" class="msg"></div><div class="field" style="max-width:400px;margin:20px auto"><label>Amount</label><input id="amount" type="number" min="1" step=".01" value="100"></div><div class="field" style="max-width:400px;margin:16px auto"><label>Coin</label><select id="coin"><option value="hfc">HFC</option></select></div><button id="deposit" class="btn primary" style="width:100%;max-width:400px;display:block;margin:20px auto">💰 Deposit</button><div class="small" style="margin-top:20px;padding:14px;background:#faf6ef;border-radius:9px"><b>VIP Progress:</b> <span id="progress">VIP 0 → VIP 1 (300 deposit required)</span></div></section></main><script type="module">const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 import{getAuth,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
-import{getFirestore,doc,getDoc,collection,query,where,orderBy,limit,onSnapshot,addDoc,setDoc,updateDoc,serverTimestamp,getDocs}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+import{getFirestore,doc,getDoc,onSnapshot,addDoc,setDoc,updateDoc,serverTimestamp,runTransaction}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 if($("logout"))$("logout").onclick=async()=>{await signOut(auth);location.href="login.html"};
-onAuthStateChanged(auth,async u=>{if(!u)return location.href="login.html";const s=await getDoc(doc(db,"users",u.uid));if(!s.exists()||s.data().status==="blocked"){await signOut(auth);return location.href="login.html"};window.ME={...s.data(),uid:u.uid};window.DB=db;$("send").onclick=async()=>{try{const amount=Number($("amount").value);if(!amount||amount<=0)throw Error("Valid amount enter karo.");await addDoc(collection(DB,"deposits"),{uid:ME.uid,username:ME.username||"",coinId:$("coin").value.trim(),amount,note:$("note").value.trim(),status:"pending",createdAt:serverTimestamp()});$("msg").textContent="Deposit request submitted.";$("msg").className="msg show ok"}catch(e){$("msg").textContent=e.message;$("msg").className="msg show err"}};onSnapshot(query(collection(DB,"deposits"),where("uid","==",ME.uid),orderBy("createdAt","desc")),s=>{$("rows").innerHTML=s.docs.map(d=>{const x=d.data();return `<tr><td>${x.createdAt?.toDate?.()?.toLocaleString()||"—"}</td><td>${x.coinId||""}</td><td>${x.amount||0}</td><td>${x.status||"pending"}</td></tr>`}).join("")||'<tr><td colspan="4">No requests.</td></tr>'});});
+
+function showMsg(t,x){const m=$("msg");m.className="msg show "+t;m.textContent=x;if(t==="ok")setTimeout(()=>{m.className="msg"},4000);}
+
+onAuthStateChanged(auth,async user=>{
+  if(!user){location.replace("login.html");return}
+  try{
+    const uSnap=await getDoc(doc(db,"users",user.uid));
+    if(!uSnap.exists()||uSnap.data().status==="blocked"){await signOut(auth);location.replace("login.html");return}
+    
+    const userData=uSnap.data();
+    let vipSettings={thresholds:[{vip:0,minDeposit:0},{vip:1,minDeposit:300}],rewards:[{vip:0,reward:10}]};
+    const vSnap=await getDoc(doc(db,"settings","vip"));
+    if(vSnap.exists())vipSettings=vSnap.data();
+
+    // Load coins
+    const cSnap=await getDoc(doc(db,"coins","hfc"));
+    if(cSnap.exists()){
+      const coins=[];
+      const allCoins=await getDoc(doc(db,"coins"));
+      // For now just HFC
+    }
+
+    // Listen to wallet for balance
+    onSnapshot(doc(db,"wallets",user.uid),s=>{
+      const w=s.exists()?s.data():{};
+      const bals=w.balances||w.coins||{};
+      $("bal").textContent=Number(bals.hfc||0).toLocaleString();
+    },()=>{$("bal").textContent="—"});
+
+    // Listen to user for total deposited
+    onSnapshot(doc(db,"users",user.uid),s=>{
+      const u=s.exists()?s.data():{};
+      const total=Number(u.totalDeposited||0);
+      $("total").textContent=total.toLocaleString();
+      
+      // Calculate current VIP
+      const thresholds=vipSettings.thresholds.sort((a,b)=>b.minDeposit-a.minDeposit);
+      let currentVIP=0;
+      for(const t of thresholds){
+        if(total>=t.minDeposit){currentVIP=t.vip;break;}
+      }
+      $("vip").textContent=currentVIP;
+      $("vipBadge").textContent="VIP "+currentVIP;
+      
+      // Show progress to next VIP
+      const nextThreshold=thresholds.find(t=>t.minDeposit>total);
+      if(nextThreshold){
+        $("progress").textContent=`VIP ${currentVIP} → VIP ${nextThreshold.vip} (${(nextThreshold.minDeposit-total).toLocaleString()} more deposit required)`;
+      }else{
+        $("progress").textContent=`VIP ${currentVIP} (Max VIP reached!)`;
+      }
+    });
+
+    $("deposit").onclick=async()=>{
+      const amount=Number($("amount").value);
+      const coinId=$("coin").value;
+      if(!Number.isFinite(amount)||amount<1){showMsg("err","Valid amount enter karein.");return}
+      
+      try{
+        // Create deposit record
+        await addDoc(collection(db,"deposits"),{
+          uid:user.uid,
+          amount,
+          coinId,
+          status:"completed",
+          createdAt:serverTimestamp()
+        });
+
+        // Update user's totalDeposited and calculate new VIP
+        await runTransaction(db,async tx=>{
+          const userRef=doc(db,"users",user.uid);
+          const walletRef=doc(db,"wallets",user.uid);
+          const uSnap=await tx.get(userRef);
+          const wSnap=await tx.get(walletRef);
+          
+          if(!uSnap.exists())throw new Error("User not found");
+          if(!wSnap.exists())throw new Error("Wallet not found");
+          
+          const uData=uSnap.data();
+          const wData=wSnap.data();
+          const newTotal=Number(uData.totalDeposited||0)+amount;
+          
+          // Calculate new VIP level
+          const thresholds=vipSettings.thresholds.sort((a,b)=>b.minDeposit-a.minDeposit);
+          let newVIP=0;
+          for(const t of thresholds){
+            if(newTotal>=t.minDeposit){newVIP=t.vip;break;}
+          }
+          
+          // Update user with new total and VIP
+          tx.update(userRef,{
+            totalDeposited:newTotal,
+            currentVIP:newVIP,
+            lastDeposit:serverTimestamp()
+          });
+          
+          // Update wallet balance
+          const field=("balances" in wData)?"balances":("coins" in wData)?"coins":"balances";
+          const bals=wData[field]||{};
+          const key=coinId.toLowerCase();
+          const currentBal=Number(bals[key]||0);
+          
+          tx.update(walletRef,{
+            [field+"."+key]:currentBal+amount
+          });
+        });
+        
+        showMsg("ok",`✅ ${amount} ${coinId.toUpperCase()} deposited successfully!`);
+        $("amount").value="";
+      }catch(err){
+        console.error(err);
+        showMsg("err",err.message||"Deposit failed.");
+      }
+    };
+  }catch(err){console.error(err);showMsg("err","Failed to load account.");}
+});
 </script></body></html>
