@@ -310,6 +310,20 @@ h1{
   background-clip:text;
   -webkit-text-fill-color:transparent;
   letter-spacing:-.5px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.vip-badge{
+  display:inline-block;
+  padding:6px 14px;
+  border-radius:20px;
+  font-size:14px;
+  font-weight:800;
+  background:linear-gradient(135deg,#ffd700,#ffed4e);
+  color:#8d632b;
+  box-shadow:0 2px 8px rgba(196,155,93,.3);
 }
 h2{
   margin:20px 0 12px;
@@ -326,11 +340,64 @@ h2:first-of-type{margin-top:24px}
   .nav{justify-content:flex-end}
   .page{padding-top:20px}
 }
-</style></head><body><header class="top"><div class="wrap head"><div class="brand">COIN FLIP</div><div class="nav"><a href="index.html">Lobby</a><a href="profile.html">Profile</a><a href="deposit.html">Deposit</a><a href="withdrawal.html">Withdrawal</a><button id="logout" class="btn soft">Logout</button></div></div></header><main class="wrap page"><section class="card"><h1>Profile</h1><div class="grid"><div class="field"><label>Username</label><input id="username" disabled></div><div class="field"><label>Email</label><input id="email" disabled></div><div class="field"><label>Phone</label><input id="phone" disabled></div><div class="field"><label>User ID</label><input id="uid" disabled></div><div class="field"><label>Account Status</label><input id="status" disabled></div><div class="field"><label>Total Games</label><input id="games" disabled></div><div class="field"><label>Wins</label><input id="wins" disabled></div><div class="field"><label>Losses</label><input id="losses" disabled></div></div><h2>Coin Balances</h2><div id="coins" class="tiles"></div></section><section class="card"><h2>Transaction History</h2><p class="small">Deposit/withdrawal requests aur game activity admin records se linked hain.</p><a class="btn primary" href="deposit.html">Deposits</a> <a class="btn soft" href="withdrawal.html">Withdrawals</a></section></main><script type="module">const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
+</style></head><body><header class="top"><div class="wrap head"><div class="brand">COIN FLIP</div><div class="nav"><a href="index.html">Lobby</a><a href="profile.html">Profile</a><a href="deposit.html">Deposit</a><a href="withdrawal.html">Withdrawal</a><button id="logout" class="btn soft">Logout</button></div></div></header><main class="wrap page"><section class="card"><h1>Profile <span id="vipBadge" class="vip-badge">VIP 0</span></h1><div class="grid"><div class="field"><label>Username</label><input id="username" disabled></div><div class="field"><label>Email</label><input id="email" disabled></div><div class="field"><label>Phone</label><input id="phone" disabled></div><div class="field"><label>User ID</label><input id="uid" disabled></div><div class="field"><label>Account Status</label><input id="status" disabled></div><div class="field"><label>Total Deposited</label><input id="totalDeposited" disabled></div><div class="field"><label>Daily Streak</label><input id="streak" disabled></div><div class="field"><label>Win Rate</label><input id="winRate" disabled></div></div><h2>📊 Game Statistics</h2><div class="tiles"><div class="tile"><span>Total Games</span><b id="games">0</b></div><div class="tile"><span>Wins</span><b id="wins">0</b></div><div class="tile"><span>Losses</span><b id="losses">0</b></div></div><h2>💰 Coin Balances</h2><div id="coins" class="tiles"></div></section><section class="card"><h2>Transaction History</h2><p class="small">Deposit/withdrawal requests aur game activity admin records se linked hain.</p><a class="btn primary" href="deposit.html">Deposits</a> <a class="btn soft" href="withdrawal.html">Withdrawals</a> <a class="btn soft" href="daily.html">Daily Rewards</a></section></main><script type="module">const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 import{getAuth,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
-import{getFirestore,doc,getDoc,collection,query,where,orderBy,limit,onSnapshot,addDoc,setDoc,updateDoc,serverTimestamp,getDocs}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+import{getFirestore,doc,getDoc,collection,query,where,orderBy,limit,onSnapshot}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 if($("logout"))$("logout").onclick=async()=>{await signOut(auth);location.href="login.html"};
-onAuthStateChanged(auth,async u=>{if(!u)return location.href="login.html";const s=await getDoc(doc(db,"users",u.uid));if(!s.exists()||s.data().status==="blocked"){await signOut(auth);return location.href="login.html"};window.ME={...s.data(),uid:u.uid};window.DB=db;$("username").value=ME.username||"";$("email").value=ME.email||"";$("phone").value=ME.phone||"";$("uid").value=ME.uid;$("status").value=ME.status||"active";$("games").value=ME.totalGames||0;$("wins").value=ME.wins||0;$("losses").value=ME.losses||0;$("coins").innerHTML=Object.entries(ME.coins||{}).map(([k,v])=>`<div class="tile"><span>${k}</span><b>${v}</b></div>`).join("")||'<p class="small">No coin balance.</p>';});
+
+onAuthStateChanged(auth,async u=>{
+  if(!u)return location.href="login.html";
+  
+  const s=await getDoc(doc(db,"users",u.uid));
+  if(!s.exists()||s.data().status==="blocked"){
+    await signOut(auth);
+    return location.href="login.html";
+  }
+  
+  const ME={...s.data(),uid:u.uid};
+  
+  // Basic profile fields (unchanged)
+  $("username").value=ME.username||"";
+  $("email").value=ME.email||"";
+  $("phone").value=ME.phone||"";
+  $("uid").value=ME.uid;
+  $("status").value=ME.status||"active";
+  
+  // VIP System fields
+  const vip=Number(ME.currentVIP||0);
+  const totalDeposited=Number(ME.totalDeposited||0);
+  const streak=Number(ME.dailyStreak||0);
+  $("vipBadge").textContent="VIP "+vip;
+  $("totalDeposited").value=totalDeposited.toLocaleString()+" HFC";
+  $("streak").value=streak+" / 7 days";
+  
+  // Real-time Game Stats from gameStats collection
+  onSnapshot(doc(db,"gameStats",u.uid),snap=>{
+    const stats=snap.exists()?snap.data():{};
+    const total=Number(stats.totalGames||0);
+    const wins=Number(stats.wins||0);
+    const losses=Number(stats.losses||0);
+    $("games").textContent=total.toLocaleString();
+    $("wins").textContent=wins.toLocaleString();
+    $("losses").textContent=losses.toLocaleString();
+    $("winRate").value=total?((wins/total*100).toFixed(1)+"%"):"0%";
+  });
+  
+  // Real-time Wallet balances from wallets collection
+  onSnapshot(doc(db,"wallets",u.uid),snap=>{
+    const w=snap.exists()?snap.data():{};
+    const balances=w.balances||w.coins||{};
+    const entries=Object.entries(balances);
+    
+    if(entries.length===0){
+      $("coins").innerHTML='<p class="small">No coin balance yet. Deposit karein.</p>';
+    }else{
+      $("coins").innerHTML=entries.map(([k,v])=>
+        `<div class="tile"><span>${String(k).toUpperCase()}</span><b>${Number(v||0).toLocaleString()}</b></div>`
+      ).join("");
+    }
+  });
+});
 </script></body></html>
