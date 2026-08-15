@@ -1,0 +1,46 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Affiliate Admin</title><style>
+*{box-sizing:border-box}body{margin:0;background:#f6f0e5;color:#29231d;font-family:Arial,sans-serif}.wrap{width:min(1180px,92%);margin:auto}.top{height:68px;background:#fffdf9;border-bottom:1px solid #e5dbcc}.head{height:100%;display:flex;align-items:center;justify-content:space-between;gap:15px}.brand{font-weight:900;color:#8d632b;letter-spacing:.5px}.nav a{color:#6e522d;text-decoration:none;font-weight:800;font-size:13px}.page{padding:28px 0 55px}.card{background:#fffdf9;border:1px solid #e5dbcc;border-radius:18px;padding:22px;box-shadow:0 10px 28px #51391a12;margin-bottom:18px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.field label{display:block;font-size:12px;font-weight:800;margin-bottom:6px}.field input{width:100%;padding:11px;border:1px solid #e5dbcc;border-radius:9px;background:#fff;color:#29231d}.btn{border:0;border-radius:10px;padding:12px 18px;font-weight:800;cursor:pointer;font-size:14px}.primary{background:linear-gradient(135deg,#c49b5d,#8d632b);color:#fff}.msg{display:none;padding:11px;border-radius:10px;margin:14px 0;font-size:13px;font-weight:700}.show{display:block}.ok{background:#edf8f1;color:#286f43}.err{background:#fff0ef;color:#963530}.table{overflow:auto}table{width:100%;border-collapse:collapse;min-width:720px}th,td{text-align:left;padding:10px;border-bottom:1px solid #eee6da;font-size:13px}th{font-size:11px;color:#81786d;text-transform:uppercase}.adminnav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.adminnav a{padding:9px 12px;border-radius:9px;background:#eee6da;text-decoration:none;color:#392d20;font-size:12px;font-weight:800}.adminnav a.active{background:#8d632b;color:#fff}.actions{display:flex;gap:6px;flex-wrap:wrap}h1{margin:0 0 12px;font-size:28px;color:#392d20}h2{margin:12px 0 10px;font-size:18px;color:#392d20}@media(max-width:780px){.grid{grid-template-columns:1fr}}
+</style></head><body><header class="top"><div class="wrap head"><div class="brand">🤝 AFFILIATE ADMIN</div><div class="nav"><a href="index.html">Lobby</a></div></div></header><main class="wrap page"><div class="adminnav"><a href="admin.html">Dashboard</a><a href="admin-users.html">Users</a><a href="admin-coins.html">Coins</a><a href="admin-games.html">Games</a><a href="admin-transactions.html">Transactions</a><a href="admin-affiliate.html" class="active">Affiliate</a></div><section class="card"><h1>Affiliate Program Settings</h1><p style="color:#81786d;font-size:13px">Commission rate set karein aur referrals manage karein.</p><div id="msg" class="msg"></div><div class="grid"><div class="field"><label>Commission Rate (%)</label><input id="commRate" type="number" min="1" max="100" step="1" value="10"></div><div class="field"><label>Minimum Payout (HFC)</label><input id="minPayout" type="number" min="1" step="1" value="100"></div></div><button id="saveSettings" class="btn primary">Save Settings</button></section><section class="card"><h2>📊 All Referrals</h2><p style="color:#81786d;font-size:13px">Saare referrals yahan dikhte hain. Pending commissions approve karein.</p><div class="table"><table><thead><tr><th>Date</th><th>Referrer</th><th>Referred User</th><th>Deposit</th><th>Commission</th><th>Status</th><th>Action</th></tr></thead><tbody id="allRefs"></tbody></table></div></section></main><script type="module">
+const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+import{getFirestore,doc,getDoc,setDoc,onSnapshot,collection,updateDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
+
+function showMsg(t,x){const m=$("msg");m.textContent=x;m.className="msg show "+t;if(t==="ok")setTimeout(()=>{m.className="msg"},3000);}
+
+onAuthStateChanged(auth,async user=>{
+  if(!user){location.replace("login.html");return}
+  const uSnap=await getDoc(doc(db,"users",user.uid));
+  if(!uSnap.exists()||uSnap.data().isAdmin!==true){location.replace("index.html");return}
+
+  // Load settings
+  const affSnap=await getDoc(doc(db,"settings","affiliate"));
+  if(affSnap.exists()){
+    const s=affSnap.data();
+    $("commRate").value=s.commissionRate||10;
+    $("minPayout").value=s.minPayout||100;
+  }
+
+  // Save settings
+  $("saveSettings").onclick=async()=>{
+    await setDoc(doc(db,"settings","affiliate"),{
+      commissionRate:Number($("commRate").value)||10,
+      minPayout:Number($("minPayout").value)||100,
+      updatedAt:serverTimestamp()
+    },{merge:true});
+    showMsg("ok","✅ Affiliate settings saved!");
+  };
+
+  // Load all referrals (live)
+  onSnapshot(collection(db,"referrals"),snap=>{
+    const rows=[];
+    snap.forEach(d=>rows.push({id:d.id,...d.data()}));
+    $("allRefs").innerHTML=rows.sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0)).map(x=>`<tr>
+      <td>${x.createdAt?.toDate?.()?.toLocaleDateString()||"—"}</td>
+      <td>${x.referrerUsername||"—"}</td>
+      <td>${x.referredUsername||"—"}</td>
+      <td>${(x.depositAmount||0).toLocaleString()} HFC</td>
+      <td>${(x.commission||0).toFixed(2)} HFC</td>
+      <td style="color:${x.status==="paid"?"#286f43":"#963530"}">${x.status||"pending"}</td>
+      <td>${x.status==="pending"?`<button class="btn primary" style="padding:6px 12px;font-size:12px" onclick="approveReferral('${x.id}','${x.referrerId}',${x.commission||0})">Approve</button>`:"—"}
