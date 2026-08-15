@@ -152,6 +152,12 @@ body{
 .primary{background:linear-gradient(135deg,#c49b5d,#8d632b);color:#fff;box-shadow:0 4px 14px rgba(141,99,43,.3)}
 .primary:hover{box-shadow:0 8px 24px rgba(141,99,43,.45)}
 
+.success{background:linear-gradient(135deg,#3ddc84,#0f9d58);color:#fff;box-shadow:0 4px 14px rgba(15,157,88,.3)}
+.success:hover{box-shadow:0 8px 24px rgba(15,157,88,.45)}
+
+.danger{background:linear-gradient(135deg,#b63e39,#8b2e2a);color:#fff;box-shadow:0 4px 14px rgba(182,62,57,.3)}
+.danger:hover{box-shadow:0 8px 24px rgba(182,62,57,.45)}
+
 .tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
 .tab{
   padding:10px 18px;
@@ -194,12 +200,13 @@ td.amount{font-weight:800;color:#286f43}
   text-transform:uppercase;
   letter-spacing:.5px;
 }
-.badge.pending{background:#fff5e1;color:#b78a4b;border:1px solid #f0d9a8}
-.badge.completed{background:#edf8f1;color:#286f43;border:1px solid #c9e7d5;animation:badgePulse 2s ease-in-out infinite}
+.badge.pending{background:#fff5e1;color:#b78a4b;border:1px solid #f0d9a8;animation:badgePulse 2s ease-in-out infinite}
+.badge.completed{background:#edf8f1;color:#286f43;border:1px solid #c9e7d5}
+.badge.rejected{background:#fff0ef;color:#963530;border:1px solid #f5d1ce}
 
 @keyframes badgePulse {
-  0%,100% { box-shadow:0 0 0 0 rgba(40,111,67,.4); }
-  50% { box-shadow:0 0 0 6px rgba(40,111,67,0); }
+  0%,100% { box-shadow:0 0 0 0 rgba(183,138,75,.4); }
+  50% { box-shadow:0 0 0 6px rgba(183,138,75,0); }
 }
 
 h1{margin:0 0 16px;font-size:32px;background:linear-gradient(135deg,#29231d,#8d632b);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.5px}
@@ -245,6 +252,25 @@ h2{margin:20px 0 12px;color:#392d20;letter-spacing:-.3px;font-size:22px}
   margin-top:12px;
 }
 
+.actions-cell{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.btn-sm{
+  padding:6px 12px;
+  font-size:12px;
+  font-weight:800;
+  border:0;
+  border-radius:8px;
+  cursor:pointer;
+  transition:all .2s ease;
+}
+.btn-sm:hover{transform:translateY(-1px)}
+.btn-sm:disabled{opacity:.5;cursor:not-allowed}
+.btn-sm.approve{background:#286f43;color:#fff}
+.btn-sm.reject{background:#963530;color:#fff}
+
 @media(max-width:780px){
   .head{height:auto;min-height:68px;padding:10px 0}
   .top{height:auto}
@@ -252,7 +278,7 @@ h2{margin:20px 0 12px;color:#392d20;letter-spacing:-.3px;font-size:22px}
   table{min-width:700px}
   .user-search{flex-direction:column}
 }
-</style></head><body><header class="top"><div class="wrap head"><div class="brand">⚙️ ADMIN PANEL</div><div class="adminnav"><a href="admin.html">📊 Dashboard</a><a href="admin-deposits.html" class="active">💰 Deposits</a><a href="admin-withdrawals.html">💸 Withdrawals</a><a href="admin-users.html">👥 Users</a></div></div></header><main class="wrap page"><section class="card"><h1>💰 Manual Deposit</h1><p class="small">User ko manually coins add karo. Ye admin deposit ke tor par record hoga.</p><div id="msg" class="msg"></div><div class="user-search"><div class="field"><label>Search User (Username/Email/UID)</label><input id="searchUser" placeholder="Enter username, email or user ID"></div><button id="searchBtn" class="btn primary" style="height:42px">🔍 Search</button></div><div id="userResult"></div><div class="grid" id="depositForm" style="display:none;margin-top:16px"><div class="field"><label>Coin</label><input id="coin" placeholder="e.g., hfc, usdt"></div><div class="field"><label>Amount</label><input id="amount" type="number" min="1" step="0.01" placeholder="Enter amount"></div><div class="field" style="grid-column:1/-1"><label>Notes (Optional)</label><textarea id="notes" placeholder="Payment reference, transaction ID, etc."></textarea></div><button id="depositBtn" class="btn primary">✓ Add Deposit</button></div></section><section class="card"><h2>Recent Deposits</h2><div class="tabs"><button class="tab active" data-filter="completed">Completed</button><button class="tab" data-filter="all">All</button></div><div class="table"><table><thead><tr><th>Date</th><th>User</th><th>Coin</th><th>Amount</th><th>Type</th><th>Notes</th></tr></thead><tbody id="rows"></tbody></table></div></section></main><script type="module">
+</style></head><body><header class="top"><div class="wrap head"><div class="brand">⚙️ ADMIN PANEL</div><div class="adminnav"><a href="admin.html">📊 Dashboard</a><a href="admin-deposits.html" class="active">💰 Deposits</a><a href="admin-withdrawals.html">💸 Withdrawals</a><a href="admin-users.html">👥 Users</a></div></div></header><main class="wrap page"><section class="card"><h1>💰 Manual Deposit</h1><p class="small">User ko manually coins add karo. Ye admin deposit ke tor par record hoga.</p><div id="msg" class="msg"></div><div class="user-search"><div class="field"><label>Search User (Username/Email/UID)</label><input id="searchUser" placeholder="Enter username, email or user ID"></div><button id="searchBtn" class="btn primary" style="height:42px">🔍 Search</button></div><div id="userResult"></div><div class="grid" id="depositForm" style="display:none;margin-top:16px"><div class="field"><label>Coin</label><input id="coin" placeholder="e.g., hfc, usdt"></div><div class="field"><label>Amount</label><input id="amount" type="number" min="1" step="0.01" placeholder="Enter amount"></div><div class="field" style="grid-column:1/-1"><label>Notes (Optional)</label><textarea id="notes" placeholder="Payment reference, transaction ID, etc."></textarea></div><button id="depositBtn" class="btn primary">✓ Add Deposit</button></div></section><section class="card"><h2>Deposit Requests</h2><div class="tabs"><button class="tab active" data-filter="pending">⏳ Pending</button><button class="tab" data-filter="completed">✓ Completed</button><button class="tab" data-filter="rejected">✗ Rejected</button><button class="tab" data-filter="all">All</button></div><div class="table"><table><thead><tr><th>Date</th><th>User</th><th>Coin</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table></div></section></main><script type="module">
 const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
 
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
@@ -268,33 +294,151 @@ function showMsg(type,text){
   setTimeout(()=>{m.className="msg"},4000);
 }
 
-// FIX: Aapke system ke mutabiq admin check (isAdmin === true) + role fallback
 function isAdminUser(data){
   return data && (data.isAdmin===true || data.role==="admin");
 }
 
 let allDeposits=[];
-let currentFilter="completed";
+let currentFilter="pending";
 let selectedUser=null;
+let vipSettings={thresholds:[{vip:0,minDeposit:0},{vip:1,minDeposit:300}]};
+
+// VIP Settings load karo
+(async()=>{
+  try{
+    const vSnap=await getDoc(doc(db,"settings","vip"));
+    if(vSnap.exists())vipSettings={...vipSettings,...vSnap.data()};
+  }catch(e){console.warn("VIP settings load failed:",e);}
+})();
 
 function renderDeposits(){
-  const filtered=currentFilter==="all"?allDeposits:allDeposits.filter(d=>d.status==="completed");
+  let filtered;
+  if(currentFilter==="all") filtered=allDeposits;
+  else filtered=allDeposits.filter(d=>d.status===currentFilter);
+  
   const rowsEl=$("rows");
   
   if(filtered.length===0){
-    rowsEl.innerHTML=`<tr><td colspan="6" class="empty">No deposits found</td></tr>`;
+    rowsEl.innerHTML=`<tr><td colspan="6" class="empty">No ${currentFilter} deposits found</td></tr>`;
     return;
   }
   
-  rowsEl.innerHTML=filtered.map(d=>`<tr>
-    <td>${d.createdAt?.toDate?.()?.toLocaleString()||"—"}</td>
-    <td class="username">${d.username||"Unknown"}<br><span style="font-size:10px;color:#81786d">${d.uid}</span></td>
-    <td>${d.coinId||"-"}</td>
-    <td class="amount">+${Number(d.amount).toLocaleString()}</td>
-    <td>${d.type||"manual"}</td>
-    <td style="max-width:200px;font-size:12px;color:#6e522d">${d.notes||"—"}</td>
-  </tr>`).join("");
+  rowsEl.innerHTML=filtered.map(d=>{
+    const isPending=d.status==="pending";
+    const actionsHtml=isPending?`
+      <div class="actions-cell">
+        <button class="btn-sm approve" data-id="${d.id}" onclick="window.approveDeposit('${d.id}')">✓ Approve</button>
+        <button class="btn-sm reject" data-id="${d.id}" onclick="window.rejectDeposit('${d.id}')">✗ Reject</button>
+      </div>
+    `:`<span class="badge ${d.status}">${d.status}</span>`;
+    
+    return `<tr>
+      <td>${d.createdAt?.toDate?.()?.toLocaleString()||"—"}</td>
+      <td class="username">${d.username||"Unknown"}<br><span style="font-size:10px;color:#81786d">${d.uid}</span></td>
+      <td>${d.coinId||"-"}</td>
+      <td class="amount">+${Number(d.amount).toLocaleString()}</td>
+      <td><span class="badge ${d.status}">${d.status}</span></td>
+      <td>${actionsHtml}</td>
+    </tr>`;
+  }).join("");
 }
+
+// Approve deposit handler (global scope for onclick)
+window.approveDeposit=async(id)=>{
+  const deposit=allDeposits.find(d=>d.id===id);
+  if(!deposit||deposit.status!=="pending"){
+    showMsg("err","Deposit not found or already processed");
+    return;
+  }
+  
+  if(!confirm(`Approve deposit of ${deposit.amount} ${deposit.coinId} for ${deposit.username}?`))return;
+  
+  try{
+    await runTransaction(db,async tx=>{
+      const depositRef=doc(db,"deposits",id);
+      const walletRef=doc(db,"wallets",deposit.uid);
+      const userRef=doc(db,"users",deposit.uid);
+      
+      const wSnap=await tx.get(walletRef);
+      const uSnap=await tx.get(userRef);
+      
+      // Update deposit status
+      tx.update(depositRef,{
+        status:"completed",
+        processedBy:"admin",
+        processedAt:serverTimestamp()
+      });
+      
+      // Update wallet balance
+      const field=wSnap.exists()?("balances" in wSnap.data()?"balances":("coins" in wSnap.data()?"coins":"balances")):"balances";
+      const bals=wSnap.exists()?(wSnap.data()[field]||{}):{};
+      const key=deposit.coinId.toLowerCase();
+      const currentBal=Number(bals[key]||0);
+      
+      if(!wSnap.exists()){
+        tx.set(walletRef,{
+          uid:deposit.uid,
+          balances:{[key]:deposit.amount},
+          lastDepositAt:serverTimestamp()
+        });
+      }else{
+        tx.update(walletRef,{
+          [field+"."+key]:currentBal+deposit.amount,
+          lastDepositAt:serverTimestamp()
+        });
+      }
+      
+      // Update user totalDeposited and VIP level
+      if(uSnap.exists()){
+        const uData=uSnap.data();
+        const newTotal=Number(uData.totalDeposited||0)+deposit.amount;
+        
+        // Calculate new VIP level
+        const thresholds=[...(vipSettings.thresholds||[])].sort((a,b)=>b.minDeposit-a.minDeposit);
+        let newVIP=0;
+        for(const t of thresholds){
+          if(newTotal>=t.minDeposit){newVIP=t.vip;break;}
+        }
+        
+        tx.update(userRef,{
+          totalDeposited:newTotal,
+          currentVIP:newVIP,
+          lastDeposit:serverTimestamp()
+        });
+      }
+    });
+    
+    showMsg("ok",`✅ Deposit approved! ${deposit.amount} ${deposit.coinId} added to ${deposit.username}'s balance.`);
+  }catch(err){
+    console.error(err);
+    showMsg("err","Approval failed: "+err.message);
+  }
+};
+
+// Reject deposit handler
+window.rejectDeposit=async(id)=>{
+  const deposit=allDeposits.find(d=>d.id===id);
+  if(!deposit||deposit.status!=="pending"){
+    showMsg("err","Deposit not found or already processed");
+    return;
+  }
+  
+  const reason=prompt("Reject reason (optional):");
+  if(reason===null)return; // Cancel
+  
+  try{
+    await updateDoc(doc(db,"deposits",id),{
+      status:"rejected",
+      rejectReason:reason||"No reason provided",
+      processedBy:"admin",
+      processedAt:serverTimestamp()
+    });
+    
+    showMsg("ok",`❌ Deposit rejected.`);
+  }catch(err){
+    showMsg("err","Rejection failed: "+err.message);
+  }
+};
 
 $("searchBtn").onclick=async()=>{
   const search=$("searchUser").value.trim();
@@ -303,19 +447,16 @@ $("searchBtn").onclick=async()=>{
   try{
     let userSnap=null;
     
-    // Try username first
     const q1=query(collection(db,"users"),where("username","==",search));
     const s1=await getDocs(q1);
     if(!s1.empty) userSnap=s1.docs[0];
     
-    // Try email
     if(!userSnap){
       const q2=query(collection(db,"users"),where("email","==",search));
       const s2=await getDocs(q2);
       if(!s2.empty) userSnap=s2.docs[0];
     }
     
-    // Try UID
     if(!userSnap){
       userSnap=await getDoc(doc(db,"users",search));
       if(!userSnap.exists()) userSnap=null;
@@ -352,7 +493,9 @@ $("depositBtn").onclick=async()=>{
   try{
     await runTransaction(db,async tx=>{
       const walletRef=doc(db,"wallets",selectedUser.uid);
+      const userRef=doc(db,"users",selectedUser.uid);
       const wSnap=await tx.get(walletRef);
+      const uSnap=await tx.get(userRef);
       
       const depositRef=doc(collection(db,"deposits"));
       const depositData={
@@ -387,9 +530,26 @@ $("depositBtn").onclick=async()=>{
           lastDepositAt:serverTimestamp()
         });
       }
+      
+      // Update user totalDeposited and VIP
+      if(uSnap.exists()){
+        const uData=uSnap.data();
+        const newTotal=Number(uData.totalDeposited||0)+amount;
+        const thresholds=[...(vipSettings.thresholds||[])].sort((a,b)=>b.minDeposit-a.minDeposit);
+        let newVIP=0;
+        for(const t of thresholds){
+          if(newTotal>=t.minDeposit){newVIP=t.vip;break;}
+        }
+        
+        tx.update(userRef,{
+          totalDeposited:newTotal,
+          currentVIP:newVIP,
+          lastDeposit:serverTimestamp()
+        });
+      }
     });
     
-    showMsg("ok",`Successfully added ${amount} ${coinId} to ${selectedUser.username}`);
+    showMsg("ok",`✅ Successfully added ${amount} ${coinId} to ${selectedUser.username}`);
     $("coin").value="";
     $("amount").value="";
     $("notes").value="";
@@ -412,7 +572,6 @@ onAuthStateChanged(auth,async user=>{
   
   try{
     const uSnap=await getDoc(doc(db,"users",user.uid));
-    // FIX: Ab isAdmin === true check hota hai (aapke existing system jaisa)
     if(!uSnap.exists()||!isAdminUser(uSnap.data())){
       showMsg("err","Access denied. Admin privileges required.");
       setTimeout(()=>location.href="index.html",2000);
@@ -421,10 +580,4 @@ onAuthStateChanged(auth,async user=>{
     
     onSnapshot(query(collection(db,"deposits"),orderBy("createdAt","desc"),limit(100)),snap=>{
       allDeposits=snap.docs.map(d=>({id:d.id,...d.data()}));
-      renderDeposits();
-    });
-  }catch(err){
-    showMsg("err","Failed to load admin panel: "+err.message);
-  }
-});
-</script></body></html>
+      renderDeposit
