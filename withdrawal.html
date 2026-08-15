@@ -58,52 +58,58 @@ import{getFirestore,doc,getDoc,getDocs,collection,query,where,orderBy,onSnapshot
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 if($("logout"))$("logout").onclick=async()=>{await signOut(auth);location.href="login.html"};
 
-// SAB KUCH ISI PAGE SE: deposits + rewards + NEW winnings READ kar ke wager calculate
+// CHRONOLOGICAL WAGER: deposit/reward wager add karta hai, win wager minus karta hai.
+// Jo wager ek baar 0 ho jaye wo khatam — naya deposit sirf apna naya wager banata hai.
 async function computeWager(uid){
-  // 1) Total completed deposits + sab se naye deposit ka time
-  let dep=0, depTime=0;
+  const events=[];
+
+  // 1) Completed deposits (har deposit ek "add" event)
+  let dep=0;
   const dSnap=await getDocs(query(collection(db,"deposits"),where("uid","==",uid)));
   dSnap.forEach(d=>{const x=d.data();
     if(x.status==="completed"){
-      dep+=Number(x.amount||0);
-      const t=x.createdAt?.toMillis?.()||0;
-      if(t>depTime)depTime=t;
+      const amt=Number(x.amount||0);
+      dep+=amt;
+      events.push({t:x.createdAt?.toMillis?.()||0,type:"add",amt});
     }
   });
 
-  // 2) Rewards (streak se) + aakhri reward claim ka time
-  let rew=0, rewTime=0;
+  // 2) Rewards (streak se, last claim time par ek "add" event)
+  let rew=0;
   const uSnap=await getDoc(doc(db,"users",uid));
   const ud=uSnap.exists()?uSnap.data():{};
   const vip=Number(ud.currentVIP||0);
   const streak=Number(ud.dailyStreak||0);
-  rewTime=ud.lastDailyReward?.toMillis?.()||0;
+  const rewTime=ud.lastDailyReward?.toMillis?.()||0;
   const vSnap=await getDoc(doc(db,"settings","dailyRewards"));
   const dr=vSnap.exists()?(vSnap.data().rewards||{}):{};
   const sched=dr["vip"+vip]||dr["vip0"]||[];
   for(let i=0;i<streak&&i<sched.length;i++)rew+=Number(sched[i]||0);
+  if(rew>0)events.push({t:rewTime,type:"add",amt:rew});
 
-  // BASELINE: sirf is time ke BAAD wali winnings count hongi (purani ignore)
-  const baseline=Math.max(depTime,rewTime);
-
-  // 3) Winnings: sirf NEW games (baseline ke baad) jo win hue
-  let win=0;
+  // 3) Wins (har win ek "sub" event = net profit)
   const gSnap=await getDocs(query(collection(db,"games"),where("uid","==",uid)));
   gSnap.forEach(g=>{const x=g.data();
-    const t=x.createdAt?.toMillis?.()||0;
-    if(x.outcome==="win" && t>baseline){
+    if(x.outcome==="win"){
       const m=Number(x.cashedAt||x.payoutMultiplier||2);
-      win+=Number(x.stake||0)*(m-1);
+      events.push({t:x.createdAt?.toMillis?.()||0,type:"sub",amt:Number(x.stake||0)*(m-1)});
     }
   });
 
-  return{dep,rew,win};
+  // Time-order mein process karo
+  events.sort((a,b)=>a.t-b.t);
+  let balance=0,winApplied=0;
+  for(const e of events){
+    if(e.type==="add"){balance+=e.amt;}
+    else{const used=Math.min(balance,e.amt);balance-=used;winApplied+=used;}
+  }
+
+  return{dep,rew,win:winApplied,remaining:balance};
 }
 
 async function renderWager(uid){
-  const{dep,rew,win}=await computeWager(uid);
+  const{dep,rew,win,remaining}=await computeWager(uid);
   const total=dep+rew;
-  const remaining=Math.max(0,total-win);
   const progress=total>0?Math.min(100,(win/total)*100):100;
   $("depVal").textContent=dep.toLocaleString();
   $("rewVal").textContent=rew.toLocaleString();
@@ -127,7 +133,6 @@ onAuthStateChanged(auth,async u=>{
     $("availableCoins").innerHTML=entries.length?entries.map(([c,a])=>`<div class="coin-box"><h4>${c.toUpperCase()}</h4><div class="amount">${Number(a).toLocaleString()}</div><div class="coin-id">${c}</div></div>`).join(""):'<p class="muted" style="grid-column:1/-1;text-align:center;padding:20px">No coins available</p>';
   });
 
-  // Wager status load + live refresh
   renderWager(u.uid);
 
   $("send").onclick=async()=>{
@@ -138,11 +143,9 @@ onAuthStateChanged(auth,async u=>{
       if(!coinId)throw Error("Coin ID enter karein.");
       if(!amount||amount<300)throw Error("Minimum withdrawal amount 300 hai.");
 
-      // Wager check (fresh calculate)
       const remaining=await renderWager(ME.uid);
       if(remaining>0)throw Error(`Wager complete nahi hua. Aapko ${remaining.toLocaleString()} aur games mein jeetna hoga withdrawal se pehle.`);
 
-      // Balance check
       const walletSnap=await getDoc(doc(DB,"wallets",ME.uid));
       if(!walletSnap.exists())throw Error("Wallet not found.");
       const balances=walletSnap.data().balances||walletSnap.data().coins||{};
