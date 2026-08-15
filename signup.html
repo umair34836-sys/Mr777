@@ -1,125 +1,98 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sign Up</title><style>*{box-sizing:border-box}body{margin:0;background:#f6f0e5;color:#29231d;font-family:Arial,sans-serif}.wrap{width:min(1180px,92%);margin:auto}.top{height:68px;background:#fffdf9;border-bottom:1px solid #e5dbcc}.head{height:100%;display:flex;align-items:center;justify-content:space-between;gap:15px}.brand{font-weight:900;color:#8d632b;letter-spacing:.5px}.nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.nav a{color:#6e522d;text-decoration:none;font-weight:800;font-size:13px}.page{padding:28px 0 55px}.card{background:#fffdf9;border:1px solid #e5dbcc;border-radius:18px;padding:22px;box-shadow:0 10px 28px #51391a12;margin-bottom:18px}.field{margin:11px 0}.field label{display:block;font-size:12px;font-weight:800;margin-bottom:6px}.field input{width:100%;padding:11px;border:1px solid #e5dbcc;border-radius:9px;background:#fff;color:#29231d;font-size:14px}.btn{border:0;border-radius:10px;padding:12px 14px;font-weight:800;cursor:pointer;font-size:15px}.btn:disabled{opacity:.5;cursor:not-allowed}.primary{background:linear-gradient(135deg,#c49b5d,#8d632b);color:#fff}.msg{display:none;padding:11px;border-radius:10px;margin-bottom:14px;font-size:13px;font-weight:700}.show{display:block}.ok{background:#edf8f1;color:#286f43}.err{background:#fff0ef;color:#963530}.small{font-size:12px;color:#81786d}.center{text-align:center}@media(max-width:780px){.head{height:auto;min-height:68px;padding:10px 0}.top{height:auto}.nav{justify-content:flex-end}.page{padding-top:20px}}</style></head><body><header class="top"><div class="wrap head"><div class="brand">COIN FLIP</div></div></header><main class="wrap page"><section class="card" style="max-width:480px;margin:30px auto"><h1 class="center">Create Account</h1><p class="small center">Username, email aur phone required hain.</p><div id="msg" class="msg"></div><div class="field"><label>Username</label><input id="username" placeholder="Enter username"></div><div class="field"><label>Email</label><input id="email" type="email" placeholder="your@email.com"></div><div class="field"><label>Phone Number</label><input id="phone" type="tel" placeholder="+92 300 1234567"></div><div class="field"><label>Password</label><input id="password" type="password" placeholder="Minimum 6 characters"></div><div class="field"><label>Confirm Password</label><input id="confirm" type="password" placeholder="Re-enter password"></div><button id="signup" class="btn primary" style="width:100%">Create Account</button><p class="small center">Already have account? <a href="login.html">Login</a></p></section></main><script type="module">const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sign Up</title><style>*{box-sizing:border-box}body{margin:0;background:#f6f0e5;color:#29231d;font-family:Arial,sans-serif}.wrap{width:min(1180px,92%);margin:auto}.top{height:68px;background:#fffdf9;border-bottom:1px solid #e5dbcc}.head{height:100%;display:flex;align-items:center;justify-content:space-between;gap:15px}.brand{font-weight:900;color:#8d632b;letter-spacing:.5px}.page{padding:28px 0 55px}.card{background:#fffdf9;border:1px solid #e5dbcc;border-radius:18px;padding:22px;box-shadow:0 10px 28px #51391a12;margin-bottom:18px}.field{margin:11px 0}.field label{display:block;font-size:12px;font-weight:800;margin-bottom:6px}.field input{width:100%;padding:11px;border:1px solid #e5dbcc;border-radius:9px;background:#fff;color:#29231d;font-size:14px}.btn{border:0;border-radius:10px;padding:12px 14px;font-weight:800;cursor:pointer;font-size:15px}.btn:disabled{opacity:.5;cursor:not-allowed}.primary{background:linear-gradient(135deg,#c49b5d,#8d632b);color:#fff}.msg{display:none;padding:11px;border-radius:10px;margin-bottom:14px;font-size:13px;font-weight:700}.show{display:block}.ok{background:#edf8f1;color:#286f43}.err{background:#fff0ef;color:#963530}.small{font-size:12px;color:#81786d}.center{text-align:center}@media(max-width:780px){.head{height:auto;min-height:68px;padding:10px 0}.top{height:auto}.page{padding-top:20px}}</style></head><body><header class="top"><div class="wrap head"><div class="brand">COIN FLIP</div></div></header><main class="wrap page"><section class="card" style="max-width:480px;margin:30px auto"><h1 class="center">Create Account</h1><p class="small center">Username, email aur phone required hain.</p><div id="msg" class="msg"></div><div class="field"><label>Username</label><input id="username" placeholder="Enter username"></div><div class="field"><label>Email</label><input id="email" type="email" placeholder="your@email.com"></div><div class="field"><label>Phone Number</label><input id="phone" type="tel" placeholder="+92 300 1234567"></div><div class="field"><label>Password</label><input id="password" type="password" placeholder="Minimum 6 characters"></div><div class="field"><label>Confirm Password</label><input id="confirm" type="password" placeholder="Re-enter password"></div><button id="signup" class="btn primary" style="width:100%">Create Account</button><p class="small center">Already have account? <a href="login.html">Login</a></p></section></main><script type="module">const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-import{getAuth,onAuthStateChanged,signOut,createUserWithEmailAndPassword}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+import{getAuth,onAuthStateChanged,createUserWithEmailAndPassword,signInWithEmailAndPassword}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 import{getFirestore,doc,getDoc,setDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 
-function showMsg(type,text){
-  const m=$("msg");
-  m.textContent=text;
-  m.className="msg show "+type;
-  if(type==="ok")setTimeout(()=>{m.className="msg"},4000);
-}
+// FIX 1: Ye flag listener ko signup ke dauran interfere karne se rokta hai
+let creating=false;
 
-function validateEmail(email){
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
+function showMsg(t,x){const m=$("msg");m.textContent=x;m.className="msg show "+t;if(t==="ok")setTimeout(()=>{m.className="msg"},4000);}
+function validEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)}
+function validPhone(p){const c=p.replace(/\D/g,'');return c.length>=10&&c.length<=15}
 
-function validatePhone(phone){
-  const cleaned=phone.replace(/\D/g,'');
-  return cleaned.length>=10 && cleaned.length<=15;
+// FIX 2: Agar profile missing ho (orphan account) to use bana deta hai
+async function ensureProfile(uid,data){
+  const ref=doc(db,"users",uid);
+  const s=await getDoc(ref);
+  if(s.exists()) return s.data();
+  await setDoc(ref,{
+    uid:uid,
+    username:data.username,
+    email:data.email,
+    phone:data.phone,
+    status:"active",
+    isAdmin:false,
+    totalDeposited:0,
+    currentVIP:0,
+    dailyStreak:0,
+    lastDailyReward:null,
+    createdAt:serverTimestamp(),
+    updatedAt:serverTimestamp()
+  });
+  return null;
 }
 
 onAuthStateChanged(auth,async u=>{
+  if(creating) return; // signup chal raha hai to kuch mat karo
   if(u){
     const s=await getDoc(doc(db,"users",u.uid));
-    if(s.exists() && s.data().status!=="blocked"){
-      location.href="index.html";
-      return;
-    }else{
-      await signOut(auth);
-    }
+    if(s.exists()&&s.data().status!=="blocked"){location.href="index.html";}
+    // profile missing ho to sign out NAHI karte — signup khud repair karega
   }
-  
-  $("signup").onclick=async()=>{
-    const username=$("username").value.trim();
-    const email=$("email").value.trim();
-    const phone=$("phone").value.trim();
-    const password=$("password").value;
-    const confirm=$("confirm").value;
-    
-    // Validation
-    if(!username){showMsg("err","Username zaroori hai.");return;}
-    if(username.length<3){showMsg("err","Username kam az kam 3 characters ka hona chahiye.");return;}
-    if(!email){showMsg("err","Email zaroori hai.");return;}
-    if(!validateEmail(email)){showMsg("err","Valid email address enter karein.");return;}
-    if(!phone){showMsg("err","Phone number zaroori hai.");return;}
-    if(!validatePhone(phone)){showMsg("err","Valid phone number enter karein (10-15 digits).");return;}
-    if(password.length<6){showMsg("err","Password kam az kam 6 characters ka hona chahiye.");return;}
-    if(password!==confirm){showMsg("err","Password aur confirm password match nahi kar rahe.");return;}
-    
-    // Disable button and show loading
-    const btn=$("signup");
-    btn.disabled=true;
-    btn.textContent="Creating account...";
-    
-    try{
-      // Create Firebase Auth user
-      const credential=await createUserWithEmailAndPassword(auth,email,password);
-      const uid=credential.user.uid;
-      
-      // Create user document in Firestore
-      await setDoc(doc(db,"users",uid),{
-        uid:uid,
-        username:username,
-        email:email,
-        phone:phone,
-        status:"active",
-        isAdmin:false,
-        totalDeposited:0,
-        currentVIP:0,
-        dailyStreak:0,
-        lastDailyReward:null,
-        createdAt:serverTimestamp(),
-        updatedAt:serverTimestamp()
-      });
-      
-      // Create wallet document with initial balance (100 HFC as welcome bonus)
-      await setDoc(doc(db,"wallets",uid),{
-        balances:{hfc:100},
-        createdAt:serverTimestamp(),
-        updatedAt:serverTimestamp()
-      });
-      
-      // Create game stats document
-      await setDoc(doc(db,"gameStats",uid),{
-        totalGames:0,
-        wins:0,
-        losses:0,
-        createdAt:serverTimestamp(),
-        updatedAt:serverTimestamp()
-      });
-      
-      // Success message
-      showMsg("ok","✅ Account created successfully! Welcome bonus: 100 HFC. Redirecting...");
-      
-      // Redirect after 2 seconds
-      setTimeout(()=>{
-        location.href="index.html";
-      },2000);
-      
-    }catch(err){
-      console.error("Signup error:",err);
-      let errorMsg="Account creation failed.";
-      
-      if(err.code==="auth/email-already-in-use"){
-        errorMsg="Ye email pehle se registered hai. Login karein.";
-      }else if(err.code==="auth/invalid-email"){
-        errorMsg="Invalid email address.";
-      }else if(err.code==="auth/weak-password"){
-        errorMsg="Password kam az kam 6 characters ka hona chahiye.";
-      }else if(err.code==="auth/network-request-failed"){
-        errorMsg="Network error. Internet connection check karein.";
-      }else if(err.message){
-        errorMsg=err.message;
-      }
-      
-      showMsg("err",errorMsg);
-      
-      // Re-enable button
-      btn.disabled=false;
-      btn.textContent="Create Account";
-    }
-  };
 });
+
+$("signup").onclick=async()=>{
+  const username=$("username").value.trim();
+  const email=$("email").value.trim();
+  const phone=$("phone").value.trim();
+  const pw=$("password").value;
+  const cf=$("confirm").value;
+
+  if(username.length<3){showMsg("err","Username kam az kam 3 characters ka ho.");return}
+  if(!validEmail(email)){showMsg("err","Valid email enter karein.");return}
+  if(!validPhone(phone)){showMsg("err","Valid phone number enter karein (10-15 digits).");return}
+  if(pw.length<6){showMsg("err","Password kam az kam 6 characters ka ho.");return}
+  if(pw!==cf){showMsg("err","Password match nahi kar raha.");return}
+
+  const btn=$("signup");btn.disabled=true;btn.textContent="Creating account...";
+  creating=true;
+
+  try{
+    let cred;
+    try{
+      cred=await createUserWithEmailAndPassword(auth,email,pw);
+    }catch(err){
+      if(err.code==="auth/email-already-in-use"){
+        // FIX 3: Orphan account repair — sign in karo, missing profile bana do
+        cred=await signInWithEmailAndPassword(auth,email,pw);
+      }else{
+        throw err;
+      }
+    }
+    const uid=cred.user.uid;
+
+    // Profile ensure karo (nayi banegi ya orphan repair hogi)
+    await ensureProfile(uid,{username,email,phone});
+
+    // Wallet/stats: rules admin-only rakhte hain, is liye try karo, fail ho to chup skip
+    // (balance admin panel / deposit se add hoga, pehle jaisa)
+    try{await setDoc(doc(db,"wallets",uid),{balances:{hfc:100},createdAt:serverTimestamp()});}catch(e){console.warn("wallet skipped:",e.code||e.message);}
+    try{await setDoc(doc(db,"gameStats",uid),{totalGames:0,wins:0,losses:0});}catch(e){console.warn("stats skipped:",e.code||e.message);}
+
+    showMsg("ok","✅ Account ready! Redirecting...");
+    setTimeout(()=>{location.href="index.html"},1500);
+  }catch(err){
+    console.error(err);
+    creating=false;
+    btn.disabled=false;btn.textContent="Create Account";
+    let msg=err.message||"Account creation failed.";
+    if(err.code==="auth/wrong-password"||err.code==="auth/invalid-credential")msg="Ye email registered hai lekin password ghalat hai. Login page se Forgot Password use karein.";
+    else if(err.code==="auth/weak-password")msg="Password kam az kam 6 characters ka ho.";
+    else if(err.code==="auth/invalid-email")msg="Invalid email address.";
+    else if(err.code==="auth/network-request-failed")msg="Network error. Internet check karein.";
+    else if(err.code==="auth/too-many-requests")msg="Bohat zyada koshishein. Thori der baad try karein.";
+    showMsg("err",msg);
+  }
+};
 </script></body></html>
