@@ -1,5 +1,57 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Login</title><style>*{box-sizing:border-box}body{margin:0;background:#f6f0e5;color:#29231d;font-family:Arial,sans-serif}.wrap{width:min(1180px,92%);margin:auto}.top{height:68px;background:#fffdf9;border-bottom:1px solid #e5dbcc}.head{height:100%;display:flex;align-items:center;justify-content:space-between;gap:15px}.brand{font-weight:900;color:#8d632b;letter-spacing:.5px}.nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.nav a{color:#6e522d;text-decoration:none;font-weight:800;font-size:13px}.page{padding:28px 0 55px}.card{background:#fffdf9;border:1px solid #e5dbcc;border-radius:18px;padding:22px;box-shadow:0 10px 28px #51391a12;margin-bottom:18px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.tile{padding:17px;border:1px solid #e5dbcc;border-radius:13px;background:#faf6ef}.tile span{font-size:12px;color:#81786d}.tile b{display:block;font-size:24px;color:#8d632b;margin-top:4px}.field{margin:11px 0}.field label{display:block;font-size:12px;font-weight:800;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;padding:11px;border:1px solid #e5dbcc;border-radius:9px;background:#fff;color:#29231d}.field textarea{min-height:90px;resize:vertical}.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer}.primary{background:linear-gradient(135deg,#c49b5d,#8d632b);color:#fff}.soft{background:#eee6da;color:#392d20}.danger{background:#b63e39;color:#fff}.msg{display:none;padding:11px;border-radius:10px;margin-bottom:14px;font-size:13px;font-weight:700}.show{display:block}.ok{background:#edf8f1;color:#286f43}.err{background:#fff0ef;color:#963530}.small{font-size:12px;color:#81786d}.muted{color:#81786d}.table{overflow:auto}table{width:100%;border-collapse:collapse;min-width:720px}th,td{text-align:left;padding:10px;border-bottom:1px solid #eee6da;font-size:13px}th{font-size:11px;color:#81786d;text-transform:uppercase}.actions{display:flex;gap:6px;flex-wrap:wrap}.coin{width:150px;height:150px;border-radius:50%;margin:25px auto 15px;display:grid;place-items:center;font-size:44px;font-weight:900;color:#855d26;background:radial-gradient(circle at 30% 25%,#fff,#ead5ab 55%,#a77430);border:8px solid #b78a4b;box-shadow:0 12px 28px #62441b22}.spin{animation:spin .8s ease}@keyframes spin{0%{transform:rotateY(0)}50%{transform:rotateY(900deg)}100%{transform:rotateY(1800deg)}}.center{text-align:center}.gamecard{cursor:pointer;transition:.15s}.gamecard:hover{transform:translateY(-2px)}.badge{display:inline-block;padding:5px 9px;border-radius:20px;font-size:11px;font-weight:800;background:#eee6da}.active{background:#edf8f1;color:#286f43}.soon{background:#f2eadc;color:#8d632b}.adminnav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.adminnav a{padding:9px 12px;border-radius:9px;background:#eee6da;text-decoration:none;color:#392d20;font-size:12px;font-weight:800}@media(max-width:780px){.grid,.tiles{grid-template-columns:1fr}.head{height:auto;min-height:68px;padding:10px 0}.top{height:auto}.nav{justify-content:flex-end}.page{padding-top:20px}}
-</style></head><body><header class="top"><div class="wrap head"><div class="brand">COIN FLIP</div></div></header><main class="wrap page"><section class="card" style="max-width:450px;margin:30px auto"><h1 class="center">Login</h1><div id="msg" class="msg"></div><div class="field"><label>Email</label><input id="email" type="email"></div><div class="field"><label>Password</label><input id="password" type="password"></div><button id="login" class="btn primary" style="width:100%">Login</button><button id="forgot" class="btn soft" style="width:100%;margin-top:8px">Forgot Password</button><p class="small center">New user? <a href="signup.html">Create account</a></p></section></main><script type="module">
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Login</title><style>
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;display:flex;flex-direction:column;overflow:hidden;
+  background:linear-gradient(180deg,#3a7bd5 0%,#7ec3e8 22%,#ffd9a0 48%,#ff9a8a 68%,#c86dd7 100%);
+  color:#fff;font-family:Arial,sans-serif;
+}
+.wrap{width:min(1180px,96%);margin:auto}
+
+/* ===== TOP BAR (magenta, gold border) ===== */
+.top{flex:0 0 auto;background:linear-gradient(180deg,#d5488a,#a02870);border-bottom:3px solid #ffd700;box-shadow:0 4px 20px rgba(0,0,0,.35)}
+.head{height:54px;display:flex;align-items:center;justify-content:center;gap:10px}
+.brand{font-weight:900;letter-spacing:1px;font-size:20px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+
+/* ===== PAGE: fit screen, center card ===== */
+.page{flex:1;min-height:0;overflow-y:auto;display:flex;align-items:center;justify-content:center;padding:20px;-webkit-overflow-scrolling:touch}
+
+.card{border:3px solid #ffd700;border-radius:18px;padding:24px;box-shadow:0 12px 40px rgba(0,0,0,.5), inset 0 0 40px rgba(255,215,0,.1);background:linear-gradient(145deg,rgba(70,25,110,.95),rgba(45,15,80,.95));width:100%;max-width:450px}
+
+h1{margin:0 0 20px;font-size:28px;color:#ffd700;text-shadow:0 2px 8px rgba(0,0,0,.5);text-align:center}
+
+.field{margin:14px 0}
+.field label{display:block;font-size:11px;font-weight:800;margin-bottom:6px;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.9)}
+.field input{width:100%;padding:12px;border:2px solid rgba(255,215,0,.5);border-radius:12px;background:rgba(0,0,0,.4);color:#fff;font-size:15px;font-weight:600}
+.field input:focus{outline:none;border-color:#ffd700;box-shadow:0 0 0 4px rgba(255,215,0,.25)}
+.field input::placeholder{color:rgba(255,255,255,.4)}
+
+.btn{border:0;border-radius:12px;padding:14px 20px;font-weight:800;cursor:pointer;transition:.2s;font-size:16px;letter-spacing:.5px;width:100%}
+.btn:hover{transform:translateY(-2px)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.primary{background:linear-gradient(180deg,#ffd700,#f0a000);color:#5a2a00;box-shadow:0 6px 20px rgba(0,0,0,.4)}
+.primary:hover:not(:disabled){box-shadow:0 8px 28px rgba(0,0,0,.5)}
+.soft{background:rgba(255,255,255,.2);color:#fff;border:2px solid rgba(255,215,0,.4)}
+.soft:hover{background:rgba(255,255,255,.3);border-color:#ffd700}
+
+.msg{display:none;padding:12px;border-radius:10px;margin-bottom:16px;font-size:13px;font-weight:700}
+.show{display:block}
+.ok{background:#0e2b1e;color:#7ee2a8;border:1px solid #1e4d34}
+.err{background:#33141a;color:#ff9d9d;border:1px solid #5a2025}
+
+.small{font-size:13px;color:rgba(255,255,255,.85);text-align:center;margin-top:16px}
+.small a{color:#ffd700;font-weight:800;text-decoration:none}
+.small a:hover{color:#fff2b0;text-decoration:underline}
+
+@media(max-width:640px){
+  .head{height:48px}
+  .brand{font-size:17px}
+  .card{padding:20px}
+  h1{font-size:24px}
+  .field input{padding:10px;font-size:14px}
+  .btn{padding:12px 16px;font-size:15px}
+}
+</style></head><body><header class="top"><div class="wrap head"><div class="brand">🪙 COIN FLIP</div></div></header><main class="wrap page"><section class="card"><h1>Login</h1><div id="msg" class="msg"></div><div class="field"><label>Email</label><input id="email" type="email"></div><div class="field"><label>Password</label><input id="password" type="password"></div><button id="login" class="btn primary" style="margin-top:8px">Login</button><button id="forgot" class="btn soft" style="margin-top:12px">Forgot Password</button><p class="small">New user? <a href="signup.html">Create account</a></p></section></main><script type="module">
 const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,sendPasswordResetEmail}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
@@ -17,8 +69,6 @@ function showMsg(text,type='err'){
   msg.className='msg show '+(type==='ok'?'ok':'err');
 }
 
-// IMPORTANT: Login page must NOT redirect to itself when the user is logged out.
-// Only redirect an already-authenticated user to the lobby.
 onAuthStateChanged(auth,async user=>{
   if(!user){
     checkingSession=false;
