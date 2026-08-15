@@ -409,6 +409,20 @@ h1{
   background-clip:text;
   -webkit-text-fill-color:transparent;
   letter-spacing:-.5px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.vip-badge{
+  display:inline-block;
+  padding:6px 14px;
+  border-radius:20px;
+  font-size:14px;
+  font-weight:800;
+  background:linear-gradient(135deg,#ffd700,#ffed4e);
+  color:#8d632b;
+  box-shadow:0 2px 8px rgba(196,155,93,.3);
 }
 h2{
   margin:6px 0;
@@ -441,7 +455,7 @@ h2{
   .page{padding-top:20px}
   #bal{font-size:26px}
 }
-</style></head><body><header class="top"><div class="wrap head"><div class="brand">COIN FLIP</div><div class="nav"><a href="index.html">Lobby</a><a href="profile.html">Profile</a><a href="deposit.html">Deposit</a><a href="withdrawal.html">Withdrawal</a><button id="logout" class="btn soft">Logout</button></div></div></header><main class="wrap page"><section class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap"><div><h1 id="welcome">Welcome</h1><p class="small">Games lobby</p></div><div><span class="small">Selected Coin Balance</span><h2><span id="bal">0</span> <span id="coin">HFC</span></h2></div></div><div class="tiles"><div class="tile"><span>Total Games</span><b id="games">0</b></div><div class="tile"><span>Wins</span><b id="wins">0</b></div><div class="tile"><span>Losses</span><b id="losses">0</b></div></div></section><section class="card"><h2>💰 Your Coin Balances</h2><p class="small">Aapke paas maujood saare coins:</p><div id="allCoins" class="tiles" style="margin-top:12px"></div></section><section><h2>Games</h2><div class="tiles"><div class="card gamecard" onclick="location.href='coinflip.html'"><span class="badge active">Active</span><h2>Coin Flip</h2><p class="small">Choose Heads or Tails and enter your bet.</p><button class="btn primary">Play Now</button></div><div class="card gamecard" onclick="location.href='crash.html'"><span class="badge active">Active</span><h2>🚀 Rocket Crash</h2><p class="small">Cash out before the rocket crashes!</p><button class="btn primary">Play Now</button></div><div class="card gamecard" onclick="location.href='mines.html'"><span class="badge active">Active</span><h2>💎 Mines</h2><p class="small">Avoid the mines and cash out your winnings!</p><button class="btn primary">Play Now</button></div><div class="card"><span class="badge soon">Coming Soon</span><h2>Future Game</h2><p class="small">Admin baad mein game enable karega.</p></div></div></section></main><script type="module">
+</style></head><body><header class="top"><div class="wrap head"><div class="brand">COIN FLIP</div><div class="nav"><a href="index.html">Lobby</a><a href="profile.html">Profile</a><a href="deposit.html">Deposit</a><a href="withdrawal.html">Withdrawal</a><a href="daily.html">🎁 Daily Rewards</a><button id="logout" class="btn soft">Logout</button></div></div></header><main class="wrap page"><section class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap"><div><h1 id="welcome">Welcome <span id="vipBadge" class="vip-badge">VIP 0</span></h1><p class="small">Games lobby</p></div><div><span class="small">Selected Coin Balance</span><h2><span id="bal">0</span> <span id="coin">HFC</span></h2></div></div><div class="tiles"><div class="tile"><span>Total Games</span><b id="games">0</b></div><div class="tile"><span>Wins</span><b id="wins">0</b></div><div class="tile"><span>Losses</span><b id="losses">0</b></div></div></section><section class="card"><h2>💰 Your Coin Balances</h2><p class="small">Aapke paas maujood saare coins:</p><div id="allCoins" class="tiles" style="margin-top:12px"></div></section><section><h2>Games</h2><div class="tiles"><div class="card gamecard" onclick="location.href='coinflip.html'"><span class="badge active">Active</span><h2>Coin Flip</h2><p class="small">Choose Heads or Tails and enter your bet.</p><button class="btn primary">Play Now</button></div><div class="card gamecard" onclick="location.href='crash.html'"><span class="badge active">Active</span><h2>🚀 Rocket Crash</h2><p class="small">Cash out before the rocket crashes!</p><button class="btn primary">Play Now</button></div><div class="card gamecard" onclick="location.href='mines.html'"><span class="badge active">Active</span><h2>💎 Mines</h2><p class="small">Avoid the mines and cash out your winnings!</p><button class="btn primary">Play Now</button></div><div class="card"><span class="badge soon">Coming Soon</span><h2>Future Game</h2><p class="small">Admin baad mein game enable karega.</p></div></div></section></main><script type="module">
 const firebaseConfig = {
   apiKey: "AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",
   authDomain: "mr777-c72fc.firebaseapp.com",
@@ -496,7 +510,11 @@ onAuthStateChanged(auth, async (user) => {
       return;
     }
 
-    $("welcome").textContent = "Welcome, " + (userData.username || "User");
+    $("welcome").textContent = "Welcome, " + (userData.username || "User") + " ";
+    
+    // VIP Badge update
+    const vip = Number(userData.currentVIP || 0);
+    $("vipBadge").textContent = "VIP " + vip;
 
     // NEW: Show ALL coin balances in lobby (live updates)
     onSnapshot(doc(db, "wallets", user.uid), (walletSnap) => {
