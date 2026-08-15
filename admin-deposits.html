@@ -1,291 +1,63 @@
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin - Deposits</title><style>
 *{box-sizing:border-box}
-
-@keyframes bgShift {
-  0%,100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-body{
-  margin:0;
-  background:linear-gradient(135deg,#f6f0e5 0%,#fff5e1 25%,#f6f0e5 50%,#e9d9c0 75%,#f6f0e5 100%);
-  background-size:400% 400%;
-  animation:bgShift 20s ease infinite;
-  color:#29231d;
-  font-family:Arial,sans-serif;
-  min-height:100vh;
-}
-
+@keyframes bgShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+body{margin:0;background:linear-gradient(135deg,#f6f0e5 0%,#fff5e1 25%,#f6f0e5 50%,#e9d9c0 75%,#f6f0e5 100%);background-size:400% 400%;animation:bgShift 20s ease infinite;color:#29231d;font-family:Arial,sans-serif;min-height:100vh}
 .wrap{width:min(1400px,96%);margin:auto}
-
-.top{
-  height:68px;
-  background:linear-gradient(180deg,rgba(255,253,249,.95),rgba(255,253,249,.85));
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
-  border-bottom:1px solid #e5dbcc;
-  box-shadow:0 4px 20px rgba(81,57,26,.08);
-  position:sticky;
-  top:0;
-  z-index:50;
-}
+.top{height:68px;background:linear-gradient(180deg,rgba(255,253,249,.95),rgba(255,253,249,.85));backdrop-filter:blur(12px);border-bottom:1px solid #e5dbcc;box-shadow:0 4px 20px rgba(81,57,26,.08);position:sticky;top:0;z-index:50}
 .head{height:100%;display:flex;align-items:center;justify-content:space-between;gap:15px}
-
-@keyframes shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
-}
-.brand{
-  font-weight:900;
-  letter-spacing:1px;
-  font-size:18px;
-  background:linear-gradient(90deg,#8d632b 0%,#c49b5d 25%,#ffd98a 50%,#c49b5d 75%,#8d632b 100%);
-  background-size:200% auto;
-  -webkit-background-clip:text;
-  background-clip:text;
-  -webkit-text-fill-color:transparent;
-  animation:shimmer 4s linear infinite;
-}
-
+.brand{font-weight:900;letter-spacing:1px;font-size:18px;background:linear-gradient(90deg,#8d632b 0%,#c49b5d 25%,#ffd98a 50%,#c49b5d 75%,#8d632b 100%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .adminnav{display:flex;gap:8px;flex-wrap:wrap}
-.adminnav a{
-  padding:9px 14px;
-  border-radius:9px;
-  background:#eee6da;
-  text-decoration:none;
-  color:#392d20;
-  font-size:12px;
-  font-weight:800;
-  transition:all .3s ease;
-  position:relative;
-}
-.adminnav a::after{
-  content:'';
-  position:absolute;
-  bottom:2px;left:50%;
-  width:0;height:2px;
-  background:linear-gradient(90deg,#c49b5d,#8d632b);
-  transition:all .3s ease;
-  transform:translateX(-50%);
-}
+.adminnav a{padding:9px 14px;border-radius:9px;background:#eee6da;text-decoration:none;color:#392d20;font-size:12px;font-weight:800;transition:all .3s ease}
 .adminnav a:hover{background:#f2e9d6;transform:translateY(-1px)}
-.adminnav a:hover::after{width:60%}
 .adminnav a.active{background:#8d632b;color:#fff}
-
 .page{padding:28px 0 55px}
-
-@keyframes cardIn {
-  from { opacity:0; transform:translateY(20px); }
-  to { opacity:1; transform:translateY(0); }
-}
-.card{
-  background:linear-gradient(145deg,#fffdf9,#f8f1e3);
-  border:1px solid #e5dbcc;
-  border-radius:18px;
-  padding:22px;
-  box-shadow:0 10px 28px rgba(81,57,26,.08), inset 0 1px 0 rgba(255,255,255,.8);
-  margin-bottom:18px;
-  animation:cardIn .6s ease backwards;
-  transition:transform .3s ease, box-shadow .3s ease;
-  position:relative;
-  overflow:hidden;
-}
-
-.card::before{
-  content:'';
-  position:absolute;
-  top:-50%;left:-50%;
-  width:200%;height:200%;
-  background:linear-gradient(45deg,transparent 30%,rgba(255,255,255,.4) 50%,transparent 70%);
-  transform:translateX(-100%);
-  transition:transform .8s ease;
-  pointer-events:none;
-}
-.card:hover::before{transform:translateX(100%)}
-
+.card{background:linear-gradient(145deg,#fffdf9,#f8f1e3);border:1px solid #e5dbcc;border-radius:18px;padding:22px;box-shadow:0 10px 28px rgba(81,57,26,.08);margin-bottom:18px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
 .field{margin:11px 0}
 .field label{display:block;font-size:12px;font-weight:800;margin-bottom:6px;letter-spacing:.5px;text-transform:uppercase;color:#6e522d}
-.field input,.field select,.field textarea{
-  width:100%;
-  padding:11px;
-  border:1px solid #e5dbcc;
-  border-radius:9px;
-  background:#fff;
-  color:#29231d;
-  font-size:14px;
-  transition:all .3s ease;
-}
-.field input:focus,.field select:focus,.field textarea:focus{
-  outline:none;
-  border-color:#c49b5d;
-  box-shadow:0 0 0 3px rgba(196,155,93,.18);
-  transform:translateY(-1px);
-}
-.field textarea{min-height:90px;resize:vertical}
-
-.btn{
-  border:0;
-  border-radius:10px;
-  padding:12px 18px;
-  font-weight:800;
-  cursor:pointer;
-  position:relative;
-  overflow:hidden;
-  transition:all .3s ease;
-  font-size:14px;
-  letter-spacing:.5px;
-}
-.btn::before{
-  content:'';
-  position:absolute;
-  top:0;left:-100%;
-  width:100%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);
-  transition:left .6s ease;
-}
-.btn:hover::before{left:100%}
+.field input,.field select,.field textarea{width:100%;padding:11px;border:1px solid #e5dbcc;border-radius:9px;background:#fff;color:#29231d;font-size:14px}
+.btn{border:0;border-radius:10px;padding:12px 18px;font-weight:800;cursor:pointer;transition:all .3s ease;font-size:14px}
 .btn:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.15)}
-.btn:active{transform:translateY(0)}
-.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.btn:disabled::before{display:none}
-
-.primary{background:linear-gradient(135deg,#c49b5d,#8d632b);color:#fff;box-shadow:0 4px 14px rgba(141,99,43,.3)}
-.primary:hover{box-shadow:0 8px 24px rgba(141,99,43,.45)}
-
-.success{background:linear-gradient(135deg,#3ddc84,#0f9d58);color:#fff;box-shadow:0 4px 14px rgba(15,157,88,.3)}
-.success:hover{box-shadow:0 8px 24px rgba(15,157,88,.45)}
-
-.danger{background:linear-gradient(135deg,#b63e39,#8b2e2a);color:#fff;box-shadow:0 4px 14px rgba(182,62,57,.3)}
-.danger:hover{box-shadow:0 8px 24px rgba(182,62,57,.45)}
-
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.primary{background:linear-gradient(135deg,#c49b5d,#8d632b);color:#fff}
 .tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
-.tab{
-  padding:10px 18px;
-  border-radius:10px;
-  background:#eee6da;
-  border:0;
-  font-weight:800;
-  font-size:13px;
-  cursor:pointer;
-  transition:all .3s ease;
-  position:relative;
-  overflow:hidden;
-}
-.tab::before{
-  content:'';
-  position:absolute;
-  top:0;left:-100%;
-  width:100%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);
-  transition:left .6s ease;
-}
-.tab:hover::before{left:100%}
-.tab.active{background:linear-gradient(135deg,#c49b5d,#8d632b);color:#fff;box-shadow:0 4px 14px rgba(141,99,43,.3)}
-
+.tab{padding:10px 18px;border-radius:10px;background:#eee6da;border:0;font-weight:800;font-size:13px;cursor:pointer;transition:all .3s ease}
+.tab.active{background:linear-gradient(135deg,#c49b5d,#8d632b);color:#fff}
 .table{overflow:auto;border-radius:12px}
 table{width:100%;border-collapse:collapse;min-width:900px}
 th,td{text-align:left;padding:12px;border-bottom:1px solid #eee6da;font-size:13px}
 th{font-size:11px;color:#81786d;text-transform:uppercase;letter-spacing:.5px;font-weight:800;background:#faf6ef}
-tbody tr{transition:background .2s ease}
-tbody tr:hover{background:#faf4e7}
 td.username{font-weight:700;color:#392d20}
 td.amount{font-weight:800;color:#286f43}
-
-.badge{
-  display:inline-block;
-  padding:5px 10px;
-  border-radius:20px;
-  font-size:11px;
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-}
-.badge.pending{background:#fff5e1;color:#b78a4b;border:1px solid #f0d9a8;animation:badgePulse 2s ease-in-out infinite}
+.badge{display:inline-block;padding:5px 10px;border-radius:20px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.badge.pending{background:#fff5e1;color:#b78a4b;border:1px solid #f0d9a8}
 .badge.completed{background:#edf8f1;color:#286f43;border:1px solid #c9e7d5}
 .badge.rejected{background:#fff0ef;color:#963530;border:1px solid #f5d1ce}
-
-@keyframes badgePulse {
-  0%,100% { box-shadow:0 0 0 0 rgba(183,138,75,.4); }
-  50% { box-shadow:0 0 0 6px rgba(183,138,75,0); }
-}
-
-h1{margin:0 0 16px;font-size:32px;background:linear-gradient(135deg,#29231d,#8d632b);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.5px}
-h2{margin:20px 0 12px;color:#392d20;letter-spacing:-.3px;font-size:22px}
-
-.msg{
-  display:none;
-  padding:11px;
-  border-radius:10px;
-  margin:14px 0;
-  font-size:13px;
-  font-weight:700;
-  animation:msgIn .4s ease;
-}
-@keyframes msgIn {
-  from { opacity:0; transform:translateY(-8px); }
-  to { opacity:1; transform:translateY(0); }
-}
+h1{margin:0 0 16px;font-size:32px;background:linear-gradient(135deg,#29231d,#8d632b);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+h2{margin:20px 0 12px;color:#392d20;font-size:22px}
+.msg{display:none;padding:11px;border-radius:10px;margin:14px 0;font-size:13px;font-weight:700}
 .show{display:block}
 .ok{background:#edf8f1;color:#286f43;border:1px solid #c9e7d5}
 .err{background:#fff0ef;color:#963530;border:1px solid #f5d1ce}
-
-.empty{
-  text-align:center;
-  padding:40px 20px;
-  color:#81786d;
-  font-weight:700;
-}
-
-.user-search{
-  display:flex;
-  gap:12px;
-  align-items:end;
-  flex-wrap:wrap;
-}
+.empty{text-align:center;padding:40px 20px;color:#81786d;font-weight:700}
+.user-search{display:flex;gap:12px;align-items:end;flex-wrap:wrap}
 .user-search .field{flex:1;min-width:200px;margin:0}
-
-.user-result{
-  padding:12px;
-  background:linear-gradient(145deg,#faf6ef,#f0e7d4);
-  border:1px solid #e5dbcc;
-  border-radius:10px;
-  margin-top:12px;
-}
-
-.actions-cell{
-  display:flex;
-  gap:6px;
-  flex-wrap:wrap;
-}
-.btn-sm{
-  padding:6px 12px;
-  font-size:12px;
-  font-weight:800;
-  border:0;
-  border-radius:8px;
-  cursor:pointer;
-  transition:all .2s ease;
-}
-.btn-sm:hover{transform:translateY(-1px)}
-.btn-sm:disabled{opacity:.5;cursor:not-allowed}
+.user-result{padding:12px;background:linear-gradient(145deg,#faf6ef,#f0e7d4);border:1px solid #e5dbcc;border-radius:10px;margin-top:12px}
+.actions-cell{display:flex;gap:6px;flex-wrap:wrap}
+.btn-sm{padding:6px 12px;font-size:12px;font-weight:800;border:0;border-radius:8px;cursor:pointer}
 .btn-sm.approve{background:#286f43;color:#fff}
 .btn-sm.reject{background:#963530;color:#fff}
-
-@media(max-width:780px){
-  .head{height:auto;min-height:68px;padding:10px 0}
-  .top{height:auto}
-  .page{padding-top:20px}
-  table{min-width:700px}
-  .user-search{flex-direction:column}
-}
-</style></head><body><header class="top"><div class="wrap head"><div class="brand">⚙️ ADMIN PANEL</div><div class="adminnav"><a href="admin.html">📊 Dashboard</a><a href="admin-deposits.html" class="active">💰 Deposits</a><a href="admin-withdrawals.html">💸 Withdrawals</a><a href="admin-users.html">👥 Users</a></div></div></header><main class="wrap page"><section class="card"><h1>💰 Manual Deposit</h1><p class="small">User ko manually coins add karo. Ye admin deposit ke tor par record hoga.</p><div id="msg" class="msg"></div><div class="user-search"><div class="field"><label>Search User (Username/Email/UID)</label><input id="searchUser" placeholder="Enter username, email or user ID"></div><button id="searchBtn" class="btn primary" style="height:42px">🔍 Search</button></div><div id="userResult"></div><div class="grid" id="depositForm" style="display:none;margin-top:16px"><div class="field"><label>Coin</label><input id="coin" placeholder="e.g., hfc, usdt"></div><div class="field"><label>Amount</label><input id="amount" type="number" min="1" step="0.01" placeholder="Enter amount"></div><div class="field" style="grid-column:1/-1"><label>Notes (Optional)</label><textarea id="notes" placeholder="Payment reference, transaction ID, etc."></textarea></div><button id="depositBtn" class="btn primary">✓ Add Deposit</button></div></section><section class="card"><h2>Deposit Requests</h2><div class="tabs"><button class="tab active" data-filter="pending">⏳ Pending</button><button class="tab" data-filter="completed">✓ Completed</button><button class="tab" data-filter="rejected">✗ Rejected</button><button class="tab" data-filter="all">All</button></div><div class="table"><table><thead><tr><th>Date</th><th>User</th><th>Coin</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table></div></section></main><script type="module">
+</style></head><body><header class="top"><div class="wrap head"><div class="brand">⚙️ ADMIN PANEL</div><div class="adminnav"><a href="admin.html">📊 Dashboard</a><a href="admin-deposits.html" class="active">💰 Deposits</a><a href="admin-withdrawals.html">💸 Withdrawals</a><a href="admin-users.html">👥 Users</a></div></div></header><main class="wrap page"><section class="card"><h1>💰 Manual Deposit</h1><p class="small">User ko manually coins add karo.</p><div id="msg" class="msg"></div><div class="user-search"><div class="field"><label>Search User (Username/Email/UID)</label><input id="searchUser" placeholder="Enter username, email or user ID"></div><button id="searchBtn" class="btn primary" style="height:42px">🔍 Search</button></div><div id="userResult"></div><div class="grid" id="depositForm" style="display:none;margin-top:16px"><div class="field"><label>Coin</label><input id="coin" placeholder="e.g., hfc, usdt"></div><div class="field"><label>Amount</label><input id="amount" type="number" min="1" step="0.01" placeholder="Enter amount"></div><div class="field" style="grid-column:1/-1"><label>Notes (Optional)</label><textarea id="notes" placeholder="Payment reference, transaction ID, etc."></textarea></div><button id="depositBtn" class="btn primary">✓ Add Deposit</button></div></section><section class="card"><h2>Deposit Requests</h2><div class="tabs"><button class="tab active" data-filter="pending">⏳ Pending</button><button class="tab" data-filter="completed">✓ Completed</button><button class="tab" data-filter="rejected">✗ Rejected</button><button class="tab" data-filter="all">All</button></div><div class="table"><table><thead><tr><th>Date</th><th>User</th><th>Coin</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table></div></section></main><script type="module">
 const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
 
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
-import{getFirestore,doc,getDoc,getDocs,collection,query,where,orderBy,limit,onSnapshot,updateDoc,serverTimestamp,runTransaction}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+import{getFirestore,doc,getDoc,getDocs,collection,query,orderBy,limit,onSnapshot,updateDoc,serverTimestamp,runTransaction}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 
-const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+const $=id=>document.getElementById(id);
 
 function showMsg(type,text){
   const m=$("msg");
@@ -294,28 +66,20 @@ function showMsg(type,text){
   setTimeout(()=>{m.className="msg"},4000);
 }
 
-function isAdminUser(data){
-  return data && (data.isAdmin===true || data.role==="admin");
-}
-
 let allDeposits=[];
 let currentFilter="pending";
 let selectedUser=null;
 let vipSettings={thresholds:[{vip:0,minDeposit:0},{vip:1,minDeposit:300}]};
 
-// VIP Settings load karo
 (async()=>{
   try{
     const vSnap=await getDoc(doc(db,"settings","vip"));
     if(vSnap.exists())vipSettings={...vipSettings,...vSnap.data()};
-  }catch(e){console.warn("VIP settings load failed:",e);}
+  }catch(e){console.warn("VIP settings:",e);}
 })();
 
 function renderDeposits(){
-  let filtered;
-  if(currentFilter==="all") filtered=allDeposits;
-  else filtered=allDeposits.filter(d=>d.status===currentFilter);
-  
+  const filtered=currentFilter==="all"?allDeposits:allDeposits.filter(d=>d.status===currentFilter);
   const rowsEl=$("rows");
   
   if(filtered.length===0){
@@ -327,8 +91,8 @@ function renderDeposits(){
     const isPending=d.status==="pending";
     const actionsHtml=isPending?`
       <div class="actions-cell">
-        <button class="btn-sm approve" data-id="${d.id}" onclick="window.approveDeposit('${d.id}')">✓ Approve</button>
-        <button class="btn-sm reject" data-id="${d.id}" onclick="window.rejectDeposit('${d.id}')">✗ Reject</button>
+        <button class="btn-sm approve" onclick="window.approveDeposit('${d.id}')">✓ Approve</button>
+        <button class="btn-sm reject" onclick="window.rejectDeposit('${d.id}')">✗ Reject</button>
       </div>
     `:`<span class="badge ${d.status}">${d.status}</span>`;
     
@@ -343,7 +107,6 @@ function renderDeposits(){
   }).join("");
 }
 
-// Approve deposit handler (global scope for onclick)
 window.approveDeposit=async(id)=>{
   const deposit=allDeposits.find(d=>d.id===id);
   if(!deposit||deposit.status!=="pending"){
@@ -351,7 +114,7 @@ window.approveDeposit=async(id)=>{
     return;
   }
   
-  if(!confirm(`Approve deposit of ${deposit.amount} ${deposit.coinId} for ${deposit.username}?`))return;
+  if(!confirm(`Approve ${deposit.amount} ${deposit.coinId} for ${deposit.username}?`))return;
   
   try{
     await runTransaction(db,async tx=>{
@@ -362,60 +125,35 @@ window.approveDeposit=async(id)=>{
       const wSnap=await tx.get(walletRef);
       const uSnap=await tx.get(userRef);
       
-      // Update deposit status
-      tx.update(depositRef,{
-        status:"completed",
-        processedBy:"admin",
-        processedAt:serverTimestamp()
-      });
+      tx.update(depositRef,{status:"completed",processedBy:"admin",processedAt:serverTimestamp()});
       
-      // Update wallet balance
-      const field=wSnap.exists()?("balances" in wSnap.data()?"balances":("coins" in wSnap.data()?"coins":"balances")):"balances";
+      const field=wSnap.exists()?("balances" in wSnap.data()?"balances":"balances"):"balances";
       const bals=wSnap.exists()?(wSnap.data()[field]||{}):{};
       const key=deposit.coinId.toLowerCase();
       const currentBal=Number(bals[key]||0);
       
       if(!wSnap.exists()){
-        tx.set(walletRef,{
-          uid:deposit.uid,
-          balances:{[key]:deposit.amount},
-          lastDepositAt:serverTimestamp()
-        });
+        tx.set(walletRef,{uid:deposit.uid,balances:{[key]:deposit.amount},lastDepositAt:serverTimestamp()});
       }else{
-        tx.update(walletRef,{
-          [field+"."+key]:currentBal+deposit.amount,
-          lastDepositAt:serverTimestamp()
-        });
+        tx.update(walletRef,{[field+"."+key]:currentBal+deposit.amount,lastDepositAt:serverTimestamp()});
       }
       
-      // Update user totalDeposited and VIP level
       if(uSnap.exists()){
         const uData=uSnap.data();
         const newTotal=Number(uData.totalDeposited||0)+deposit.amount;
-        
-        // Calculate new VIP level
         const thresholds=[...(vipSettings.thresholds||[])].sort((a,b)=>b.minDeposit-a.minDeposit);
         let newVIP=0;
-        for(const t of thresholds){
-          if(newTotal>=t.minDeposit){newVIP=t.vip;break;}
-        }
-        
-        tx.update(userRef,{
-          totalDeposited:newTotal,
-          currentVIP:newVIP,
-          lastDeposit:serverTimestamp()
-        });
+        for(const t of thresholds){if(newTotal>=t.minDeposit){newVIP=t.vip;break;}}
+        tx.update(userRef,{totalDeposited:newTotal,currentVIP:newVIP,lastDeposit:serverTimestamp()});
       }
     });
     
-    showMsg("ok",`✅ Deposit approved! ${deposit.amount} ${deposit.coinId} added to ${deposit.username}'s balance.`);
+    showMsg("ok",`✅ Approved! ${deposit.amount} ${deposit.coinId} added.`);
   }catch(err){
-    console.error(err);
     showMsg("err","Approval failed: "+err.message);
   }
 };
 
-// Reject deposit handler
 window.rejectDeposit=async(id)=>{
   const deposit=allDeposits.find(d=>d.id===id);
   if(!deposit||deposit.status!=="pending"){
@@ -424,17 +162,11 @@ window.rejectDeposit=async(id)=>{
   }
   
   const reason=prompt("Reject reason (optional):");
-  if(reason===null)return; // Cancel
+  if(reason===null)return;
   
   try{
-    await updateDoc(doc(db,"deposits",id),{
-      status:"rejected",
-      rejectReason:reason||"No reason provided",
-      processedBy:"admin",
-      processedAt:serverTimestamp()
-    });
-    
-    showMsg("ok",`❌ Deposit rejected.`);
+    await updateDoc(doc(db,"deposits",id),{status:"rejected",rejectReason:reason||"No reason",processedBy:"admin",processedAt:serverTimestamp()});
+    showMsg("ok","❌ Rejected.");
   }catch(err){
     showMsg("err","Rejection failed: "+err.message);
   }
@@ -470,10 +202,7 @@ $("searchBtn").onclick=async()=>{
     }
     
     selectedUser={uid:userSnap.id,...userSnap.data()};
-    $("userResult").innerHTML=`<div class="user-result">
-      <strong>✓ User Found:</strong> ${selectedUser.username||"No username"} | ${selectedUser.email||"No email"}<br>
-      <span style="font-size:11px;color:#81786d">UID: ${selectedUser.uid}</span>
-    </div>`;
+    $("userResult").innerHTML=`<div class="user-result"><strong>✓ User Found:</strong> ${selectedUser.username||"No username"} | ${selectedUser.email||"No email"}<br><span style="font-size:11px;color:#81786d">UID: ${selectedUser.uid}</span></div>`;
     $("depositForm").style.display="grid";
   }catch(err){
     showMsg("err","Search failed: "+err.message);
@@ -498,58 +227,29 @@ $("depositBtn").onclick=async()=>{
       const uSnap=await tx.get(userRef);
       
       const depositRef=doc(collection(db,"deposits"));
-      const depositData={
-        uid:selectedUser.uid,
-        username:selectedUser.username||"",
-        coinId:coinId,
-        amount:amount,
-        type:"manual",
-        status:"completed",
-        notes:notes,
-        processedBy:"admin",
-        createdAt:serverTimestamp()
-      };
-      tx.set(depositRef,depositData);
+      tx.set(depositRef,{uid:selectedUser.uid,username:selectedUser.username||"",coinId,amount,type:"manual",status:"completed",notes,processedBy:"admin",createdAt:serverTimestamp()});
       
       if(!wSnap.exists()){
-        const key=coinId.toLowerCase();
-        tx.set(walletRef,{
-          uid:selectedUser.uid,
-          balances:{[key]:amount},
-          lastDepositAt:serverTimestamp()
-        });
+        tx.set(walletRef,{uid:selectedUser.uid,balances:{[coinId.toLowerCase()]:amount},lastDepositAt:serverTimestamp()});
       }else{
         const wData=wSnap.data();
-        const field=("balances" in wData)?"balances":("coins" in wData)?"coins":"balances";
+        const field="balances" in wData?"balances":"balances";
         const bals=wData[field]||{};
         const key=coinId.toLowerCase();
-        const bal=Number(bals[key]||0);
-        
-        tx.update(walletRef,{
-          [field+"."+key]:bal+amount,
-          lastDepositAt:serverTimestamp()
-        });
+        tx.update(walletRef,{[field+"."+key]:Number(bals[key]||0)+amount,lastDepositAt:serverTimestamp()});
       }
       
-      // Update user totalDeposited and VIP
       if(uSnap.exists()){
         const uData=uSnap.data();
         const newTotal=Number(uData.totalDeposited||0)+amount;
         const thresholds=[...(vipSettings.thresholds||[])].sort((a,b)=>b.minDeposit-a.minDeposit);
         let newVIP=0;
-        for(const t of thresholds){
-          if(newTotal>=t.minDeposit){newVIP=t.vip;break;}
-        }
-        
-        tx.update(userRef,{
-          totalDeposited:newTotal,
-          currentVIP:newVIP,
-          lastDeposit:serverTimestamp()
-        });
+        for(const t of thresholds){if(newTotal>=t.minDeposit){newVIP=t.vip;break;}}
+        tx.update(userRef,{totalDeposited:newTotal,currentVIP:newVIP,lastDeposit:serverTimestamp()});
       }
     });
     
-    showMsg("ok",`✅ Successfully added ${amount} ${coinId} to ${selectedUser.username}`);
+    showMsg("ok",`✅ Added ${amount} ${coinId} to ${selectedUser.username}`);
     $("coin").value="";
     $("amount").value="";
     $("notes").value="";
@@ -572,7 +272,7 @@ onAuthStateChanged(auth,async user=>{
   
   try{
     const uSnap=await getDoc(doc(db,"users",user.uid));
-    if(!uSnap.exists()||!isAdminUser(uSnap.data())){
+    if(!uSnap.exists()||!uSnap.data().isAdmin){
       showMsg("err","Access denied. Admin privileges required.");
       setTimeout(()=>location.href="index.html",2000);
       return;
@@ -580,4 +280,11 @@ onAuthStateChanged(auth,async user=>{
     
     onSnapshot(query(collection(db,"deposits"),orderBy("createdAt","desc"),limit(100)),snap=>{
       allDeposits=snap.docs.map(d=>({id:d.id,...d.data()}));
-      renderDeposit
+      renderDeposits();
+    });
+  }catch(err){
+    console.error("Auth error:",err);
+    showMsg("err","Failed to load: "+err.message);
+  }
+});
+</script></body></html>
