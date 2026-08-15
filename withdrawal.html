@@ -323,6 +323,44 @@ h2{margin:6px 0 16px;color:#392d20;letter-spacing:-.3px}
 }
 .coin-box .coin-id{font-size:11px;color:#81786d;font-weight:700}
 
+/* Wager Progress Bar */
+.wager-info{
+  padding:16px;
+  background:linear-gradient(145deg,#faf6ef,#f0e7d4);
+  border:1px solid #e5dbcc;
+  border-radius:13px;
+  margin:16px 0;
+}
+.wager-info h3{margin:0 0 12px;font-size:16px;color:#392d20}
+.progress-bar{
+  width:100%;
+  height:24px;
+  background:#e5dbcc;
+  border-radius:12px;
+  overflow:hidden;
+  position:relative;
+  margin:8px 0;
+}
+.progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,#c49b5d,#8d632b);
+  transition:width .5s ease;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-weight:800;
+  font-size:12px;
+}
+.wager-stats{
+  display:flex;
+  justify-content:space-between;
+  margin-top:8px;
+  font-size:12px;
+  color:#81786d;
+}
+.wager-stats span{font-weight:700}
+
 @media(max-width:780px){
   .grid,.tiles{grid-template-columns:1fr}
   .coins-grid{grid-template-columns:1fr}
@@ -331,7 +369,7 @@ h2{margin:6px 0 16px;color:#392d20;letter-spacing:-.3px}
   .nav{justify-content:flex-end}
   .page{padding-top:20px}
 }
-</style></head><body><header class="top"><div class="wrap head"><div class="brand">COIN FLIP</div><div class="nav"><a href="index.html">Lobby</a><a href="profile.html">Profile</a><a href="deposit.html">Deposit</a><a href="withdrawal.html">Withdrawal</a><button id="logout" class="btn soft">Logout</button></div></div></header><main class="wrap page"><section class="card"><h1>Withdrawal</h1><p class="small">Available coin balance check karke request submit karo. Admin manually review karega.</p><p><a class="btn primary" href="https://wa.me/message/66Q4PMXC7LUCJ1" target="_blank">WhatsApp Admin</a></p><div id="msg" class="msg">Withdrawal request</div><div class="grid"><div class="field"><label>Coin</label><input id="coin"></div><div class="field"><label>Amount</label><input id="amount" type="number" min="1"></div></div><div class="field"><label>Withdrawal Details</label><textarea id="details"></textarea></div><button id="send" class="btn primary">Submit Request</button></section><section class="card"><h2>Available Coins</h2><p class="small">Aapke paas maujood saare coins:</p><div class="coins-grid" id="availableCoins"></div></section><section class="card"><h2>Request History</h2><div class="table"><table><thead><tr><th>Date</th><th>Coin</th><th>Amount</th><th>Status</th></tr></thead><tbody id="rows"></tbody></table></div></section></main><script type="module">const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
+</style></head><body><header class="top"><div class="wrap head"><div class="brand">COIN FLIP</div><div class="nav"><a href="index.html">Lobby</a><a href="profile.html">Profile</a><a href="deposit.html">Deposit</a><a href="withdrawal.html">Withdrawal</a><button id="logout" class="btn soft">Logout</button></div></div></header><main class="wrap page"><section class="card"><h1>Withdrawal</h1><p class="small">Available coin balance check karke request submit karo. Admin manually review karega.</p><p><a class="btn primary" href="https://wa.me/message/66Q4PMXC7LUCJ1" target="_blank">WhatsApp Admin</a></p><div class="wager-info"><h3>🎯 Wager Requirement</h3><p class="small">Withdrawal se pehle aapko apni deposit + claimed rewards ke barabar wager karna hoga (games khelne honge).</p><div class="progress-bar"><div class="progress-fill" id="wagerProgress" style="width:0%">0%</div></div><div class="wager-stats"><span>Wagered: <span id="wagered">0</span></span><span>Required: <span id="required">0</span></span></div></div><div id="msg" class="msg">Withdrawal request</div><div class="grid"><div class="field"><label>Coin</label><input id="coin"></div><div class="field"><label>Amount (Minimum 300)</label><input id="amount" type="number" min="300"></div></div><div class="field"><label>Withdrawal Details</label><textarea id="details"></textarea></div><button id="send" class="btn primary">Submit Request</button></section><section class="card"><h2>Available Coins</h2><p class="small">Aapke paas maujood saare coins:</p><div class="coins-grid" id="availableCoins"></div></section><section class="card"><h2>Request History</h2><div class="table"><table><thead><tr><th>Date</th><th>Coin</th><th>Amount</th><th>Status</th></tr></thead><tbody id="rows"></tbody></table></div></section></main><script type="module">const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 import{getAuth,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 import{getFirestore,doc,getDoc,collection,query,where,orderBy,limit,onSnapshot,addDoc,setDoc,updateDoc,serverTimestamp,getDocs}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
@@ -339,7 +377,7 @@ const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$
 if($("logout"))$("logout").onclick=async()=>{await signOut(auth);location.href="login.html"};
 onAuthStateChanged(auth,async u=>{if(!u)return location.href="login.html";const s=await getDoc(doc(db,"users",u.uid));if(!s.exists()||s.data().status==="blocked"){await signOut(auth);return location.href="login.html"};window.ME={...s.data(),uid:u.uid};window.DB=db;
 
-// Display available coins
+// Display available coins and wager status
 onSnapshot(doc(db,"wallets",u.uid),snap=>{
   const w=snap.exists()?snap.data():{};
   const balances=w.balances||w.coins||{};
@@ -358,5 +396,88 @@ onSnapshot(doc(db,"wallets",u.uid),snap=>{
   }
 },err=>{console.error("Wallet error:",err);$("availableCoins").innerHTML='<p class="err" style="grid-column:1/-1">Failed to load coins</p>';});
 
-$("send").onclick=async()=>{try{const amount=Number($("amount").value);if(!amount||amount<=0)throw Error("Valid amount enter karo.");await addDoc(collection(DB,"withdrawals"),{uid:ME.uid,username:ME.username||"",coinId:$("coin").value.trim(),amount,details:$("details").value.trim(),status:"pending",createdAt:serverTimestamp()});$("msg").textContent="Withdrawal request submitted.";$("msg").className="msg show ok"}catch(e){$("msg").textContent=e.message;$("msg").className="msg show err"}};onSnapshot(query(collection(DB,"withdrawals"),where("uid","==",ME.uid),orderBy("createdAt","desc")),s=>{$("rows").innerHTML=s.docs.map(d=>{const x=d.data();return `<tr><td>${x.createdAt?.toDate?.()?.toLocaleString()||"—"}</td><td>${x.coinId||""}</td><td>${x.amount||0}</td><td>${x.status||"pending"}</td></tr>`}).join("")||'<tr><td colspan="4">No requests.</td></tr>'});});
+// Update wager progress
+onSnapshot(doc(db,"users",u.uid),snap=>{
+  if(!snap.exists())return;
+  const userData=snap.data();
+  const totalDeposited=Number(userData.totalDeposited||0);
+  const totalClaimed=Number(userData.totalClaimed||0);
+  const totalWagered=Number(userData.totalWagered||0);
+  const required=totalDeposited+totalClaimed;
+  const progress=required>0?Math.min(100,(totalWagered/required)*100):100;
+  
+  $("wagered").textContent=totalWagered.toLocaleString();
+  $("required").textContent=required.toLocaleString();
+  $("wagerProgress").style.width=progress+"%";
+  $("wagerProgress").textContent=Math.floor(progress)+"%";
+});
+
+$("send").onclick=async()=>{
+  try{
+    const amount=Number($("amount").value);
+    const coinId=$("coin").value.trim();
+    const details=$("details").value.trim();
+    
+    // Validation 1: Minimum 300
+    if(!amount||amount<300){
+      throw Error("Minimum withdrawal amount 300 hai.");
+    }
+    
+    // Validation 2: Wager requirement check
+    const userSnap=await getDoc(doc(DB,"users",ME.uid));
+    if(!userSnap.exists())throw Error("User data not found.");
+    
+    const userData=userSnap.data();
+    const totalDeposited=Number(userData.totalDeposited||0);
+    const totalClaimed=Number(userData.totalClaimed||0);
+    const totalWagered=Number(userData.totalWagered||0);
+    const required=totalDeposited+totalClaimed;
+    
+    if(totalWagered<required){
+      const remaining=required-totalWagered;
+      throw Error(`Wager requirement puri nahi hui. Aapko ${remaining.toLocaleString()} aur wager karna hoga (games khelna honge) withdrawal se pehle.`);
+    }
+    
+    // Validation 3: Sufficient balance
+    const walletSnap=await getDoc(doc(DB,"wallets",ME.uid));
+    if(!walletSnap.exists())throw Error("Wallet not found.");
+    
+    const walletData=walletSnap.data();
+    const balances=walletData.balances||walletData.coins||{};
+    const key=coinId.toLowerCase();
+    const currentBal=Number(balances[key]||0);
+    
+    if(amount>currentBal){
+      throw Error(`Insufficient balance. Aapke paas sirf ${currentBal.toLocaleString()} ${coinId.toUpperCase()} hai.`);
+    }
+    
+    // Submit withdrawal request
+    await addDoc(collection(DB,"withdrawals"),{
+      uid:ME.uid,
+      username:ME.username||"",
+      coinId:coinId,
+      amount:amount,
+      details:details,
+      status:"pending",
+      createdAt:serverTimestamp()
+    });
+    
+    $("msg").textContent="✅ Withdrawal request submitted successfully! Admin review karega.";
+    $("msg").className="msg show ok";
+    $("coin").value="";
+    $("amount").value="";
+    $("details").value="";
+  }catch(e){
+    $("msg").textContent="❌ "+e.message;
+    $("msg").className="msg show err";
+  }
+};
+
+onSnapshot(query(collection(DB,"withdrawals"),where("uid","==",ME.uid),orderBy("createdAt","desc")),s=>{
+  $("rows").innerHTML=s.docs.map(d=>{
+    const x=d.data();
+    return `<tr><td>${x.createdAt?.toDate?.()?.toLocaleString()||"—"}</td><td>${x.coinId||""}</td><td>${x.amount||0}</td><td>${x.status||"pending"}</td></tr>`;
+  }).join("")||'<tr><td colspan="4">No requests.</td></tr>';
+});
+});
 </script></body></html>
