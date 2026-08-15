@@ -9,41 +9,26 @@ function readBalanceCaseInsensitive(b,c){const w=String(c||"").trim().toLowerCas
 function readBalanceKey(b,c){const w=String(c||"").trim().toLowerCase();for(const k of Object.keys(b||{})){if(String(k).trim().toLowerCase()===w)return k}return String(c||"").trim().toLowerCase()}
 function rollWin(ch){const a=new Uint32Array(1);crypto.getRandomValues(a);return (a[0]%100)<Number(ch??50)}
 
+// Sirf cells banayein (onclick baad mein attach hoga jab pick define ho)
 const board=$("board");
-for(let i=0;i<25;i++){const b=document.createElement("button");b.className="cell";b.dataset.i=i;b.disabled=true;b.onclick=()=>pick(i,b);board.appendChild(b);}
+for(let i=0;i<25;i++){const b=document.createElement("button");b.className="cell";b.dataset.i=i;b.disabled=true;board.appendChild(b);}
 
 onAuthStateChanged(auth,async user=>{
   if(!user){location.replace("login.html");return}
   try{
     const uSnap=await getDoc(doc(db,"users",user.uid));
     if(!uSnap.exists()||uSnap.data().status==="blocked"){await signOut(auth);location.replace("login.html");return}
-    
     let cfg={gameStatus:"enabled",coinId:"hfc",coinName:"HFC",minBet:1,maxBet:1000,maxMultiplier:50,winChance:50,mines:5};
-    
-    try{
-      const ms=await getDoc(doc(db,"settings","mines"));
-      if(ms.exists())cfg={...cfg,...ms.data()};
-    }catch(e){console.warn("Mines settings load failed:",e);}
-    
+    try{const ms=await getDoc(doc(db,"settings","mines"));if(ms.exists())cfg={...cfg,...ms.data()};}catch(e){console.warn("Mines settings:",e);}
     $("min").textContent=cfg.minBet;$("max").textContent=cfg.maxBet;
     $("bet").min=cfg.minBet;$("bet").max=cfg.maxBet;$("bet").value=cfg.minBet;
     $("mines").value=String(cfg.mines||5);
 
-    // Ensure wallet exists
     let walletRef=doc(db,"wallets",user.uid);
     let wSnap=await getDoc(walletRef);
-    if(!wSnap.exists()){
-      console.log("Creating wallet for user...");
-      try{
-        await setDoc(walletRef,{balances:{hfc:0},createdAt:serverTimestamp()});
-      }catch(e){console.warn("Wallet create failed:",e);}
-    }
+    if(!wSnap.exists()){try{await setDoc(walletRef,{balances:{hfc:0},createdAt:serverTimestamp()});}catch(e){console.warn("Wallet create:",e);}}
 
-    onSnapshot(walletRef,s=>{
-      const w=s.exists()?s.data():{};
-      $("bal").textContent=readBalanceCaseInsensitive(w.balances||w.coins||{},cfg.coinId).toLocaleString();
-    },()=>{$("bal").textContent="—"});
-    
+    onSnapshot(walletRef,s=>{const w=s.exists()?s.data():{};$("bal").textContent=readBalanceCaseInsensitive(w.balances||w.coins||{},cfg.coinId).toLocaleString();},()=>{$("bal").textContent="—"});
     onSnapshot(query(collection(db,"games"),where("uid","==",user.uid),limit(100)),s=>{
       const rows=s.docs.map(d=>d.data()).filter(x=>x.game==="mines").sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0)).slice(0,20);
       $("history").innerHTML=rows.map(x=>`<tr><td>${x.createdAt?.toDate?.()?.toLocaleString()||"—"}</td><td>${x.stake??"—"} ${x.coinName||""}</td><td>${x.picks??0}</td><td>${x.cashedAt?x.cashedAt.toFixed(2)+"x":"—"}</td><td style="color:${x.outcome==="win"?"#7ee2a8":"#ff9d9d"}">${x.outcome==="win"?"CASHED":"MINE"}</td></tr>`).join("")||'<tr><td colspan="5">No rounds yet.</td></tr>';
@@ -52,22 +37,6 @@ onAuthStateChanged(auth,async user=>{
     let phase="idle",stake=0,M=5,picks=0,mult=1,willWin=true,lossAt=1;
     function multiplier(k){let p=1;for(let i=0;i<k;i++){p*=(25-M-i)/(25-i);}return Math.max(1,Math.min(Number(cfg.maxMultiplier)||50,Math.floor((1/p)*0.97*100)/100));}
     function resetBoard(){[...board.children].forEach(c=>{c.className="cell";c.textContent="";c.disabled=true;});}
-
-    $("start").onclick=()=>{
-      if(phase==="playing")return;
-      if(cfg.gameStatus!=="enabled"){showMsg("err","Game disabled hai.");return}
-      stake=Number($("bet").value);
-      if(!Number.isFinite(stake)||stake<Number(cfg.minBet)||stake>Number(cfg.maxBet)){showMsg("err","Bet limits ke andar enter karo.");return}
-      M=Number($("mines").value)||5;
-      willWin=rollWin(cfg.winChance);
-      lossAt=1+Math.floor(Math.random()*3);
-      phase="playing";picks=0;mult=1;
-      $("mult").textContent="1.00x";
-      resetBoard();
-      [...board.children].forEach(c=>c.disabled=false);
-      $("start").disabled=true;$("cash").disabled=true;$("bet").disabled=true;$("mines").disabled=true;
-      $("msg").className="msg";
-    };
 
     function pick(i,btn){
       if(phase!=="playing")return;
@@ -91,6 +60,25 @@ onAuthStateChanged(auth,async user=>{
       idx.sort(()=>Math.random()-.5);
       idx.slice(0,M).forEach(x=>{board.children[x].className="cell mine";board.children[x].textContent="💣";board.children[x].disabled=true;});
     }
+
+    // ✅ AB click handlers attach karein (pick define ho chuka hai)
+    [...board.children].forEach((c,i)=>{c.onclick=()=>pick(i,c);});
+
+    $("start").onclick=()=>{
+      if(phase==="playing")return;
+      if(cfg.gameStatus!=="enabled"){showMsg("err","Game disabled hai.");return}
+      stake=Number($("bet").value);
+      if(!Number.isFinite(stake)||stake<Number(cfg.minBet)||stake>Number(cfg.maxBet)){showMsg("err","Bet limits ke andar enter karo.");return}
+      M=Number($("mines").value)||5;
+      willWin=rollWin(cfg.winChance);
+      lossAt=1+Math.floor(Math.random()*3);
+      phase="playing";picks=0;mult=1;
+      $("mult").textContent="1.00x";
+      resetBoard();
+      [...board.children].forEach(c=>c.disabled=false);
+      $("start").disabled=true;$("cash").disabled=true;$("bet").disabled=true;$("mines").disabled=true;
+      $("msg").className="msg";
+    };
     $("cash").onclick=()=>{if(phase==="playing"&&picks>0)end(true,mult);};
 
     async function end(won,payout){
@@ -103,40 +91,28 @@ onAuthStateChanged(auth,async user=>{
           const statsRef=doc(db,"gameStats",user.uid);
           const wSnap=await tx.get(walletRef);
           const sSnap=await tx.get(statsRef);
-          
           if(!wSnap.exists())throw new Error("Wallet not found.");
           const wData=wSnap.data();
           const field=("balances" in wData)?"balances":("coins" in wData)?"coins":"balances";
           const bals=wData[field]||{};
           const key=readBalanceKey(bals,cfg.coinId);
           const bal=Number(bals[key])||0;
-          
           if(stake>bal)throw new Error("Insufficient balance.");
           const newBal=won?bal-stake+stake*payout:bal-stake;
           const gameRef=doc(collection(db,"games"));
           const rec={uid:user.uid,game:"mines",outcome:won?"win":"loss",stake,coinId:key,coinName:cfg.coinName,mines:M,picks,createdAt:serverTimestamp()};
           if(won){rec.cashedAt=payout;rec.payoutMultiplier=payout;}
-          
           tx.set(gameRef,rec);
           tx.update(walletRef,{[field+"."+key]:newBal,lastGameId:gameRef.id,lastPlayedCoin:key,lastGame:"mines",lastGameAt:serverTimestamp()});
-          
-          if(sSnap.exists()){
-            const o=sSnap.data();
-            tx.update(statsRef,{totalGames:Number(o.totalGames||0)+1,wins:Number(o.wins||0)+(won?1:0),losses:Number(o.losses||0)+(won?0:1),lastGameId:gameRef.id});
-          }else{
-            tx.set(statsRef,{totalGames:1,wins:won?1:0,losses:won?0:1,lastGameId:gameRef.id});
-          }
+          if(sSnap.exists()){const o=sSnap.data();tx.update(statsRef,{totalGames:Number(o.totalGames||0)+1,wins:Number(o.wins||0)+(won?1:0),losses:Number(o.losses||0)+(won?0:1),lastGameId:gameRef.id});}
+          else{tx.set(statsRef,{totalGames:1,wins:won?1:0,losses:won?0:1,lastGameId:gameRef.id});}
         });
         if(won)showMsg("ok",`Cashed out @ ${payout.toFixed(2)}x! +${(stake*payout-stake).toFixed(2)} ${cfg.coinName}`);
         else showMsg("err",`💣 Mine lag gayi! -${stake} ${cfg.coinName}`);
       }catch(err){
         console.error("Transaction error:",err);
         let errMsg=err?.message||"Transaction fail.";
-        if(err?.code==="permission-denied"){
-          errMsg="Rules ne reject kiya. Admin-mines.html se settings save karein aur rules publish karein.";
-        }else if(errMsg.includes("Wallet not found")){
-          errMsg="Wallet missing. Page refresh karein.";
-        }
+        if(err?.code==="permission-denied")errMsg="Rules ne reject kiya. Admin-mines.html se settings save karein.";
         showMsg("err",errMsg);
       }
     }
