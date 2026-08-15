@@ -1,0 +1,152 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dragon vs Tiger</title><style>
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#1a1030,#2a1650 40%,#1a1030);color:#f0eaff;font-family:Arial,sans-serif;min-height:100vh}
+.wrap{width:min(560px,94%);margin:auto}
+.top{padding:12px 0;background:rgba(26,16,48,.9);backdrop-filter:blur(10px);border-bottom:1px solid #3a2a60;position:sticky;top:0;z-index:50}
+.head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{font-weight:900;color:#ffd700;font-size:17px;letter-spacing:.5px}
+.nav{display:flex;gap:6px;flex-wrap:wrap}
+.nav a{color:#c9b8f0;text-decoration:none;font-weight:800;font-size:12px;padding:6px 10px;border-radius:8px}
+.nav a:hover{background:#2a1650}
+.page{padding:16px 0 50px}
+.card{background:linear-gradient(145deg,#241448,#1c1038);border:1px solid #3a2a60;border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{padding:12px;border:1px solid #3a2a60;border-radius:12px;background:#1c1038;text-align:center}
+.tile span{font-size:11px;color:#9a8cc0;text-transform:uppercase;font-weight:700}
+.tile b{display:block;font-size:20px;color:#ffd700;margin-top:4px}
+/* Cards arena */
+.arena{display:flex;align-items:center;justify-content:center;gap:14px;margin:18px 0}
+.pcard{width:86px;height:120px;border-radius:12px;background:linear-gradient(145deg,#fff,#e8e0f5);color:#2a1650;display:grid;place-items:center;font-size:34px;font-weight:900;border:3px solid #ffd700;box-shadow:0 6px 18px rgba(0,0,0,.5);transition:all .4s}
+.pcard.back{background:linear-gradient(145deg,#4a2a80,#3a2a60);color:#ffd700}
+.vs{font-size:26px;font-weight:900;color:#ffd700}
+.side-label{font-size:12px;font-weight:800;text-align:center;margin-top:6px}
+/* Bet areas */
+.bets{display:grid;grid-template-columns:1fr;gap:10px;margin-top:14px}
+.betbox{border-radius:14px;padding:16px;text-align:center;cursor:pointer;border:2px solid transparent;transition:all .2s;position:relative}
+.betbox:hover{transform:translateY(-2px)}
+.betbox.sel{border-color:#ffd700;box-shadow:0 0 0 3px rgba(255,215,0,.25)}
+.betbox h3{margin:0 0 4px;font-size:20px}
+.betbox .odd{font-size:13px;font-weight:800;opacity:.9}
+.dragon{background:linear-gradient(145deg,#3a2a80,#2a1a60);color:#c9b8f0}
+.tie{background:linear-gradient(145deg,#1a5030,#0f3a20);color:#a8f0c0}
+.tiger{background:linear-gradient(145deg,#802a1a,#601a0f);color:#ffc0a8}
+/* chips */
+.chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:14px 0}
+.chip{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:13px;cursor:pointer;border:4px dashed #fff;transition:all .2s;color:#fff}
+.chip:hover{transform:scale(1.1)}
+.c10{background:#0f9d58}.c50{background:#1a5090}.c100{background:#4a2a80}.c500{background:#902a2a}.c1k{background:#906a1a}
+.field{margin:10px 0}
+.field label{display:block;font-size:12px;font-weight:800;margin-bottom:6px;color:#c9b8f0}
+.field input{width:100%;padding:11px;border:1px solid #3a2a60;border-radius:10px;background:#1c1038;color:#f0eaff;font-size:15px}
+.btn{border:0;border-radius:12px;padding:14px 20px;font-weight:800;cursor:pointer;font-size:16px;width:100%;transition:all .2s}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.deal{background:linear-gradient(135deg,#ffd700,#e0a000);color:#2a1650;box-shadow:0 6px 18px rgba(255,215,0,.3)}
+.msg{display:none;padding:11px;border-radius:10px;margin:12px 0;font-size:13px;font-weight:700}
+.show{display:block}.ok{background:#123524;color:#7ee2a8}.err{background:#3a1518;color:#ff9d9d}
+.small{font-size:12px;color:#9a8cc0}
+.result{font-size:22px;font-weight:900;text-align:center;margin:10px 0;color:#ffd700}
+.table{overflow:auto}table{width:100%;border-collapse:collapse;min-width:420px}th,td{text-align:left;padding:8px;border-bottom:1px solid #3a2a60;font-size:12px}th{font-size:10px;color:#9a8cc0;text-transform:uppercase}
+@media(max-width:480px){.pcard{width:70px;height:100px;font-size:28px}}
+</style></head><body><header class="top"><div class="wrap head"><div class="brand">🐉 DRAGON vs TIGER 🐯</div><div class="nav"><a href="index.html">Lobby</a><a href="profile.html">Profile</a><button id="logout" class="nav-a" style="background:#2a1650;color:#c9b8f0;border:0;border-radius:8px;font-weight:800">Logout</button></div></div></header><main class="wrap page">
+<section class="card"><div class="tiles"><div class="tile"><span>Balance</span><b id="bal">0</b></div><div class="tile"><span>Min</span><b id="min">1</b></div><div class="tile"><span>Max</span><b id="max">1000</b></div></div>
+<div class="arena"><div><div class="pcard back" id="dcard">?</div><div class="side-label" style="color:#c9b8f0">🐉 DRAGON</div></div><div class="vs">VS</div><div><div class="pcard back" id="tcard">?</div><div class="side-label" style="color:#ffc0a8">🐯 TIGER</div></div></div>
+<div class="result" id="result">Apni side choose karein</div>
+<div class="bets">
+<div class="betbox dragon" data-side="Dragon"><h3>🐉 DRAGON</h3><div class="odd">1 : 1</div></div>
+<div class="betbox tie" data-side="Tie"><h3>🤝 TIE</h3><div class="odd">1 : 8</div></div>
+<div class="betbox tiger" data-side="Tiger"><h3>🐯 TIGER</h3><div class="odd">1 : 1</div></div>
+</div>
+<div class="chips"><div class="chip c10" data-v="10">10</div><div class="chip c50" data-v="50">50</div><div class="chip c100" data-v="100">100</div><div class="chip c500" data-v="500">500</div><div class="chip c1k" data-v="1000">1K</div></div>
+<div class="field"><label>Bet Amount</label><input id="bet" type="number" min="1" step=".01" value="10"></div>
+<button id="deal" class="btn deal">🎴 DEAL</button>
+<div id="msg" class="msg"></div>
+</section>
+<section class="card"><h2 style="color:#f0eaff;margin:0 0 10px">Recent Rounds</h2><div class="table"><table><thead><tr><th>Time</th><th>Choice</th><th>Result</th><th>Stake</th><th>Outcome</th></tr></thead><tbody id="history"></tbody></table></div></section>
+</main><script type="module">const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import{getAuth,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+import{getFirestore,doc,getDoc,setDoc,onSnapshot,collection,query,where,limit,runTransaction,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
+$("logout").onclick=async()=>{await signOut(auth);location.replace("login.html")};
+function showMsg(t,x){const m=$("msg");m.className="msg show "+t;m.textContent=x;if(t==="ok")setTimeout(()=>{m.className="msg"},4000);}
+function readBalanceCaseInsensitive(b,c){const w=String(c||"").trim().toLowerCase();for(const[k,v]of Object.entries(b||{})){if(String(k).trim().toLowerCase()===w)return Number(v)||0}return 0}
+function readBalanceKey(b,c){const w=String(c||"").trim().toLowerCase();for(const k of Object.keys(b||{})){if(String(k).trim().toLowerCase()===w)return k}return String(c||"").trim().toLowerCase()}
+function rollWin(ch){const n=Number(ch);const c=Number.isFinite(n)?n:50;const a=new Uint32Array(1);crypto.getRandomValues(a);return (a[0]%100)<c}
+const RANKS=["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
+
+let side=null,busy=false;
+document.querySelectorAll(".betbox").forEach(b=>{b.onclick=()=>{if(busy)return;document.querySelectorAll(".betbox").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");side=b.dataset.side;$("result").textContent=`Selected: ${side}`;};});
+document.querySelectorAll(".chip").forEach(c=>{c.onclick=()=>{if(!busy)$("bet").value=c.dataset.v;};});
+
+onAuthStateChanged(auth,async user=>{
+  if(!user){location.replace("login.html");return}
+  try{
+    const uSnap=await getDoc(doc(db,"users",user.uid));
+    if(!uSnap.exists()||uSnap.data().status==="blocked"){await signOut(auth);location.replace("login.html");return}
+    let cfg={gameStatus:"enabled",coinId:"hfc",coinName:"HFC",minBet:1,maxBet:1000,maxMultiplier:9,winChance:50};
+    onSnapshot(doc(db,"settings","dragontiger"),s=>{if(s.exists())cfg={...cfg,...s.data()};$("min").textContent=cfg.minBet;$("max").textContent=cfg.maxBet;$("bet").min=cfg.minBet;$("bet").max=cfg.maxBet;});
+    let walletRef=doc(db,"wallets",user.uid);
+    if(!(await getDoc(walletRef)).exists()){try{await setDoc(walletRef,{balances:{hfc:0},createdAt:serverTimestamp()});}catch(e){}}
+    onSnapshot(walletRef,s=>{const w=s.exists()?s.data():{};$("bal").textContent=readBalanceCaseInsensitive(w.balances||w.coins||{},cfg.coinId).toLocaleString();},()=>{$("bal").textContent="—"});
+    onSnapshot(query(collection(db,"games"),where("uid","==",user.uid),limit(100)),s=>{
+      const rows=s.docs.map(d=>d.data()).filter(x=>x.game==="dragontiger").sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0)).slice(0,15);
+      $("history").innerHTML=rows.map(x=>`<tr><td>${x.createdAt?.toDate?.()?.toLocaleString()||"—"}</td><td>${x.choice||""}</td><td>${x.result||""}</td><td>${x.stake??""}</td><td style="color:${x.outcome==="win"?"#7ee2a8":"#ff9d9d"}">${x.outcome||""}</td></tr>`).join("")||'<tr><td colspan="5">No rounds yet.</td></tr>';
+    });
+
+    function makeCards(result){
+      const hi=1+Math.floor(Math.random()*12);const lo=Math.floor(Math.random()*hi);
+      if(result==="Tie"){const r=RANKS[hi];return[r,r];}
+      if(result==="Dragon")return[RANKS[hi],RANKS[lo]];
+      return[RANKS[lo],RANKS[hi]];
+    }
+
+    $("deal").onclick=async()=>{
+      if(busy)return;
+      if(cfg.gameStatus!=="enabled"){showMsg("err","Game disabled hai.");return}
+      if(!side){showMsg("err","Pehle koi side choose karein.");return}
+      const stake=Number($("bet").value);
+      if(!Number.isFinite(stake)||stake<Number(cfg.minBet)||stake>Number(cfg.maxBet)){showMsg("err","Bet limits ke andar enter karo.");return}
+      busy=true;$("deal").disabled=true;$("msg").className="msg";
+      $("dcard").className="pcard back";$("tcard").className="pcard back";
+      $("dcard").textContent="?";$("tcard").textContent="?";
+      $("result").textContent="Dealing...";
+
+      const willWin=rollWin(cfg.winChance);
+      let result;
+      if(willWin){result=side;}
+      else{const others=["Dragon","Tie","Tiger"].filter(x=>x!==side);result=others[Math.floor(Math.random()*others.length)];}
+      const won=result===side;
+      const payout=won?((side==="Tie")?9:2):0;
+
+      setTimeout(async()=>{
+        const[dc,tc]=makeCards(result);
+        $("dcard").className="pcard";$("tcard").className="pcard";
+        $("dcard").textContent=dc;$("tcard").textContent=tc;
+        $("result").textContent=`Result: ${result}`;
+        try{
+          await runTransaction(db,async tx=>{
+            const wSnap=await tx.get(walletRef);
+            const sSnap=await tx.get(doc(db,"gameStats",user.uid));
+            if(!wSnap.exists())throw new Error("Wallet not found.");
+            const wData=wSnap.data();
+            const field=("balances" in wData)?"balances":("coins" in wData)?"coins":"balances";
+            const bals=wData[field]||{};const key=readBalanceKey(bals,cfg.coinId);
+            const bal=Number(bals[key])||0;
+            if(stake>bal)throw new Error("Insufficient balance.");
+            const newBal=won?bal-stake+stake*payout:bal-stake;
+            const gameRef=doc(collection(db,"games"));
+            const rec={uid:user.uid,game:"dragontiger",choice:side,result,outcome:won?"win":"loss",stake,coinId:key,coinName:cfg.coinName,createdAt:serverTimestamp()};
+            if(won)rec.payoutMultiplier=payout;
+            tx.set(gameRef,rec);
+            tx.update(walletRef,{[field+"."+key]:newBal,lastGameId:gameRef.id,lastPlayedCoin:key,lastGame:"dragontiger",lastGameAt:serverTimestamp()});
+            if(sSnap.exists()){const o=sSnap.data();tx.update(doc(db,"gameStats",user.uid),{totalGames:Number(o.totalGames||0)+1,wins:Number(o.wins||0)+(won?1:0),losses:Number(o.losses||0)+(won?0:1),lastGameId:gameRef.id});}
+            else{tx.set(doc(db,"gameStats",user.uid),{totalGames:1,wins:won?1:0,losses:won?0:1,lastGameId:gameRef.id});}
+          });
+          if(won)showMsg("ok",`🎉 ${side} won! +${(stake*payout-stake).toFixed(2)} ${cfg.coinName}`);
+          else showMsg("err",`${result} aaya. -${stake} ${cfg.coinName}`);
+        }catch(err){console.error(err);showMsg("err",err?.code==="permission-denied"?"Rules ne reject kiya. Admin-dragontiger.html se settings save karein.":(err?.message||"Transaction fail."));}
+        busy=false;$("deal").disabled=false;
+      },900);
+    };
+  }catch(err){console.error(err);$("bal").textContent="—";}
+});
+</script></body></html>
