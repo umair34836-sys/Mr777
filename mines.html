@@ -7,9 +7,8 @@ $("logout").onclick=async()=>{await signOut(auth);location.replace("login.html")
 function showMsg(t,x){const m=$("msg");m.className="msg show "+t;m.textContent=x;if(t==="ok")setTimeout(()=>{m.className="msg"},4000);}
 function readBalanceCaseInsensitive(b,c){const w=String(c||"").trim().toLowerCase();for(const[k,v]of Object.entries(b||{})){if(String(k).trim().toLowerCase()===w)return Number(v)||0}return 0}
 function readBalanceKey(b,c){const w=String(c||"").trim().toLowerCase();for(const k of Object.keys(b||{})){if(String(k).trim().toLowerCase()===w)return k}return String(c||"").trim().toLowerCase()}
-function rollWin(ch){const a=new Uint32Array(1);crypto.getRandomValues(a);return (a[0]%100)<Number(ch??50)}
+function rollWin(ch){const n=Number(ch);const c=Number.isFinite(n)?n:50;const a=new Uint32Array(1);crypto.getRandomValues(a);return (a[0]%100)<c}
 
-// Sirf cells banayein (onclick baad mein attach hoga jab pick define ho)
 const board=$("board");
 for(let i=0;i<25;i++){const b=document.createElement("button");b.className="cell";b.dataset.i=i;b.disabled=true;board.appendChild(b);}
 
@@ -19,14 +18,19 @@ onAuthStateChanged(auth,async user=>{
     const uSnap=await getDoc(doc(db,"users",user.uid));
     if(!uSnap.exists()||uSnap.data().status==="blocked"){await signOut(auth);location.replace("login.html");return}
     let cfg={gameStatus:"enabled",coinId:"hfc",coinName:"HFC",minBet:1,maxBet:1000,maxMultiplier:50,winChance:50,mines:5};
-    try{const ms=await getDoc(doc(db,"settings","mines"));if(ms.exists())cfg={...cfg,...ms.data()};}catch(e){console.warn("Mines settings:",e);}
-    $("min").textContent=cfg.minBet;$("max").textContent=cfg.maxBet;
-    $("bet").min=cfg.minBet;$("bet").max=cfg.maxBet;$("bet").value=cfg.minBet;
-    $("mines").value=String(cfg.mines||5);
+
+    // ✅ LIVE SYNC: admin change karte hi foran update
+    onSnapshot(doc(db,"settings","mines"),s=>{
+      if(s.exists())cfg={...cfg,...s.data()};
+      $("min").textContent=cfg.minBet;$("max").textContent=cfg.maxBet;
+      $("bet").min=cfg.minBet;$("bet").max=cfg.maxBet;
+      $("mines").value=String(cfg.mines||5);
+      console.log("Mines settings loaded:",cfg);
+    });
 
     let walletRef=doc(db,"wallets",user.uid);
     let wSnap=await getDoc(walletRef);
-    if(!wSnap.exists()){try{await setDoc(walletRef,{balances:{hfc:0},createdAt:serverTimestamp()});}catch(e){console.warn("Wallet create:",e);}}
+    if(!wSnap.exists()){try{await setDoc(walletRef,{balances:{hfc:0},createdAt:serverTimestamp()});}catch(e){}}
 
     onSnapshot(walletRef,s=>{const w=s.exists()?s.data():{};$("bal").textContent=readBalanceCaseInsensitive(w.balances||w.coins||{},cfg.coinId).toLocaleString();},()=>{$("bal").textContent="—"});
     onSnapshot(query(collection(db,"games"),where("uid","==",user.uid),limit(100)),s=>{
@@ -37,31 +41,14 @@ onAuthStateChanged(auth,async user=>{
     let phase="idle",stake=0,M=5,picks=0,mult=1,willWin=true,lossAt=1;
     function multiplier(k){let p=1;for(let i=0;i<k;i++){p*=(25-M-i)/(25-i);}return Math.max(1,Math.min(Number(cfg.maxMultiplier)||50,Math.floor((1/p)*0.97*100)/100));}
     function resetBoard(){[...board.children].forEach(c=>{c.className="cell";c.textContent="";c.disabled=true;});}
-
     function pick(i,btn){
       if(phase!=="playing")return;
       picks++;
       const isMine=!willWin && picks>=lossAt;
-      if(isMine){
-        btn.className="cell mine";btn.textContent="💥";btn.disabled=true;
-        revealMines(i);
-        return end(false,1);
-      }else{
-        btn.className="cell safe";btn.textContent="💎";btn.disabled=true;
-        mult=multiplier(picks);
-        $("mult").textContent=mult.toFixed(2)+"x";
-        $("cash").disabled=false;
-        $("cash").textContent=`💰 Cash Out ${(stake*mult).toFixed(2)}`;
-        if(picks>=(25-M))return end(true,mult);
-      }
+      if(isMine){btn.className="cell mine";btn.textContent="💥";btn.disabled=true;revealMines(i);return end(false,1);}
+      else{btn.className="cell safe";btn.textContent="💎";btn.disabled=true;mult=multiplier(picks);$("mult").textContent=mult.toFixed(2)+"x";$("cash").disabled=false;$("cash").textContent=`💰 Cash Out ${(stake*mult).toFixed(2)}`;if(picks>=(25-M))return end(true,mult);}
     }
-    function revealMines(skip){
-      const idx=[...Array(25).keys()].filter(x=>x!==skip&&!board.children[x].classList.contains("safe"));
-      idx.sort(()=>Math.random()-.5);
-      idx.slice(0,M).forEach(x=>{board.children[x].className="cell mine";board.children[x].textContent="💣";board.children[x].disabled=true;});
-    }
-
-    // ✅ AB click handlers attach karein (pick define ho chuka hai)
+    function revealMines(skip){const idx=[...Array(25).keys()].filter(x=>x!==skip&&!board.children[x].classList.contains("safe"));idx.sort(()=>Math.random()-.5);idx.slice(0,M).forEach(x=>{board.children[x].className="cell mine";board.children[x].textContent="💣";board.children[x].disabled=true;});}
     [...board.children].forEach((c,i)=>{c.onclick=()=>pick(i,c);});
 
     $("start").onclick=()=>{
@@ -70,7 +57,7 @@ onAuthStateChanged(auth,async user=>{
       stake=Number($("bet").value);
       if(!Number.isFinite(stake)||stake<Number(cfg.minBet)||stake>Number(cfg.maxBet)){showMsg("err","Bet limits ke andar enter karo.");return}
       M=Number($("mines").value)||5;
-      willWin=rollWin(cfg.winChance);
+      willWin=rollWin(cfg.winChance);   // ✅ admin winChance (live) use hota hai
       lossAt=1+Math.floor(Math.random()*3);
       phase="playing";picks=0;mult=1;
       $("mult").textContent="1.00x";
@@ -109,12 +96,7 @@ onAuthStateChanged(auth,async user=>{
         });
         if(won)showMsg("ok",`Cashed out @ ${payout.toFixed(2)}x! +${(stake*payout-stake).toFixed(2)} ${cfg.coinName}`);
         else showMsg("err",`💣 Mine lag gayi! -${stake} ${cfg.coinName}`);
-      }catch(err){
-        console.error("Transaction error:",err);
-        let errMsg=err?.message||"Transaction fail.";
-        if(err?.code==="permission-denied")errMsg="Rules ne reject kiya. Admin-mines.html se settings save karein.";
-        showMsg("err",errMsg);
-      }
+      }catch(err){console.error(err);showMsg("err",err?.code==="permission-denied"?"Rules ne reject kiya.":"Transaction fail.");}
     }
   }catch(err){console.error(err);$("bal").textContent="—";}
 });
