@@ -1,0 +1,103 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Affiliate Program</title><style>
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;display:flex;flex-direction:column;overflow:hidden;background:linear-gradient(180deg,#3a7bd5 0%,#7ec3e8 22%,#ffd9a0 48%,#ff9a8a 68%,#c86dd7 100%);color:#fff;font-family:Arial,sans-serif}
+.wrap{width:min(1180px,96%);margin:auto}
+.top{flex:0 0 auto;background:linear-gradient(180deg,#d5488a,#a02870);border-bottom:3px solid #ffd700;box-shadow:0 4px 20px rgba(0,0,0,.35)}
+.head{height:54px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{font-weight:900;letter-spacing:1px;font-size:18px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;justify-content:space-around;align-items:center;gap:4px;background:linear-gradient(180deg,#3aa04a,#1c6b2a);border-top:3px solid #ffd700;padding:7px 6px calc(7px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px rgba(0,0,0,.4)}
+.nav a{color:#fff;text-decoration:none;font-weight:800;font-size:12px;padding:8px 11px;border-radius:10px;background:rgba(255,255,255,.14);transition:.2s}
+.nav a:hover{background:rgba(255,255,255,.28)}
+.page{flex:1;min-height:0;overflow-y:auto;padding:8px 0 62px;-webkit-overflow-scrolling:touch}
+.card{border:2px solid #ffd700;border-radius:16px;padding:14px;margin-bottom:10px;box-shadow:0 8px 24px rgba(0,0,0,.35);background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.06))}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0}
+.tile{padding:10px 8px;border:1px solid rgba(255,215,0,.5);border-radius:12px;background:rgba(0,0,0,.25);text-align:center}
+.tile span{font-size:9px;color:rgba(255,255,255,.85);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.tile b{display:block;font-size:18px;margin-top:3px;font-weight:900;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+h1{margin:0 0 10px;font-size:24px;color:#ffd700;text-shadow:0 2px 8px rgba(0,0,0,.5);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+h2{margin:12px 0 8px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4);font-size:16px}
+.small{font-size:12px;color:rgba(255,255,255,.85);margin:4px 0}
+.ref-box{display:flex;gap:8px;align-items:center;margin:12px 0;padding:12px;background:rgba(0,0,0,.3);border:1px solid rgba(255,215,0,.4);border-radius:12px}
+.ref-link{flex:1;padding:10px;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.5);border-radius:8px;color:#ffd700;font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn{border:0;border-radius:10px;padding:10px 16px;font-weight:800;cursor:pointer;transition:.2s;font-size:14px}
+.btn:hover{transform:translateY(-2px)}
+.primary{background:linear-gradient(180deg,#ffd700,#f0a000);color:#5a2a00;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.msg{display:none;padding:10px;border-radius:10px;margin:10px 0;font-size:13px;font-weight:700}
+.show{display:block}
+.ok{background:#0e2b1e;color:#7ee2a8;border:1px solid #1e4d34}
+.err{background:#33141a;color:#ff9d9d;border:1px solid #5a2025}
+.table{overflow:auto;border-radius:12px;max-height:280px}
+table{width:100%;border-collapse:collapse;min-width:520px}
+th,td{text-align:left;padding:9px;border-bottom:1px solid rgba(255,215,0,.3);font-size:12px;color:#fff}
+th{font-size:10px;color:rgba(255,255,255,.85);text-transform:uppercase;letter-spacing:.5px}
+tbody tr:hover{background:rgba(255,215,0,.1)}
+.commission-info{padding:14px;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.4);border-radius:12px;margin:12px 0}
+.commission-info h3{margin:0 0 8px;font-size:16px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+.badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.active{background:linear-gradient(180deg,#ff6a2a,#d02a1a);color:#fff;border:1px solid #ffd700}
+@media(max-width:640px){
+  .head{height:48px}.brand{font-size:15px}
+  .nav a{font-size:11px;padding:7px 9px}
+  .tiles{grid-template-columns:1fr}
+  h1{font-size:20px}
+  .ref-box{flex-direction:column;align-items:stretch}
+  .ref-link{text-align:center}
+}
+</style></head><body><header class="top"><div class="wrap head"><div class="brand">🤝 AFFILIATE PROGRAM</div><div class="nav"><a href="index.html">Lobby</a><a href="profile.html">Profile</a><a href="deposit.html">Deposit</a><a href="withdrawal.html">Withdrawal</a></div></div></header><main class="wrap page"><section class="card"><h1>💰 Affiliate Program <span class="badge active">Active</span></h1><p class="small">Apna referral link share karein aur har referral ki deposit par commission kamayein!</p><div class="tiles"><div class="tile"><span>Total Referrals</span><b id="totalRefs">0</b></div><div class="tile"><span>Total Earnings</span><b id="totalEarn">0</b></div><div class="tile"><span>Pending</span><b id="pending">0</b></div></div><h2>🔗 Your Referral Link</h2><div class="ref-box"><div class="ref-link" id="refLink">Loading...</div><button class="btn primary" id="copyBtn">📋 Copy</button></div><div class="commission-info"><h3>💡 How It Works</h3><p class="small">• Apna unique link share karein<br>• Koi bhi us link se signup kare<br>• Wo user deposit kare → aapko <b id="commRate">10%</b> commission milega<br>• Commission seedha aapke wallet mein aata hai</p></div><div id="msg" class="msg"></div></section><section class="card"><h2>📊 Referral History</h2><div class="table"><table><thead><tr><th>Date</th><th>Username</th><th>Deposit</th><th>Commission</th><th>Status</th></tr></thead><tbody id="history"></tbody></table></div></section></main><script type="module">
+const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+import{getFirestore,doc,getDoc,onSnapshot,collection,query,where}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
+
+function showMsg(t,x){const m=$("msg");m.textContent=x;m.className="msg show "+t;if(t==="ok")setTimeout(()=>{m.className="msg"},3000);}
+
+onAuthStateChanged(auth,async user=>{
+  if(!user){location.replace("login.html");return}
+  try{
+    const uSnap=await getDoc(doc(db,"users",user.uid));
+    if(!uSnap.exists()||uSnap.data().status==="blocked"){location.replace("login.html");return}
+    const userData=uSnap.data();
+
+    // Referral link generate karo
+    const refLink=`${window.location.origin}/signup.html?ref=${user.uid}`;
+    $("refLink").textContent=refLink;
+    $("copyBtn").onclick=()=>{
+      navigator.clipboard.writeText(refLink).then(()=>showMsg("ok","✅ Link copied! Share karein."));
+    };
+
+    // Commission rate load karo
+    const affSnap=await getDoc(doc(db,"settings","affiliate"));
+    const commRate=affSnap.exists()?Number(affSnap.data().commissionRate||10):10;
+    $("commRate").textContent=commRate+"%";
+
+    // Referrals count aur earnings (live)
+    onSnapshot(query(collection(db,"referrals"),where("referrerId","==",user.uid)),snap=>{
+      let totalRefs=0,totalEarn=0,pending=0;
+      const rows=[];
+      snap.forEach(d=>{
+        const x=d.data();
+        totalRefs++;
+        const amt=Number(x.commission||0);
+        totalEarn+=amt;
+        if(x.status==="pending")pending+=amt;
+        rows.push(x);
+      });
+      $("totalRefs").textContent=totalRefs.toLocaleString();
+      $("totalEarn").textContent=totalEarn.toFixed(2)+" HFC";
+      $("pending").textContent=pending.toFixed(2)+" HFC";
+
+      // History table
+      $("history").innerHTML=rows.sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0)).map(x=>`<tr>
+        <td>${x.createdAt?.toDate?.()?.toLocaleDateString()||"—"}</td>
+        <td>${x.referredUsername||"—"}</td>
+        <td>${(x.depositAmount||0).toLocaleString()} HFC</td>
+        <td>${(x.commission||0).toFixed(2)} HFC</td>
+        <td style="color:${x.status==="paid"?"#7ee2a8":"#ff9d9d"}">${x.status||"pending"}</td>
+      </tr>`).join("")||'<tr><td colspan="5">No referrals yet.</td></tr>';
+    });
+  }catch(err){console.error(err);showMsg("err","Failed to load.");}
+});
+</script></body></html>
