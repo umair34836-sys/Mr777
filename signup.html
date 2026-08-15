@@ -5,43 +5,60 @@ import{getAuth,onAuthStateChanged,signOut,createUserWithEmailAndPassword}from"ht
 import{getFirestore,doc,getDoc,collection,query,where,orderBy,limit,onSnapshot,addDoc,setDoc,updateDoc,serverTimestamp,getDocs}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 
-// FIX: Signup page par agar user logged in nahi hai, to form dikhao.
-// Agar logged in hai, to unhe index.html par bhej do.
 onAuthStateChanged(auth,async u=>{
+    // Agar user already logged in hai
     if(u){
         const s=await getDoc(doc(db,"users",u.uid));
+        // Agar user valid hai aur blocked nahi hai
         if(s.exists() && s.data().status!=="blocked"){
-            return location.href="index.html";
+            // Direct lobby par bhej do (signup ki zaroorat nahi)
+            location.href="index.html";
+            return;
         }else{
+            // User invalid/blocked hai, sign out karo
             await signOut(auth);
         }
     }
-    // Agar user nahi hai, to signup form visible rehne do
+    
+    // Yahan tak pohnchne ka matlab hai ke user logged in nahi hai
+    // Ab signup button ka click handler attach karo
+    $("signup").onclick=async()=>{
+        const u=$("username").value.trim();
+        const e=$("email").value.trim();
+        const p=$("phone").value.trim();
+        const pw=$("password").value;
+        const confirm=$("confirm").value;
+        
+        // Validation
+        if(!u||!e||!p||pw.length<6||pw!==confirm){
+            $("msg").textContent="Fields check karo. Password 6+ characters aur matching hona chahiye.";
+            $("msg").className="msg show err";
+            return;
+        }
+        
+        try{
+            // Firebase mein user create karo
+            const c=await createUserWithEmailAndPassword(auth,e,pw);
+            
+            // Firestore mein user document create karo
+            await setDoc(doc(db,"users",c.user.uid),{
+                uid:c.user.uid,
+                username:u,
+                email:e,
+                phone:p,
+                status:"active",
+                isAdmin:false,
+                createdAt:serverTimestamp(),
+                updatedAt:serverTimestamp()
+            });
+            
+            // Successfully signup hone ke baad lobby par bhej do
+            location.href="index.html";
+        }catch(err){
+            // Error message dikhao
+            $("msg").textContent=err.message;
+            $("msg").className="msg show err";
+        }
+    };
 });
-
-$("signup").onclick=async()=>{
-    const u=$("username").value.trim(),e=$("email").value.trim(),p=$("phone").value.trim(),pw=$("password").value;
-    if(!u||!e||!p||pw.length<6||pw!==$("confirm").value){
-        $("msg").textContent="Fields check karo. Password 6+ characters aur matching hona chahiye.";
-        $("msg").className="msg show err";
-        return;
-    }
-    try{
-        const c=await createUserWithEmailAndPassword(auth,e,pw);
-        await setDoc(doc(db,"users",c.user.uid),{
-            uid:c.user.uid,
-            username:u,
-            email:e,
-            phone:p,
-            status:"active",
-            isAdmin:false,
-            createdAt:serverTimestamp(),
-            updatedAt:serverTimestamp()
-        });
-        location.href="index.html";
-    }catch(e){
-        $("msg").textContent=e.message;
-        $("msg").className="msg show err";
-    }
-};
 </script></body></html>
