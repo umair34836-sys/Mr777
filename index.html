@@ -49,7 +49,7 @@ body{
 }
 
 .nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.nav a{
+.nav a,.nav button{
   color:#6e522d;
   text-decoration:none;
   font-weight:800;
@@ -58,8 +58,11 @@ body{
   border-radius:9px;
   position:relative;
   transition:all .3s ease;
+  border:0;
+  background:transparent;
+  cursor:pointer;
 }
-.nav a::after{
+.nav a::after,.nav button::after{
   content:'';
   position:absolute;
   bottom:2px;left:50%;
@@ -68,8 +71,8 @@ body{
   transition:all .3s ease;
   transform:translateX(-50%);
 }
-.nav a:hover{background:#f2e9d6;transform:translateY(-1px)}
-.nav a:hover::after{width:60%}
+.nav a:hover,.nav button:hover{background:#f2e9d6;transform:translateY(-1px)}
+.nav a:hover::after,.nav button:hover::after{width:60%}
 
 .page{padding:28px 0 55px}
 
@@ -106,9 +109,10 @@ body{
 
 .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
 
-@keyframes tilePulse {
-  0%,100% { transform:scale(1); }
-  50% { transform:scale(1.02); }
+/* Staggered tile animations */
+@keyframes tileIn {
+  from { opacity:0; transform:translateY(15px); }
+  to { opacity:1; transform:translateY(0); }
 }
 .tile{
   padding:17px;
@@ -119,7 +123,12 @@ body{
   overflow:hidden;
   transition:all .4s cubic-bezier(.2,.8,.2,1);
   box-shadow:0 4px 12px rgba(81,57,26,.06);
+  animation:tileIn .5s ease backwards;
 }
+.tiles .tile:nth-child(1){animation-delay:.1s}
+.tiles .tile:nth-child(2){animation-delay:.15s}
+.tiles .tile:nth-child(3){animation-delay:.2s}
+
 .tile::after{
   content:'';
   position:absolute;
@@ -132,13 +141,21 @@ body{
   mask-composite:exclude;
   opacity:0;
   transition:opacity .3s ease;
+  pointer-events:none;
 }
 .tile:hover{
   transform:translateY(-4px);
   box-shadow:0 12px 28px rgba(141,99,43,.18);
 }
 .tile:hover::after{opacity:1}
-.tile span{font-size:12px;color:#81786d;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+
+.tile span{
+  font-size:12px;
+  color:#81786d;
+  font-weight:700;
+  letter-spacing:.5px;
+  text-transform:uppercase;
+}
 .tile b{
   display:block;
   font-size:24px;
@@ -151,30 +168,44 @@ body{
 }
 
 .field{margin:11px 0}
-.field label{display:block;font-size:12px;font-weight:800;margin-bottom:6px}
+.field label{
+  display:block;
+  font-size:12px;
+  font-weight:800;
+  margin-bottom:6px;
+  letter-spacing:.5px;
+  text-transform:uppercase;
+  color:#6e522d;
+}
 .field input,.field select,.field textarea{
-  width:100%;padding:11px;
+  width:100%;
+  padding:11px;
   border:1px solid #e5dbcc;
   border-radius:9px;
-  background:#fff;color:#29231d;
+  background:#fff;
+  color:#29231d;
+  font-size:14px;
   transition:all .3s ease;
 }
 .field input:focus,.field select:focus,.field textarea:focus{
   outline:none;
   border-color:#c49b5d;
-  box-shadow:0 0 0 3px rgba(196,155,93,.15);
+  box-shadow:0 0 0 3px rgba(196,155,93,.18);
+  transform:translateY(-1px);
 }
 .field textarea{min-height:90px;resize:vertical}
 
 .btn{
   border:0;
   border-radius:10px;
-  padding:10px 14px;
+  padding:12px 18px;
   font-weight:800;
   cursor:pointer;
   position:relative;
   overflow:hidden;
   transition:all .3s ease;
+  font-size:14px;
+  letter-spacing:.3px;
 }
 .btn::before{
   content:'';
@@ -194,32 +225,59 @@ body{
   box-shadow:0 4px 14px rgba(141,99,43,.3);
 }
 .primary:hover{box-shadow:0 8px 24px rgba(141,99,43,.45)}
+
 .soft{background:#eee6da;color:#392d20}
 .soft:hover{background:#e5d9c4}
-.danger{background:#b63e39;color:#fff}
 
-.msg{display:none;padding:11px;border-radius:10px;margin-bottom:14px;font-size:13px;font-weight:700}
+.danger{background:#b63e39;color:#fff}
+.danger:hover{box-shadow:0 6px 16px rgba(182,62,57,.3)}
+
+.msg{
+  display:none;
+  padding:11px;
+  border-radius:10px;
+  margin:14px 0;
+  font-size:13px;
+  font-weight:700;
+  animation:msgIn .4s ease;
+}
+@keyframes msgIn {
+  from { opacity:0; transform:translateY(-8px); }
+  to { opacity:1; transform:translateY(0); }
+}
 .show{display:block}
-.ok{background:#edf8f1;color:#286f43}
-.err{background:#fff0ef;color:#963530}
+.ok{background:#edf8f1;color:#286f43;border:1px solid #c9e7d5}
+.err{background:#fff0ef;color:#963530;border:1px solid #f5d1ce}
+
 .small{font-size:12px;color:#81786d}
 .muted{color:#81786d}
 
-.table{overflow:auto}
+.table{overflow:auto;border-radius:12px}
 table{width:100%;border-collapse:collapse;min-width:720px}
-th,td{text-align:left;padding:10px;border-bottom:1px solid #eee6da;font-size:13px}
-tr{transition:background .2s ease}
+th,td{text-align:left;padding:12px;border-bottom:1px solid #eee6da;font-size:13px}
+th{
+  font-size:11px;
+  color:#81786d;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  font-weight:800;
+  background:#faf6ef;
+}
+tbody tr{transition:background .2s ease}
 tbody tr:hover{background:#faf4e7}
-th{font-size:11px;color:#81786d;text-transform:uppercase;letter-spacing:.5px}
+
 .actions{display:flex;gap:6px;flex-wrap:wrap}
 
 /* COIN with rotating shine */
 .coin{
-  width:150px;height:150px;
+  width:150px;
+  height:150px;
   border-radius:50%;
   margin:25px auto 15px;
-  display:grid;place-items:center;
-  font-size:44px;font-weight:900;
+  display:grid;
+  place-items:center;
+  font-size:44px;
+  font-weight:900;
   color:#855d26;
   background:radial-gradient(circle at 30% 25%,#fff,#ead5ab 55%,#a77430);
   border:8px solid #b78a4b;
@@ -229,6 +287,7 @@ th{font-size:11px;color:#81786d;text-transform:uppercase;letter-spacing:.5px}
     inset 0 4px 8px rgba(255,255,255,.4);
   position:relative;
   animation:coinFloat 3s ease-in-out infinite;
+  text-shadow:0 2px 4px rgba(0,0,0,.15);
 }
 @keyframes coinFloat {
   0%,100% { transform:translateY(0); box-shadow:0 12px 28px rgba(98,68,27,.22); }
@@ -241,6 +300,7 @@ th{font-size:11px;color:#81786d;text-transform:uppercase;letter-spacing:.5px}
   border-radius:50%;
   background:conic-gradient(from 0deg,transparent,rgba(255,255,255,.5),transparent 30%);
   animation:coinShine 3s linear infinite;
+  pointer-events:none;
 }
 @keyframes coinShine {
   from { transform:rotate(0); }
@@ -252,7 +312,7 @@ th{font-size:11px;color:#81786d;text-transform:uppercase;letter-spacing:.5px}
 
 .center{text-align:center}
 
-/* Game cards with glow */
+/* Game cards with enhanced glow */
 .gamecard{
   cursor:pointer;
   transition:all .3s cubic-bezier(.2,.8,.2,1);
@@ -278,11 +338,16 @@ th{font-size:11px;color:#81786d;text-transform:uppercase;letter-spacing:.5px}
   box-shadow:0 20px 40px rgba(141,99,43,.25), 0 0 30px rgba(196,155,93,.3);
 }
 .gamecard:hover::after{opacity:1}
+.gamecard h2{
+  margin:10px 0 8px;
+  font-size:22px;
+  color:#392d20;
+}
 
 /* Pulsing active badge */
 .badge{
   display:inline-block;
-  padding:5px 9px;
+  padding:5px 10px;
   border-radius:20px;
   font-size:11px;
   font-weight:800;
@@ -295,16 +360,21 @@ th{font-size:11px;color:#81786d;text-transform:uppercase;letter-spacing:.5px}
   color:#286f43;
   box-shadow:0 0 0 rgba(40,111,67,.4);
   animation:badgePulse 2s ease-in-out infinite;
+  border:1px solid #c9e7d5;
 }
 @keyframes badgePulse {
   0%,100% { box-shadow:0 0 0 0 rgba(40,111,67,.4); }
   50% { box-shadow:0 0 0 8px rgba(40,111,67,0); }
 }
-.soon{background:linear-gradient(135deg,#f2eadc,#e8d8b8);color:#8d632b}
+.soon{
+  background:linear-gradient(135deg,#f2eadc,#e8d8b8);
+  color:#8d632b;
+  border:1px solid #e5d5b8;
+}
 
 .adminnav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
 .adminnav a{
-  padding:9px 12px;
+  padding:9px 14px;
   border-radius:9px;
   background:#eee6da;
   text-decoration:none;
@@ -312,11 +382,56 @@ th{font-size:11px;color:#81786d;text-transform:uppercase;letter-spacing:.5px}
   font-size:12px;
   font-weight:800;
   transition:all .3s ease;
+  position:relative;
+  overflow:hidden;
 }
-.adminnav a:hover{background:#8d632b;color:#fff;transform:translateY(-2px)}
+.adminnav a::before{
+  content:'';
+  position:absolute;
+  top:0;left:-100%;
+  width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);
+  transition:left .6s ease;
+}
+.adminnav a:hover::before{left:100%}
+.adminnav a:hover{
+  background:linear-gradient(135deg,#c49b5d,#8d632b);
+  color:#fff;
+  transform:translateY(-2px);
+  box-shadow:0 4px 12px rgba(141,99,43,.3);
+}
 
-h1{margin:0 0 4px;font-size:28px;background:linear-gradient(135deg,#29231d,#8d632b);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-h2{margin:6px 0;color:#392d20}
+h1{
+  margin:0 0 8px;
+  font-size:32px;
+  background:linear-gradient(135deg,#29231d,#8d632b);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  letter-spacing:-.5px;
+}
+h2{
+  margin:6px 0;
+  color:#392d20;
+  letter-spacing:-.3px;
+}
+
+/* Enhanced balance display */
+#bal{
+  font-size:32px;
+  font-weight:900;
+  background:linear-gradient(135deg,#8d632b,#c49b5d);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  display:inline-block;
+}
+#coin{
+  font-size:18px;
+  color:#6e522d;
+  font-weight:700;
+  margin-left:8px;
+}
 
 @media(max-width:780px){
   .grid,.tiles{grid-template-columns:1fr}
@@ -324,8 +439,9 @@ h2{margin:6px 0;color:#392d20}
   .top{height:auto}
   .nav{justify-content:flex-end}
   .page{padding-top:20px}
+  #bal{font-size:26px}
 }
-</style></head><body><header class="top"><div class="wrap head"><div class="brand">COIN FLIP</div><div class="nav"><a href="index.html">Lobby</a><a href="profile.html">Profile</a><a href="deposit.html">Deposit</a><a href="withdrawal.html">Withdrawal</a><button id="logout" class="btn soft">Logout</button></div></div></header><main class="wrap page"><section class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap"><div><h1 id="welcome">Welcome</h1><p class="small">Games lobby</p></div><div><span class="small">Selected Coin Balance</span><h2><span id="bal">0</span> <span id="coin">HFC</span></h2></div></div><div class="tiles"><div class="tile"><span>Total Games</span><b id="games">0</b></div><div class="tile"><span>Wins</span><b id="wins">0</b></div><div class="tile"><span>Losses</span><b id="losses">0</b></div></div></section><section><h2>Games</h2><div class="tiles"><div class="card gamecard" onclick="location.href='coinflip.html'"><span class="badge active">Active</span><h2>Coin Flip</h2><p class="small">Choose Heads or Tails and enter your bet.</p><button class="btn primary">Play Now</button></div><div class="card gamecard" onclick="location.href='crash.html'"><span class="badge active">Active</span><h2>🚀 Rocket Crash</h2><p class="small">Cash out before the rocket crashes!</p><button class="btn primary">Play Now</button></div><div class="card"><span class="badge soon">Coming Soon</span><h2>Future Game</h2><p class="small">Admin baad mein game enable karega.</p></div></div></section></main><script type="module">
+</style></head><body><header class="top"><div class="wrap head"><div class="brand">COIN FLIP</div><div class="nav"><a href="index.html">Lobby</a><a href="profile.html">Profile</a><a href="deposit.html">Deposit</a><a href="withdrawal.html">Withdrawal</a><button id="logout" class="btn soft">Logout</button></div></div></header><main class="wrap page"><section class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap"><div><h1 id="welcome">Welcome</h1><p class="small">Games lobby</p></div><div><span class="small">Selected Coin Balance</span><h2><span id="bal">0</span> <span id="coin">HFC</span></h2></div></div><div class="tiles"><div class="tile"><span>Total Games</span><b id="games">0</b></div><div class="tile"><span>Wins</span><b id="wins">0</b></div><div class="tile"><span>Losses</span><b id="losses">0</b></div></div></section><section class="card"><h2>💰 Your Coin Balances</h2><p class="small">Aapke paas maujood saare coins:</p><div id="allCoins" class="tiles" style="margin-top:12px"></div></section><section><h2>Games</h2><div class="tiles"><div class="card gamecard" onclick="location.href='coinflip.html'"><span class="badge active">Active</span><h2>Coin Flip</h2><p class="small">Choose Heads or Tails and enter your bet.</p><button class="btn primary">Play Now</button></div><div class="card gamecard" onclick="location.href='crash.html'"><span class="badge active">Active</span><h2>🚀 Rocket Crash</h2><p class="small">Cash out before the rocket crashes!</p><button class="btn primary">Play Now</button></div><div class="card"><span class="badge soon">Coming Soon</span><h2>Future Game</h2><p class="small">Admin baad mein game enable karega.</p></div></div></section></main><script type="module">
 const firebaseConfig = {
   apiKey: "AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",
   authDomain: "mr777-c72fc.firebaseapp.com",
@@ -381,6 +497,25 @@ onAuthStateChanged(auth, async (user) => {
     }
 
     $("welcome").textContent = "Welcome, " + (userData.username || "User");
+
+    // NEW: Show ALL coin balances in lobby (live updates)
+    onSnapshot(doc(db, "wallets", user.uid), (walletSnap) => {
+      const wallet = walletSnap.exists() ? walletSnap.data() : {};
+      const balances = wallet.balances || wallet.coins || {};
+      const entries = Object.entries(balances);
+      const coinsEl = $("allCoins");
+
+      if (entries.length === 0) {
+        coinsEl.innerHTML = '<p class="small" style="grid-column:1/-1">No coins available yet.</p>';
+      } else {
+        coinsEl.innerHTML = entries.map(([coinId, amount]) =>
+          `<div class="tile"><span>${String(coinId).toUpperCase()}</span><b>${Number(amount || 0).toLocaleString()}</b></div>`
+        ).join("");
+      }
+    }, (error) => {
+      console.error("All coins listener:", error);
+      $("allCoins").innerHTML = '<p class="small">Unable to load coins.</p>';
+    });
 
     // Game settings: admin-selected coin for Coin Flip
     onSnapshot(doc(db, "gameSettings", "coinflip"), (settingsSnap) => {
