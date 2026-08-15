@@ -1,4 +1,81 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mines</title><style>*{box-sizing:border-box}body{margin:0;background:#0d1021;color:#e8e6f0;font-family:Arial,sans-serif}.wrap{width:min(1180px,92%);margin:auto}.top{height:68px;background:#151a33;border-bottom:1px solid #2a3055}.head{height:100%;display:flex;align-items:center;justify-content:space-between;gap:15px}.brand{font-weight:900;color:#3ddc84}.nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.nav a{color:#9aa3d0;text-decoration:none;font-weight:800;font-size:13px}.page{padding:28px 0 55px}.card{background:#151a33;border:1px solid #2a3055;border-radius:18px;padding:22px;margin-bottom:18px}.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.tile{padding:17px;border:1px solid #2a3055;border-radius:13px;background:#10142a}.tile span{font-size:12px;color:#8b93b8}.tile b{display:block;font-size:24px;color:#3ddc84;margin-top:4px}.field{margin:11px 0}.field label{display:block;font-size:12px;font-weight:800;margin-bottom:6px}.field input,.field select{width:100%;padding:11px;border:1px solid #2a3055;border-radius:9px;background:#0d1021;color:#e8e6f0}.btn{border:0;border-radius:10px;padding:12px 18px;font-weight:800;cursor:pointer;font-size:14px}.btn:disabled{opacity:.45;cursor:not-allowed}.primary{background:linear-gradient(135deg,#3ddc84,#0f9d58);color:#fff}.cash{background:linear-gradient(135deg,#ff9d3d,#e05b00);color:#fff}.soft{background:#232a4d;color:#cdd3f0}.msg{display:none;padding:11px;border-radius:10px;margin:14px auto 0;font-size:13px;font-weight:700;max-width:560px}.show{display:block}.ok{background:#123524;color:#7ee2a8}.err{background:#3a1518;color:#ff9d9d}.small{font-size:12px;color:#8b93b8}.board{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;max-width:420px;margin:20px auto}.cell{aspect-ratio:1;border:0;border-radius:12px;background:linear-gradient(135deg,#2a3055,#232a4d);color:#e8e6f0;font-size:26px;cursor:pointer;display:grid;place-items:center;transition:.12s}.cell:hover:not(:disabled){transform:translateY(-2px)}.cell:disabled{cursor:not-allowed}.cell.safe{background:linear-gradient(135deg,#123524,#0f9d58)}.cell.mine{background:linear-gradient(135deg,#3a1518,#b63e39)}.center{text-align:center}.mult{font-size:40px;font-weight:900;color:#3ddc84;margin:10px 0}.table{overflow:auto}table{width:100%;border-collapse:collapse;min-width:720px}th,td{text-align:left;padding:10px;border-bottom:1px solid #232a4d;font-size:13px}th{font-size:11px;color:#8b93b8;text-transform:uppercase}@media(max-width:780px){.tiles{grid-template-columns:1fr}.head{height:auto;min-height:68px;padding:10px 0}.top{height:auto}.nav{justify-content:flex-end}.page{padding-top:20px}}</style></head><body><header class="top"><div class="wrap head"><div class="brand">💎 MINES</div><div class="nav"><a href="index.html">Lobby</a><a href="coinflip.html">Coin Flip</a><a href="crash.html">Crash</a><a href="profile.html">Profile</a><button id="logout" class="btn soft">Logout</button></div></div></header><main class="wrap page"><section class="card"><div class="tiles"><div class="tile"><span>Balance</span><b id="bal">0</b></div><div class="tile"><span>Min Bet</span><b id="min">1</b></div><div class="tile"><span>Max Bet</span><b id="max">1000</b></div></div><div class="field" style="max-width:200px;margin:16px auto"><label>Bet Amount</label><input id="bet" type="number" min="1" step=".01" value="1"></div><div class="field" style="max-width:200px;margin:12px auto"><label>Mines</label><select id="mines"><option>1</option><option>3</option><option selected>5</option><option>10</option><option>15</option><option>20</option></select></div><div class="center"><div class="mult" id="mult">1.00x</div><div class="board" id="board"></div><button id="start" class="btn primary">▶ Start Game</button> <button id="cash" class="btn cash" disabled>💰 Cash Out</button></div><div id="msg" class="msg"></div></section><section class="card"><h2 style="color:#e8e6f0">Recent Rounds</h2><div class="table"><table><thead><tr><th>Time</th><th>Stake</th><th>Picks</th><th>Cashed At</th><th>Outcome</th></tr></thead><tbody id="history"></tbody></table></div></section></main><script type="module">const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mines</title><style>
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;display:flex;flex-direction:column;overflow:hidden;
+  background:linear-gradient(180deg,#3a7bd5 0%,#7ec3e8 22%,#ffd9a0 48%,#ff9a8a 68%,#c86dd7 100%);
+  color:#fff;font-family:Arial,sans-serif;
+}
+.wrap{width:min(1180px,96%);margin:auto}
+
+/* ===== TOP BAR (magenta, gold border) ===== */
+.top{flex:0 0 auto;background:linear-gradient(180deg,#d5488a,#a02870);border-bottom:3px solid #ffd700;box-shadow:0 4px 20px rgba(0,0,0,.35)}
+.head{height:54px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{font-weight:900;letter-spacing:1px;font-size:18px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+
+/* ===== BOTTOM NAV (green bar) ===== */
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;justify-content:space-around;align-items:center;gap:4px;background:linear-gradient(180deg,#3aa04a,#1c6b2a);border-top:3px solid #ffd700;padding:7px 6px calc(7px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px rgba(0,0,0,.4)}
+.nav a{color:#fff;text-decoration:none;font-weight:800;font-size:12px;padding:8px 11px;border-radius:10px;background:rgba(255,255,255,.14);transition:.2s}
+.nav a::after{display:none}
+.nav a:hover{background:rgba(255,255,255,.28)}
+
+/* ===== PAGE: fit screen ===== */
+.page{flex:1;min-height:0;overflow-y:auto;padding:8px 0 62px;-webkit-overflow-scrolling:touch}
+
+.card{border:2px solid #ffd700;border-radius:16px;padding:12px;margin-bottom:10px;box-shadow:0 8px 24px rgba(0,0,0,.35);background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.06))}
+
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.tile{padding:8px 6px;border:1px solid rgba(255,215,0,.5);border-radius:12px;background:rgba(0,0,0,.25);text-align:center}
+.tile span{font-size:9px;color:rgba(255,255,255,.85);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.tile b{display:block;font-size:16px;margin-top:2px;font-weight:900;color:#ffd700}
+
+.field{margin:8px 0}
+.field label{display:block;font-size:10px;font-weight:800;margin-bottom:4px;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.9)}
+.field input,.field select{width:100%;padding:10px;border:1px solid rgba(255,215,0,.5);border-radius:10px;background:rgba(0,0,0,.3);color:#fff;font-size:14px;font-weight:700}
+.field input:focus,.field select:focus{outline:none;border-color:#ffd700;box-shadow:0 0 0 3px rgba(255,215,0,.2)}
+
+.btn{border:0;border-radius:12px;padding:11px 16px;font-weight:800;cursor:pointer;transition:.2s;font-size:14px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.primary{background:linear-gradient(180deg,#ffd700,#f0a000);color:#5a2a00;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.primary:hover{box-shadow:0 6px 20px rgba(0,0,0,.5)}
+.cash{background:linear-gradient(180deg,#ff9d3d,#e05b00);color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.cash:hover{box-shadow:0 6px 20px rgba(0,0,0,.5)}
+.soft{background:rgba(255,255,255,.2);color:#fff}
+
+.msg{display:none;padding:10px;border-radius:10px;margin:10px auto 0;font-size:13px;font-weight:700;max-width:560px}
+.show{display:block}
+.ok{background:#0e2b1e;color:#7ee2a8;border:1px solid #1e4d34}
+.err{background:#33141a;color:#ff9d9d;border:1px solid #5a2025}
+
+.small{font-size:12px;color:rgba(255,255,255,.85)}
+
+.board{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-width:380px;margin:14px auto}
+.cell{aspect-ratio:1;border:2px solid rgba(255,215,0,.4);border-radius:10px;background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.08));color:#fff;font-size:24px;cursor:pointer;display:grid;place-items:center;transition:.12s}
+.cell:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.cell:disabled{cursor:not-allowed}
+.cell.safe{background:linear-gradient(135deg,#0f9d58,#1a8a5a);border-color:#7ee2a8}
+.cell.mine{background:linear-gradient(135deg,#d02a1a,#801a2a);border-color:#ff9d9d}
+
+.center{text-align:center}
+.mult{font-size:36px;font-weight:900;color:#ffd700;margin:8px 0;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+
+.table{overflow:auto;border-radius:12px}
+table{width:100%;border-collapse:collapse;min-width:620px}
+th,td{text-align:left;padding:9px;border-bottom:1px solid rgba(255,215,0,.3);font-size:12px;color:#fff}
+th{font-size:10px;color:rgba(255,255,255,.85);text-transform:uppercase;letter-spacing:.5px}
+tbody tr:hover{background:rgba(255,215,0,.1)}
+
+h2{margin:6px 0 12px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4);font-size:18px}
+
+@media(max-width:640px){
+  .head{height:48px}.brand{font-size:15px}
+  .nav a{font-size:11px;padding:7px 9px}
+  .tiles{grid-template-columns:1fr}
+  .board{max-width:320px}
+  .cell{font-size:20px}
+  .mult{font-size:30px}
+}
+</style></head><body><header class="top"><div class="wrap head"><div class="brand">💎 MINES</div><div class="nav"><a href="index.html">Lobby</a><a href="coinflip.html">Coin Flip</a><a href="crash.html">Crash</a><a href="profile.html">Profile</a><button id="logout" class="btn soft">Logout</button></div></div></header><main class="wrap page"><section class="card"><div class="tiles"><div class="tile"><span>Balance</span><b id="bal">0</b></div><div class="tile"><span>Min Bet</span><b id="min">1</b></div><div class="tile"><span>Max Bet</span><b id="max">1000</b></div></div><div class="field" style="max-width:200px;margin:16px auto"><label>Bet Amount</label><input id="bet" type="number" min="1" step=".01" value="1"></div><div class="field" style="max-width:200px;margin:12px auto"><label>Mines</label><select id="mines"><option>1</option><option>3</option><option selected>5</option><option>10</option><option>15</option><option>20</option></select></div><div class="center"><div class="mult" id="mult">1.00x</div><div class="board" id="board"></div><button id="start" class="btn primary">▶ Start Game</button> <button id="cash" class="btn cash" disabled>💰 Cash Out</button></div><div id="msg" class="msg"></div></section><section class="card"><h2 style="color:#e8e6f0">Recent Rounds</h2><div class="table"><table><thead><tr><th>Time</th><th>Stake</th><th>Picks</th><th>Cashed At</th><th>Outcome</th></tr></thead><tbody id="history"></tbody></table></div></section></main><script type="module">const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 import{getAuth,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 import{getFirestore,doc,getDoc,setDoc,onSnapshot,collection,query,where,limit,runTransaction,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
@@ -57,7 +134,7 @@ onAuthStateChanged(auth,async user=>{
       stake=Number($("bet").value);
       if(!Number.isFinite(stake)||stake<Number(cfg.minBet)||stake>Number(cfg.maxBet)){showMsg("err","Bet limits ke andar enter karo.");return}
       M=Number($("mines").value)||5;
-      willWin=rollWin(cfg.winChance);   // ✅ admin winChance (live) use hota hai
+      willWin=rollWin(cfg.winChance);
       lossAt=1+Math.floor(Math.random()*3);
       phase="playing";picks=0;mult=1;
       $("mult").textContent="1.00x";
