@@ -1,483 +1,154 @@
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Withdrawal</title><style>
 *{box-sizing:border-box}
-
-/* Animated gradient background */
-@keyframes bgShift {
-  0%,100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-body{
-  margin:0;
-  background:linear-gradient(135deg,#f6f0e5 0%,#fff5e1 25%,#f6f0e5 50%,#e9d9c0 75%,#f6f0e5 100%);
-  background-size:400% 400%;
-  animation:bgShift 20s ease infinite;
-  color:#29231d;
-  font-family:Arial,sans-serif;
-  min-height:100vh;
-}
-
+@keyframes bgShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+body{margin:0;background:linear-gradient(135deg,#f6f0e5 0%,#fff5e1 25%,#f6f0e5 50%,#e9d9c0 75%,#f6f0e5 100%);background-size:400% 400%;animation:bgShift 20s ease infinite;color:#29231d;font-family:Arial,sans-serif;min-height:100vh}
 .wrap{width:min(1180px,92%);margin:auto}
-
-.top{
-  height:68px;
-  background:linear-gradient(180deg,rgba(255,253,249,.95),rgba(255,253,249,.85));
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
-  border-bottom:1px solid #e5dbcc;
-  box-shadow:0 4px 20px rgba(81,57,26,.08);
-  position:sticky;
-  top:0;
-  z-index:50;
-}
+.top{height:68px;background:linear-gradient(180deg,rgba(255,253,249,.95),rgba(255,253,249,.85));backdrop-filter:blur(12px);border-bottom:1px solid #e5dbcc;box-shadow:0 4px 20px rgba(81,57,26,.08);position:sticky;top:0;z-index:50}
 .head{height:100%;display:flex;align-items:center;justify-content:space-between;gap:15px}
-
-/* Brand with shimmer */
-@keyframes shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
-}
-.brand{
-  font-weight:900;
-  letter-spacing:1px;
-  font-size:18px;
-  background:linear-gradient(90deg,#8d632b 0%,#c49b5d 25%,#ffd98a 50%,#c49b5d 75%,#8d632b 100%);
-  background-size:200% auto;
-  -webkit-background-clip:text;
-  background-clip:text;
-  -webkit-text-fill-color:transparent;
-  animation:shimmer 4s linear infinite;
-}
-
+.brand{font-weight:900;letter-spacing:1px;font-size:18px;background:linear-gradient(90deg,#8d632b 0%,#c49b5d 25%,#ffd98a 50%,#c49b5d 75%,#8d632b 100%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.nav a{
-  color:#6e522d;
-  text-decoration:none;
-  font-weight:800;
-  font-size:13px;
-  padding:8px 14px;
-  border-radius:9px;
-  position:relative;
-  transition:all .3s ease;
-}
-.nav a::after{
-  content:'';
-  position:absolute;
-  bottom:2px;left:50%;
-  width:0;height:2px;
-  background:linear-gradient(90deg,#c49b5d,#8d632b);
-  transition:all .3s ease;
-  transform:translateX(-50%);
-}
+.nav a{color:#6e522d;text-decoration:none;font-weight:800;font-size:13px;padding:8px 14px;border-radius:9px;transition:all .3s ease}
 .nav a:hover{background:#f2e9d6;transform:translateY(-1px)}
-.nav a:hover::after{width:60%}
-
 .page{padding:28px 0 55px}
-
-/* Cards with entrance animation */
-@keyframes cardIn {
-  from { opacity:0; transform:translateY(20px); }
-  to { opacity:1; transform:translateY(0); }
-}
-.card{
-  background:linear-gradient(145deg,#fffdf9,#f8f1e3);
-  border:1px solid #e5dbcc;
-  border-radius:18px;
-  padding:22px;
-  box-shadow:0 10px 28px rgba(81,57,26,.08), inset 0 1px 0 rgba(255,255,255,.8);
-  margin-bottom:18px;
-  animation:cardIn .6s ease backwards;
-  transition:transform .3s ease, box-shadow .3s ease;
-  position:relative;
-  overflow:hidden;
-}
-.card:nth-of-type(2){animation-delay:.1s}
-.card:nth-of-type(3){animation-delay:.2s}
-
-.card::before{
-  content:'';
-  position:absolute;
-  top:-50%;left:-50%;
-  width:200%;height:200%;
-  background:linear-gradient(45deg,transparent 30%,rgba(255,255,255,.4) 50%,transparent 70%);
-  transform:translateX(-100%);
-  transition:transform .8s ease;
-  pointer-events:none;
-}
-.card:hover::before{transform:translateX(100%)}
-
+.card{background:linear-gradient(145deg,#fffdf9,#f8f1e3);border:1px solid #e5dbcc;border-radius:18px;padding:22px;box-shadow:0 10px 28px rgba(81,57,26,.08);margin-bottom:18px;position:relative;overflow:hidden}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
-.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
-
-/* Tile hover lift + gradient border */
-.tile{
-  padding:17px;
-  border:1px solid #e5dbcc;
-  border-radius:13px;
-  background:linear-gradient(145deg,#faf6ef,#f0e7d4);
-  position:relative;
-  overflow:hidden;
-  transition:all .4s cubic-bezier(.2,.8,.2,1);
-  box-shadow:0 4px 12px rgba(81,57,26,.06);
-}
-.tile::after{
-  content:'';
-  position:absolute;
-  inset:0;
-  border-radius:13px;
-  padding:1px;
-  background:linear-gradient(135deg,#c49b5d,#8d632b);
-  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;
-  mask-composite:exclude;
-  opacity:0;
-  transition:opacity .3s ease;
-  pointer-events:none;
-}
-.tile:hover{
-  transform:translateY(-4px);
-  box-shadow:0 12px 28px rgba(141,99,43,.18);
-}
-.tile:hover::after{opacity:1}
-
-.tile span{font-size:12px;color:#81786d;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
-
-/* Gradient numbers */
-.tile b{
-  display:block;
-  font-size:24px;
-  margin-top:4px;
-  font-weight:900;
-  background:linear-gradient(135deg,#8d632b,#c49b5d);
-  -webkit-background-clip:text;
-  background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-
 .field{margin:11px 0}
 .field label{display:block;font-size:12px;font-weight:800;margin-bottom:6px;letter-spacing:.5px;text-transform:uppercase;color:#6e522d}
-
-.field input,.field select,.field textarea{
-  width:100%;
-  padding:11px;
-  border:1px solid #e5dbcc;
-  border-radius:9px;
-  background:#fff;
-  color:#29231d;
-  font-size:14px;
-  transition:all .3s ease;
-}
-.field input:focus,.field select:focus,.field textarea:focus{
-  outline:none;
-  border-color:#c49b5d;
-  box-shadow:0 0 0 3px rgba(196,155,93,.18);
-  transform:translateY(-1px);
-}
+.field input,.field textarea{width:100%;padding:11px;border:1px solid #e5dbcc;border-radius:9px;background:#fff;color:#29231d;font-size:14px}
 .field textarea{min-height:90px;resize:vertical}
-
-.btn{
-  border:0;
-  border-radius:10px;
-  padding:12px 18px;
-  font-weight:800;
-  cursor:pointer;
-  position:relative;
-  overflow:hidden;
-  transition:all .3s ease;
-  font-size:14px;
-  letter-spacing:.5px;
-}
-.btn::before{
-  content:'';
-  position:absolute;
-  top:0;left:-100%;
-  width:100%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);
-  transition:left .6s ease;
-}
-.btn:hover::before{left:100%}
+.btn{border:0;border-radius:10px;padding:12px 18px;font-weight:800;cursor:pointer;transition:all .3s ease;font-size:14px}
 .btn:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.15)}
-.btn:active{transform:translateY(0)}
-
-.primary{
-  background:linear-gradient(135deg,#c49b5d,#8d632b);
-  color:#fff;
-  box-shadow:0 4px 14px rgba(141,99,43,.3);
-}
-.primary:hover{box-shadow:0 8px 24px rgba(141,99,43,.45)}
-
+.primary{background:linear-gradient(135deg,#c49b5d,#8d632b);color:#fff}
 .soft{background:#eee6da;color:#392d20}
-.soft:hover{background:#e5d9c4}
-
-.danger{background:#b63e39;color:#fff}
-
-.msg{
-  display:none;
-  padding:11px;
-  border-radius:10px;
-  margin:14px 0;
-  font-size:13px;
-  font-weight:700;
-  animation:msgIn .4s ease;
-}
-@keyframes msgIn {
-  from { opacity:0; transform:translateY(-8px); }
-  to { opacity:1; transform:translateY(0); }
-}
+.msg{display:none;padding:11px;border-radius:10px;margin:14px 0;font-size:13px;font-weight:700}
 .show{display:block}
 .ok{background:#edf8f1;color:#286f43;border:1px solid #c9e7d5}
 .err{background:#fff0ef;color:#963530;border:1px solid #f5d1ce}
-
 .small{font-size:12px;color:#81786d}
 .muted{color:#81786d}
-
 .table{overflow:auto;border-radius:12px}
 table{width:100%;border-collapse:collapse;min-width:720px}
 th,td{text-align:left;padding:10px;border-bottom:1px solid #eee6da;font-size:13px}
-th{font-size:11px;color:#81786d;text-transform:uppercase;letter-spacing:.5px;font-weight:800}
-tbody tr{transition:background .2s ease}
-tbody tr:hover{background:#faf4e7}
-
-.actions{display:flex;gap:6px;flex-wrap:wrap}
-
-.coin{
-  width:150px;height:150px;
-  border-radius:50%;
-  margin:25px auto 15px;
-  display:grid;place-items:center;
-  font-size:44px;font-weight:900;
-  color:#855d26;
-  background:radial-gradient(circle at 30% 25%,#fff,#ead5ab 55%,#a77430);
-  border:8px solid #b78a4b;
-  box-shadow:0 12px 28px rgba(98,68,27,.22);
-}
-
-.spin{animation:spin .8s ease}
-@keyframes spin{0%{transform:rotateY(0)}50%{transform:rotateY(900deg)}100%{transform:rotateY(1800deg)}}
-
-.center{text-align:center}
-
-.gamecard{cursor:pointer;transition:.15s}
-.gamecard:hover{transform:translateY(-2px)}
-
-.badge{display:inline-block;padding:5px 9px;border-radius:20px;font-size:11px;font-weight:800;background:#eee6da}
-.active{background:#edf8f1;color:#286f43}
-.soon{background:#f2eadc;color:#8d632b}
-
-.adminnav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
-.adminnav a{
-  padding:9px 12px;
-  border-radius:9px;
-  background:#eee6da;
-  text-decoration:none;
-  color:#392d20;
-  font-size:12px;
-  font-weight:800;
-  transition:all .3s ease;
-}
-.adminnav a:hover{background:#8d632b;color:#fff;transform:translateY(-2px)}
-
-h1{margin:0 0 8px;font-size:32px;background:linear-gradient(135deg,#29231d,#8d632b);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.5px}
-h2{margin:6px 0 16px;color:#392d20;letter-spacing:-.3px}
-
-/* Available Coins Section */
+th{font-size:11px;color:#81786d;text-transform:uppercase;font-weight:800}
+h1{margin:0 0 8px;font-size:32px;background:linear-gradient(135deg,#29231d,#8d632b);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+h2{margin:6px 0 16px;color:#392d20}
 .coins-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:13px;margin-top:16px}
-.coin-box{
-  padding:16px;
-  border:1px solid #e5dbcc;
-  border-radius:13px;
-  background:linear-gradient(145deg,#faf6ef,#f0e7d4);
-  position:relative;
-  overflow:hidden;
-  transition:all .4s cubic-bezier(.2,.8,.2,1);
-  box-shadow:0 4px 12px rgba(81,57,26,.06);
-  text-align:center;
-}
-.coin-box::after{
-  content:'';
-  position:absolute;
-  inset:0;
-  border-radius:13px;
-  padding:1px;
-  background:linear-gradient(135deg,#c49b5d,#8d632b);
-  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;
-  mask-composite:exclude;
-  opacity:0;
-  transition:opacity .3s ease;
-  pointer-events:none;
-}
-.coin-box:hover{
-  transform:translateY(-4px);
-  box-shadow:0 12px 28px rgba(141,99,43,.18);
-}
-.coin-box:hover::after{opacity:1}
-.coin-box h4{margin:0 0 8px;font-size:14px;color:#6e522d;font-weight:800;letter-spacing:.5px;text-transform:uppercase}
-.coin-box .amount{
-  font-size:26px;
-  font-weight:900;
-  background:linear-gradient(135deg,#8d632b,#c49b5d);
-  -webkit-background-clip:text;
-  background-clip:text;
-  -webkit-text-fill-color:transparent;
-  margin:4px 0;
-}
+.coin-box{padding:16px;border:1px solid #e5dbcc;border-radius:13px;background:linear-gradient(145deg,#faf6ef,#f0e7d4);text-align:center;transition:all .3s ease}
+.coin-box:hover{transform:translateY(-4px);box-shadow:0 12px 28px rgba(141,99,43,.18)}
+.coin-box h4{margin:0 0 8px;font-size:14px;color:#6e522d;font-weight:800;text-transform:uppercase}
+.coin-box .amount{font-size:26px;font-weight:900;background:linear-gradient(135deg,#8d632b,#c49b5d);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin:4px 0}
 .coin-box .coin-id{font-size:11px;color:#81786d;font-weight:700}
-
-/* Wager Progress Bar */
-.wager-info{
-  padding:16px;
-  background:linear-gradient(145deg,#faf6ef,#f0e7d4);
-  border:1px solid #e5dbcc;
-  border-radius:13px;
-  margin:16px 0;
-}
-.wager-info h3{margin:0 0 12px;font-size:16px;color:#392d20}
-.progress-bar{
-  width:100%;
-  height:24px;
-  background:#e5dbcc;
-  border-radius:12px;
-  overflow:hidden;
-  position:relative;
-  margin:8px 0;
-}
-.progress-fill{
-  height:100%;
-  background:linear-gradient(90deg,#c49b5d,#8d632b);
-  transition:width .5s ease;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#fff;
-  font-weight:800;
-  font-size:12px;
-}
-.wager-stats{
-  display:flex;
-  justify-content:space-between;
-  margin-top:8px;
-  font-size:12px;
-  color:#81786d;
-}
-.wager-stats span{font-weight:700}
-
-@media(max-width:780px){
-  .grid,.tiles{grid-template-columns:1fr}
-  .coins-grid{grid-template-columns:1fr}
-  .head{height:auto;min-height:68px;padding:10px 0}
-  .top{height:auto}
-  .nav{justify-content:flex-end}
-  .page{padding-top:20px}
-}
-</style></head><body><header class="top"><div class="wrap head"><div class="brand">COIN FLIP</div><div class="nav"><a href="index.html">Lobby</a><a href="profile.html">Profile</a><a href="deposit.html">Deposit</a><a href="withdrawal.html">Withdrawal</a><button id="logout" class="btn soft">Logout</button></div></div></header><main class="wrap page"><section class="card"><h1>Withdrawal</h1><p class="small">Available coin balance check karke request submit karo. Admin manually review karega.</p><p><a class="btn primary" href="https://wa.me/message/66Q4PMXC7LUCJ1" target="_blank">WhatsApp Admin</a></p><div class="wager-info"><h3>🎯 Wager Requirement</h3><p class="small">Withdrawal se pehle aapko apni deposit + claimed rewards ke barabar wager karna hoga (games khelne honge).</p><div class="progress-bar"><div class="progress-fill" id="wagerProgress" style="width:0%">0%</div></div><div class="wager-stats"><span>Wagered: <span id="wagered">0</span></span><span>Required: <span id="required">0</span></span></div></div><div id="msg" class="msg">Withdrawal request</div><div class="grid"><div class="field"><label>Coin</label><input id="coin"></div><div class="field"><label>Amount (Minimum 300)</label><input id="amount" type="number" min="300"></div></div><div class="field"><label>Withdrawal Details</label><textarea id="details"></textarea></div><button id="send" class="btn primary">Submit Request</button></section><section class="card"><h2>Available Coins</h2><p class="small">Aapke paas maujood saare coins:</p><div class="coins-grid" id="availableCoins"></div></section><section class="card"><h2>Request History</h2><div class="table"><table><thead><tr><th>Date</th><th>Coin</th><th>Amount</th><th>Status</th></tr></thead><tbody id="rows"></tbody></table></div></section></main><script type="module">const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
+.wager-info{padding:16px;background:linear-gradient(145deg,#faf6ef,#f0e7d4);border:1px solid #e5dbcc;border-radius:13px;margin:16px 0}
+.wager-info h3{margin:0 0 10px;font-size:16px;color:#392d20}
+.progress-bar{width:100%;height:24px;background:#e5dbcc;border-radius:12px;overflow:hidden;margin:8px 0}
+.progress-fill{height:100%;background:linear-gradient(90deg,#c49b5d,#8d632b);transition:width .5s ease;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:12px}
+.progress-fill.complete{background:linear-gradient(90deg,#3ddc84,#0f9d58)}
+.income-breakdown{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.income-item{padding:10px;background:#fff;border:1px solid #e5dbcc;border-radius:9px;text-align:center}
+.income-item .label{font-size:10px;color:#81786d;font-weight:700;text-transform:uppercase;margin-bottom:4px}
+.income-item .value{font-size:16px;font-weight:900;color:#392d20}
+.income-item.remaining .value{color:#963530}
+@media(max-width:780px){.grid{grid-template-columns:1fr}.coins-grid{grid-template-columns:1fr}.income-breakdown{grid-template-columns:repeat(2,1fr)}.head{height:auto;min-height:68px;padding:10px 0}.top{height:auto}.nav{justify-content:flex-end}.page{padding-top:20px}}
+</style></head><body><header class="top"><div class="wrap head"><div class="brand">COIN FLIP</div><div class="nav"><a href="index.html">Lobby</a><a href="profile.html">Profile</a><a href="deposit.html">Deposit</a><a href="withdrawal.html">Withdrawal</a><button id="logout" class="btn soft">Logout</button></div></div></header><main class="wrap page"><section class="card"><h1>Withdrawal</h1><p class="small">Minimum 300 withdraw. Pehle wager complete karein (games jeet kar).</p><p><a class="btn primary" href="https://wa.me/message/66Q4PMXC7LUCJ1" target="_blank">WhatsApp Admin</a></p><div class="wager-info"><h3>🎯 Wager Status</h3><p class="small">Deposit + Rewards = Wager. Games jeet kar wager 0 karein, phir withdraw le sakte hain.</p><div class="income-breakdown"><div class="income-item"><div class="label">💰 Deposits</div><div class="value" id="depVal">0</div></div><div class="income-item"><div class="label">🎁 Rewards</div><div class="value" id="rewVal">0</div></div><div class="income-item"><div class="label">🎮 Jeeta Hua</div><div class="value" id="winVal">0</div></div><div class="income-item remaining"><div class="label">⏳ Remaining</div><div class="value" id="remVal">0</div></div></div><div class="progress-bar"><div class="progress-fill" id="wagerProgress" style="width:0%">0%</div></div></div><div id="msg" class="msg"></div><div class="grid"><div class="field"><label>Coin</label><input id="coin" placeholder="e.g., hfc"></div><div class="field"><label>Amount (Minimum 300)</label><input id="amount" type="number" min="300" placeholder="300"></div></div><div class="field"><label>Withdrawal Details</label><textarea id="details" placeholder="Wallet address, payment method, etc."></textarea></div><button id="send" class="btn primary">Submit Request</button></section><section class="card"><h2>Available Coins</h2><p class="small">Aapke paas maujood saare coins:</p><div class="coins-grid" id="availableCoins"></div></section><section class="card"><h2>Request History</h2><div class="table"><table><thead><tr><th>Date</th><th>Coin</th><th>Amount</th><th>Status</th></tr></thead><tbody id="rows"></tbody></table></div></section></main><script type="module">
+const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 import{getAuth,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
-import{getFirestore,doc,getDoc,collection,query,where,orderBy,limit,onSnapshot,addDoc,setDoc,updateDoc,serverTimestamp,getDocs}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+import{getFirestore,doc,getDoc,getDocs,collection,query,where,orderBy,onSnapshot,addDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 if($("logout"))$("logout").onclick=async()=>{await signOut(auth);location.href="login.html"};
-onAuthStateChanged(auth,async u=>{if(!u)return location.href="login.html";const s=await getDoc(doc(db,"users",u.uid));if(!s.exists()||s.data().status==="blocked"){await signOut(auth);return location.href="login.html"};window.ME={...s.data(),uid:u.uid};window.DB=db;
 
-// Display available coins and wager status
-onSnapshot(doc(db,"wallets",u.uid),snap=>{
-  const w=snap.exists()?snap.data():{};
-  const balances=w.balances||w.coins||{};
-  const coinsEl=$("availableCoins");
-  const entries=Object.entries(balances);
-  if(entries.length===0){
-    coinsEl.innerHTML='<p class="muted" style="grid-column:1/-1;text-align:center;padding:20px">No coins available</p>';
-  }else{
-    coinsEl.innerHTML=entries.map(([coinId,amount])=>`
-      <div class="coin-box">
-        <h4>${coinId.toUpperCase()}</h4>
-        <div class="amount">${Number(amount).toLocaleString()}</div>
-        <div class="coin-id">${coinId}</div>
-      </div>
-    `).join("");
-  }
-},err=>{console.error("Wallet error:",err);$("availableCoins").innerHTML='<p class="err" style="grid-column:1/-1">Failed to load coins</p>';});
+// SAB KUCH ISI PAGE SE: deposits + rewards + winnings READ kar ke wager calculate
+async function computeWager(uid){
+  // 1) Total completed deposits
+  let dep=0;
+  const dSnap=await getDocs(query(collection(db,"deposits"),where("uid","==",uid)));
+  dSnap.forEach(d=>{const x=d.data();if(x.status==="completed")dep+=Number(x.amount||0);});
 
-// Update wager progress
-onSnapshot(doc(db,"users",u.uid),snap=>{
-  if(!snap.exists())return;
-  const userData=snap.data();
-  const totalDeposited=Number(userData.totalDeposited||0);
-  const totalClaimed=Number(userData.totalClaimed||0);
-  const totalWagered=Number(userData.totalWagered||0);
-  const required=totalDeposited+totalClaimed;
-  const progress=required>0?Math.min(100,(totalWagered/required)*100):100;
-  
-  $("wagered").textContent=totalWagered.toLocaleString();
-  $("required").textContent=required.toLocaleString();
-  $("wagerProgress").style.width=progress+"%";
-  $("wagerProgress").textContent=Math.floor(progress)+"%";
-});
-
-$("send").onclick=async()=>{
-  try{
-    const amount=Number($("amount").value);
-    const coinId=$("coin").value.trim();
-    const details=$("details").value.trim();
-    
-    // Validation 1: Minimum 300
-    if(!amount||amount<300){
-      throw Error("Minimum withdrawal amount 300 hai.");
+  // 2) Total winnings (games se net profit)
+  let win=0;
+  const gSnap=await getDocs(query(collection(db,"games"),where("uid","==",uid)));
+  gSnap.forEach(g=>{const x=g.data();
+    if(x.outcome==="win"){
+      const m=Number(x.cashedAt||x.payoutMultiplier||2);
+      win+=Number(x.stake||0)*(m-1);
     }
-    
-    // Validation 2: Wager requirement check
-    const userSnap=await getDoc(doc(DB,"users",ME.uid));
-    if(!userSnap.exists())throw Error("User data not found.");
-    
-    const userData=userSnap.data();
-    const totalDeposited=Number(userData.totalDeposited||0);
-    const totalClaimed=Number(userData.totalClaimed||0);
-    const totalWagered=Number(userData.totalWagered||0);
-    const required=totalDeposited+totalClaimed;
-    
-    if(totalWagered<required){
-      const remaining=required-totalWagered;
-      throw Error(`Wager requirement puri nahi hui. Aapko ${remaining.toLocaleString()} aur wager karna hoga (games khelna honge) withdrawal se pehle.`);
-    }
-    
-    // Validation 3: Sufficient balance
-    const walletSnap=await getDoc(doc(DB,"wallets",ME.uid));
-    if(!walletSnap.exists())throw Error("Wallet not found.");
-    
-    const walletData=walletSnap.data();
-    const balances=walletData.balances||walletData.coins||{};
-    const key=coinId.toLowerCase();
-    const currentBal=Number(balances[key]||0);
-    
-    if(amount>currentBal){
-      throw Error(`Insufficient balance. Aapke paas sirf ${currentBal.toLocaleString()} ${coinId.toUpperCase()} hai.`);
-    }
-    
-    // Submit withdrawal request
-    await addDoc(collection(DB,"withdrawals"),{
-      uid:ME.uid,
-      username:ME.username||"",
-      coinId:coinId,
-      amount:amount,
-      details:details,
-      status:"pending",
-      createdAt:serverTimestamp()
-    });
-    
-    $("msg").textContent="✅ Withdrawal request submitted successfully! Admin review karega.";
-    $("msg").className="msg show ok";
-    $("coin").value="";
-    $("amount").value="";
-    $("details").value="";
-  }catch(e){
-    $("msg").textContent="❌ "+e.message;
-    $("msg").className="msg show err";
-  }
-};
+  });
 
-onSnapshot(query(collection(DB,"withdrawals"),where("uid","==",ME.uid),orderBy("createdAt","desc")),s=>{
-  $("rows").innerHTML=s.docs.map(d=>{
-    const x=d.data();
-    return `<tr><td>${x.createdAt?.toDate?.()?.toLocaleString()||"—"}</td><td>${x.coinId||""}</td><td>${x.amount||0}</td><td>${x.status||"pending"}</td></tr>`;
-  }).join("")||'<tr><td colspan="4">No requests.</td></tr>';
-});
+  // 3) Total rewards (current streak ke schedule se)
+  let rew=0;
+  const uSnap=await getDoc(doc(db,"users",uid));
+  const ud=uSnap.exists()?uSnap.data():{};
+  const vip=Number(ud.currentVIP||0);
+  const streak=Number(ud.dailyStreak||0);
+  const vSnap=await getDoc(doc(db,"settings","dailyRewards"));
+  const dr=vSnap.exists()?(vSnap.data().rewards||{}):{};
+  const sched=dr["vip"+vip]||dr["vip0"]||[];
+  for(let i=0;i<streak&&i<sched.length;i++)rew+=Number(sched[i]||0);
+
+  return{dep,rew,win};
+}
+
+async function renderWager(uid){
+  const{dep,rew,win}=await computeWager(uid);
+  const total=dep+rew;
+  const remaining=Math.max(0,total-win);
+  const progress=total>0?Math.min(100,(win/total)*100):100;
+  $("depVal").textContent=dep.toLocaleString();
+  $("rewVal").textContent=rew.toLocaleString();
+  $("winVal").textContent=win.toLocaleString();
+  $("remVal").textContent=remaining.toLocaleString();
+  const fill=$("wagerProgress");
+  fill.style.width=progress+"%";fill.textContent=Math.floor(progress)+"%";
+  if(remaining<=0)fill.classList.add("complete");else fill.classList.remove("complete");
+  return remaining;
+}
+
+onAuthStateChanged(auth,async u=>{
+  if(!u)return location.href="login.html";
+  const s=await getDoc(doc(db,"users",u.uid));
+  if(!s.exists()||s.data().status==="blocked"){await signOut(auth);return location.href="login.html"}
+  window.ME={...s.data(),uid:u.uid};window.DB=db;
+
+  onSnapshot(doc(db,"wallets",u.uid),snap=>{
+    const w=snap.exists()?snap.data():{};
+    const entries=Object.entries(w.balances||w.coins||{});
+    $("availableCoins").innerHTML=entries.length?entries.map(([c,a])=>`<div class="coin-box"><h4>${c.toUpperCase()}</h4><div class="amount">${Number(a).toLocaleString()}</div><div class="coin-id">${c}</div></div>`).join(""):'<p class="muted" style="grid-column:1/-1;text-align:center;padding:20px">No coins available</p>';
+  });
+
+  // Wager status load + live refresh
+  renderWager(u.uid);
+
+  $("send").onclick=async()=>{
+    try{
+      const amount=Number($("amount").value);
+      const coinId=$("coin").value.trim();
+      const details=$("details").value.trim();
+      if(!coinId)throw Error("Coin ID enter karein.");
+      if(!amount||amount<300)throw Error("Minimum withdrawal amount 300 hai.");
+
+      // Wager check (fresh calculate)
+      const remaining=await renderWager(ME.uid);
+      if(remaining>0)throw Error(`Wager complete nahi hua. Aapko ${remaining.toLocaleString()} aur games mein jeetna hoga withdrawal se pehle.`);
+
+      // Balance check
+      const walletSnap=await getDoc(doc(DB,"wallets",ME.uid));
+      if(!walletSnap.exists())throw Error("Wallet not found.");
+      const balances=walletSnap.data().balances||walletSnap.data().coins||{};
+      const currentBal=Number(balances[coinId.toLowerCase()]||0);
+      if(amount>currentBal)throw Error(`Insufficient balance. Aapke paas sirf ${currentBal.toLocaleString()} ${coinId.toUpperCase()} hai.`);
+
+      await addDoc(collection(DB,"withdrawals"),{uid:ME.uid,username:ME.username||"",coinId,amount,details,status:"pending",createdAt:serverTimestamp()});
+      $("msg").textContent="✅ Withdrawal request submitted! Admin review karega.";
+      $("msg").className="msg show ok";
+      $("coin").value="";$("amount").value="";$("details").value="";
+    }catch(e){
+      $("msg").textContent="❌ "+e.message;
+      $("msg").className="msg show err";
+    }
+  };
+
+  onSnapshot(query(collection(DB,"withdrawals"),where("uid","==",ME.uid),orderBy("createdAt","desc")),s=>{
+    $("rows").innerHTML=s.docs.map(d=>{const x=d.data();return `<tr><td>${x.createdAt?.toDate?.()?.toLocaleString()||"—"}</td><td>${x.coinId||""}</td><td>${x.amount||0}</td><td>${x.status||"pending"}</td></tr>`}).join("")||'<tr><td colspan="4">No requests.</td></tr>';
+  });
 });
 </script></body></html>
