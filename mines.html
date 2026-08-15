@@ -1,7 +1,7 @@
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mines</title><style>*{box-sizing:border-box}body{margin:0;background:#0d1021;color:#e8e6f0;font-family:Arial,sans-serif}.wrap{width:min(1180px,92%);margin:auto}.top{height:68px;background:#151a33;border-bottom:1px solid #2a3055}.head{height:100%;display:flex;align-items:center;justify-content:space-between;gap:15px}.brand{font-weight:900;color:#3ddc84}.nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.nav a{color:#9aa3d0;text-decoration:none;font-weight:800;font-size:13px}.page{padding:28px 0 55px}.card{background:#151a33;border:1px solid #2a3055;border-radius:18px;padding:22px;margin-bottom:18px}.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.tile{padding:17px;border:1px solid #2a3055;border-radius:13px;background:#10142a}.tile span{font-size:12px;color:#8b93b8}.tile b{display:block;font-size:24px;color:#3ddc84;margin-top:4px}.field{margin:11px 0}.field label{display:block;font-size:12px;font-weight:800;margin-bottom:6px}.field input,.field select{width:100%;padding:11px;border:1px solid #2a3055;border-radius:9px;background:#0d1021;color:#e8e6f0}.btn{border:0;border-radius:10px;padding:12px 18px;font-weight:800;cursor:pointer;font-size:14px}.btn:disabled{opacity:.45;cursor:not-allowed}.primary{background:linear-gradient(135deg,#3ddc84,#0f9d58);color:#fff}.cash{background:linear-gradient(135deg,#ff9d3d,#e05b00);color:#fff}.soft{background:#232a4d;color:#cdd3f0}.msg{display:none;padding:11px;border-radius:10px;margin:14px auto 0;font-size:13px;font-weight:700;max-width:560px}.show{display:block}.ok{background:#123524;color:#7ee2a8}.err{background:#3a1518;color:#ff9d9d}.small{font-size:12px;color:#8b93b8}.board{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;max-width:420px;margin:20px auto}.cell{aspect-ratio:1;border:0;border-radius:12px;background:linear-gradient(135deg,#2a3055,#232a4d);color:#e8e6f0;font-size:26px;cursor:pointer;display:grid;place-items:center;transition:.12s}.cell:hover:not(:disabled){transform:translateY(-2px)}.cell:disabled{cursor:not-allowed}.cell.safe{background:linear-gradient(135deg,#123524,#0f9d58)}.cell.mine{background:linear-gradient(135deg,#3a1518,#b63e39)}.center{text-align:center}.mult{font-size:40px;font-weight:900;color:#3ddc84;margin:10px 0}.table{overflow:auto}table{width:100%;border-collapse:collapse;min-width:720px}th,td{text-align:left;padding:10px;border-bottom:1px solid #232a4d;font-size:13px}th{font-size:11px;color:#8b93b8;text-transform:uppercase}@media(max-width:780px){.tiles{grid-template-columns:1fr}.head{height:auto;min-height:68px;padding:10px 0}.top{height:auto}.nav{justify-content:flex-end}.page{padding-top:20px}}</style></head><body><header class="top"><div class="wrap head"><div class="brand">💎 MINES</div><div class="nav"><a href="index.html">Lobby</a><a href="coinflip.html">Coin Flip</a><a href="crash.html">Crash</a><a href="profile.html">Profile</a><button id="logout" class="btn soft">Logout</button></div></div></header><main class="wrap page"><section class="card"><div class="tiles"><div class="tile"><span>Balance</span><b id="bal">0</b></div><div class="tile"><span>Min Bet</span><b id="min">1</b></div><div class="tile"><span>Max Bet</span><b id="max">1000</b></div></div><div class="field" style="max-width:200px;margin:16px auto"><label>Bet Amount</label><input id="bet" type="number" min="1" step=".01" value="1"></div><div class="field" style="max-width:200px;margin:12px auto"><label>Mines</label><select id="mines"><option>1</option><option>3</option><option selected>5</option><option>10</option><option>15</option><option>20</option></select></div><div class="center"><div class="mult" id="mult">1.00x</div><div class="board" id="board"></div><button id="start" class="btn primary">▶ Start Game</button> <button id="cash" class="btn cash" disabled>💰 Cash Out</button></div><div id="msg" class="msg"></div></section><section class="card"><h2 style="color:#e8e6f0">Recent Rounds</h2><div class="table"><table><thead><tr><th>Time</th><th>Stake</th><th>Picks</th><th>Cashed At</th><th>Outcome</th></tr></thead><tbody id="history"></tbody></table></div></section></main><script type="module">const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 import{getAuth,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
-import{getFirestore,doc,getDoc,onSnapshot,collection,query,where,limit,runTransaction,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+import{getFirestore,doc,getDoc,setDoc,onSnapshot,collection,query,where,limit,runTransaction,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 $("logout").onclick=async()=>{await signOut(auth);location.replace("login.html")};
 function showMsg(t,x){const m=$("msg");m.className="msg show "+t;m.textContent=x;if(t==="ok")setTimeout(()=>{m.className="msg"},4000);}
@@ -9,7 +9,6 @@ function readBalanceCaseInsensitive(b,c){const w=String(c||"").trim().toLowerCas
 function readBalanceKey(b,c){const w=String(c||"").trim().toLowerCase();for(const k of Object.keys(b||{})){if(String(k).trim().toLowerCase()===w)return k}return String(c||"").trim().toLowerCase()}
 function rollWin(ch){const a=new Uint32Array(1);crypto.getRandomValues(a);return (a[0]%100)<Number(ch??50)}
 
-// Build 25 cells
 const board=$("board");
 for(let i=0;i<25;i++){const b=document.createElement("button");b.className="cell";b.dataset.i=i;b.disabled=true;b.onclick=()=>pick(i,b);board.appendChild(b);}
 
@@ -18,22 +17,38 @@ onAuthStateChanged(auth,async user=>{
   try{
     const uSnap=await getDoc(doc(db,"users",user.uid));
     if(!uSnap.exists()||uSnap.data().status==="blocked"){await signOut(auth);location.replace("login.html");return}
+    
     let cfg={gameStatus:"enabled",coinId:"hfc",coinName:"HFC",minBet:1,maxBet:1000,maxMultiplier:50,winChance:50,mines:5};
-    const cf=await getDoc(doc(db,"settings","coinflip"));
-    if(cf.exists())cfg={...cfg,coinId:cf.data().coinId||cfg.coinId,coinName:cf.data().coinName||cfg.coinName};
-    const ms=await getDoc(doc(db,"settings","mines"));
-    if(ms.exists())cfg={...cfg,...ms.data()};
+    
+    try{
+      const ms=await getDoc(doc(db,"settings","mines"));
+      if(ms.exists())cfg={...cfg,...ms.data()};
+    }catch(e){console.warn("Mines settings load failed:",e);}
+    
     $("min").textContent=cfg.minBet;$("max").textContent=cfg.maxBet;
     $("bet").min=cfg.minBet;$("bet").max=cfg.maxBet;$("bet").value=cfg.minBet;
     $("mines").value=String(cfg.mines||5);
 
-    onSnapshot(doc(db,"wallets",user.uid),s=>{const w=s.exists()?s.data():{};$("bal").textContent=readBalanceCaseInsensitive(w.balances||w.coins||{},cfg.coinId).toLocaleString();},()=>{$("bal").textContent="—"});
+    // Ensure wallet exists
+    let walletRef=doc(db,"wallets",user.uid);
+    let wSnap=await getDoc(walletRef);
+    if(!wSnap.exists()){
+      console.log("Creating wallet for user...");
+      try{
+        await setDoc(walletRef,{balances:{hfc:0},createdAt:serverTimestamp()});
+      }catch(e){console.warn("Wallet create failed:",e);}
+    }
+
+    onSnapshot(walletRef,s=>{
+      const w=s.exists()?s.data():{};
+      $("bal").textContent=readBalanceCaseInsensitive(w.balances||w.coins||{},cfg.coinId).toLocaleString();
+    },()=>{$("bal").textContent="—"});
+    
     onSnapshot(query(collection(db,"games"),where("uid","==",user.uid),limit(100)),s=>{
       const rows=s.docs.map(d=>d.data()).filter(x=>x.game==="mines").sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0)).slice(0,20);
       $("history").innerHTML=rows.map(x=>`<tr><td>${x.createdAt?.toDate?.()?.toLocaleString()||"—"}</td><td>${x.stake??"—"} ${x.coinName||""}</td><td>${x.picks??0}</td><td>${x.cashedAt?x.cashedAt.toFixed(2)+"x":"—"}</td><td style="color:${x.outcome==="win"?"#7ee2a8":"#ff9d9d"}">${x.outcome==="win"?"CASHED":"MINE"}</td></tr>`).join("")||'<tr><td colspan="5">No rounds yet.</td></tr>';
     },()=>{$("history").innerHTML='<tr><td colspan="5">History unavailable.</td></tr>'});
 
-    // ---- GAME STATE ----
     let phase="idle",stake=0,M=5,picks=0,mult=1,willWin=true,lossAt=1;
     function multiplier(k){let p=1;for(let i=0;i<k;i++){p*=(25-M-i)/(25-i);}return Math.max(1,Math.min(Number(cfg.maxMultiplier)||50,Math.floor((1/p)*0.97*100)/100));}
     function resetBoard(){[...board.children].forEach(c=>{c.className="cell";c.textContent="";c.disabled=true;});}
@@ -44,9 +59,8 @@ onAuthStateChanged(auth,async user=>{
       stake=Number($("bet").value);
       if(!Number.isFinite(stake)||stake<Number(cfg.minBet)||stake>Number(cfg.maxBet)){showMsg("err","Bet limits ke andar enter karo.");return}
       M=Number($("mines").value)||5;
-      // ADMIN WIN CHANCE: pehle win/loss decide
       willWin=rollWin(cfg.winChance);
-      lossAt=1+Math.floor(Math.random()*3); // loss round mein 1..3 pick par mine
+      lossAt=1+Math.floor(Math.random()*3);
       phase="playing";picks=0;mult=1;
       $("mult").textContent="1.00x";
       resetBoard();
@@ -69,7 +83,7 @@ onAuthStateChanged(auth,async user=>{
         $("mult").textContent=mult.toFixed(2)+"x";
         $("cash").disabled=false;
         $("cash").textContent=`💰 Cash Out ${(stake*mult).toFixed(2)}`;
-        if(picks>=(25-M))return end(true,mult); // sab safe tiles khul gayi
+        if(picks>=(25-M))return end(true,mult);
       }
     }
     function revealMines(skip){
@@ -89,27 +103,41 @@ onAuthStateChanged(auth,async user=>{
           const statsRef=doc(db,"gameStats",user.uid);
           const wSnap=await tx.get(walletRef);
           const sSnap=await tx.get(statsRef);
+          
           if(!wSnap.exists())throw new Error("Wallet not found.");
           const wData=wSnap.data();
           const field=("balances" in wData)?"balances":("coins" in wData)?"coins":"balances";
           const bals=wData[field]||{};
           const key=readBalanceKey(bals,cfg.coinId);
           const bal=Number(bals[key])||0;
+          
           if(stake>bal)throw new Error("Insufficient balance.");
           const newBal=won?bal-stake+stake*payout:bal-stake;
           const gameRef=doc(collection(db,"games"));
           const rec={uid:user.uid,game:"mines",outcome:won?"win":"loss",stake,coinId:key,coinName:cfg.coinName,mines:M,picks,createdAt:serverTimestamp()};
           if(won){rec.cashedAt=payout;rec.payoutMultiplier=payout;}
+          
           tx.set(gameRef,rec);
           tx.update(walletRef,{[field+"."+key]:newBal,lastGameId:gameRef.id,lastPlayedCoin:key,lastGame:"mines",lastGameAt:serverTimestamp()});
-          if(sSnap.exists()){const o=sSnap.data();tx.update(statsRef,{totalGames:Number(o.totalGames||0)+1,wins:Number(o.wins||0)+(won?1:0),losses:Number(o.losses||0)+(won?0:1),lastGameId:gameRef.id});}
-          else{tx.set(statsRef,{totalGames:1,wins:won?1:0,losses:won?0:1,lastGameId:gameRef.id});}
+          
+          if(sSnap.exists()){
+            const o=sSnap.data();
+            tx.update(statsRef,{totalGames:Number(o.totalGames||0)+1,wins:Number(o.wins||0)+(won?1:0),losses:Number(o.losses||0)+(won?0:1),lastGameId:gameRef.id});
+          }else{
+            tx.set(statsRef,{totalGames:1,wins:won?1:0,losses:won?0:1,lastGameId:gameRef.id});
+          }
         });
         if(won)showMsg("ok",`Cashed out @ ${payout.toFixed(2)}x! +${(stake*payout-stake).toFixed(2)} ${cfg.coinName}`);
         else showMsg("err",`💣 Mine lag gayi! -${stake} ${cfg.coinName}`);
       }catch(err){
-        console.error(err);
-        showMsg("err",err?.code==="permission-denied"?"Rules ne reject kiya. Naye rules publish karein aur admin-mines.html se settings save karein.":(err?.message||"Transaction fail."));
+        console.error("Transaction error:",err);
+        let errMsg=err?.message||"Transaction fail.";
+        if(err?.code==="permission-denied"){
+          errMsg="Rules ne reject kiya. Admin-mines.html se settings save karein aur rules publish karein.";
+        }else if(errMsg.includes("Wallet not found")){
+          errMsg="Wallet missing. Page refresh karein.";
+        }
+        showMsg("err",errMsg);
       }
     }
   }catch(err){console.error(err);$("bal").textContent="—";}
