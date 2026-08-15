@@ -3,9 +3,10 @@
 @keyframes bgShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
 body{margin:0;background:linear-gradient(135deg,#f6f0e5 0%,#fff5e1 25%,#f6f0e5 50%,#e9d9c0 75%,#f6f0e5 100%);background-size:400% 400%;animation:bgShift 20s ease infinite;color:#29231d;font-family:Arial,sans-serif;min-height:100vh}
 .wrap{width:min(1180px,92%);margin:auto}
-.top{height:68px;background:linear-gradient(180deg,rgba(255,253,249,.95),rgba(255,253,249,.85));backdrop-filter:blur(12px);border-bottom:1px solid #e5dbcc;box-shadow:0 4px 20px rgba(81,57,26,.08);position:sticky;top:0;z-index:50}
+.top{height:68px;background:linear-gradient(180deg,rgba(255,253,249,.95),rgba(255,253,249,.85));backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid #e5dbcc;box-shadow:0 4px 20px rgba(81,57,26,.08);position:sticky;top:0;z-index:50}
 .head{height:100%;display:flex;align-items:center;justify-content:space-between;gap:15px}
-.brand{font-weight:900;letter-spacing:1px;font-size:18px;background:linear-gradient(90deg,#8d632b 0%,#c49b5d 25%,#ffd98a 50%,#c49b5d 75%,#8d632b 100%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.brand{font-weight:900;letter-spacing:1px;font-size:18px;background:linear-gradient(90deg,#8d632b 0%,#c49b5d 25%,#ffd98a 50%,#c49b5d 75%,#8d632b 100%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 4s linear infinite}
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
 .nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .nav a{color:#6e522d;text-decoration:none;font-weight:800;font-size:13px;padding:8px 14px;border-radius:9px;transition:all .3s ease}
 .nav a:hover{background:#f2e9d6;transform:translateY(-1px)}
@@ -57,33 +58,44 @@ import{getFirestore,doc,getDoc,getDocs,collection,query,where,orderBy,onSnapshot
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 if($("logout"))$("logout").onclick=async()=>{await signOut(auth);location.href="login.html"};
 
-// SAB KUCH ISI PAGE SE: deposits + rewards + winnings READ kar ke wager calculate
+// SAB KUCH ISI PAGE SE: deposits + rewards + NEW winnings READ kar ke wager calculate
 async function computeWager(uid){
-  // 1) Total completed deposits
-  let dep=0;
+  // 1) Total completed deposits + sab se naye deposit ka time
+  let dep=0, depTime=0;
   const dSnap=await getDocs(query(collection(db,"deposits"),where("uid","==",uid)));
-  dSnap.forEach(d=>{const x=d.data();if(x.status==="completed")dep+=Number(x.amount||0);});
-
-  // 2) Total winnings (games se net profit)
-  let win=0;
-  const gSnap=await getDocs(query(collection(db,"games"),where("uid","==",uid)));
-  gSnap.forEach(g=>{const x=g.data();
-    if(x.outcome==="win"){
-      const m=Number(x.cashedAt||x.payoutMultiplier||2);
-      win+=Number(x.stake||0)*(m-1);
+  dSnap.forEach(d=>{const x=d.data();
+    if(x.status==="completed"){
+      dep+=Number(x.amount||0);
+      const t=x.createdAt?.toMillis?.()||0;
+      if(t>depTime)depTime=t;
     }
   });
 
-  // 3) Total rewards (current streak ke schedule se)
-  let rew=0;
+  // 2) Rewards (streak se) + aakhri reward claim ka time
+  let rew=0, rewTime=0;
   const uSnap=await getDoc(doc(db,"users",uid));
   const ud=uSnap.exists()?uSnap.data():{};
   const vip=Number(ud.currentVIP||0);
   const streak=Number(ud.dailyStreak||0);
+  rewTime=ud.lastDailyReward?.toMillis?.()||0;
   const vSnap=await getDoc(doc(db,"settings","dailyRewards"));
   const dr=vSnap.exists()?(vSnap.data().rewards||{}):{};
   const sched=dr["vip"+vip]||dr["vip0"]||[];
   for(let i=0;i<streak&&i<sched.length;i++)rew+=Number(sched[i]||0);
+
+  // BASELINE: sirf is time ke BAAD wali winnings count hongi (purani ignore)
+  const baseline=Math.max(depTime,rewTime);
+
+  // 3) Winnings: sirf NEW games (baseline ke baad) jo win hue
+  let win=0;
+  const gSnap=await getDocs(query(collection(db,"games"),where("uid","==",uid)));
+  gSnap.forEach(g=>{const x=g.data();
+    const t=x.createdAt?.toMillis?.()||0;
+    if(x.outcome==="win" && t>baseline){
+      const m=Number(x.cashedAt||x.payoutMultiplier||2);
+      win+=Number(x.stake||0)*(m-1);
+    }
+  });
 
   return{dep,rew,win};
 }
