@@ -1,4 +1,67 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Deposit</title><style>*{box-sizing:border-box}body{margin:0;background:#f6f0e5;color:#29231d;font-family:Arial,sans-serif}.wrap{width:min(1180px,92%);margin:auto}.top{height:68px;background:#fffdf9;border-bottom:1px solid #e5dbcc}.head{height:100%;display:flex;align-items:center;justify-content:space-between;gap:15px}.brand{font-weight:900;color:#8d632b;letter-spacing:.5px}.nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.nav a{color:#6e522d;text-decoration:none;font-weight:800;font-size:13px}.page{padding:28px 0 55px}.card{background:#fffdf9;border:1px solid #e5dbcc;border-radius:18px;padding:22px;box-shadow:0 10px 28px #51391a12;margin-bottom:18px}.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.tile{padding:17px;border:1px solid #e5dbcc;border-radius:13px;background:#faf6ef}.tile span{font-size:12px;color:#81786d}.tile b{display:block;font-size:24px;color:#8d632b;margin-top:4px}.field{margin:11px 0}.field label{display:block;font-size:12px;font-weight:800;margin-bottom:6px}.field input,.field select{width:100%;padding:11px;border:1px solid #e5dbcc;border-radius:9px;background:#fff;color:#29231d}.btn{border:0;border-radius:10px;padding:12px 18px;font-weight:800;cursor:pointer;font-size:14px}.primary{background:linear-gradient(135deg,#c49b5d,#8d632b);color:#fff}.soft{background:#eee6da;color:#392d20}.msg{display:none;padding:11px;border-radius:10px;margin:14px 0;font-size:13px;font-weight:700}.show{display:block}.ok{background:#edf8f1;color:#286f43}.err{background:#fff0ef;color:#963530}.small{font-size:12px;color:#81786d}.vip-badge{display:inline-block;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:800;background:linear-gradient(135deg,#ffd700,#ffed4e);color:#8d632b;margin-left:10px}@media(max-width:780px){.tiles{grid-template-columns:1fr}.head{height:auto;min-height:68px;padding:10px 0}.top{height:auto}.nav{justify-content:flex-end}.page{padding-top:20px}}</style></head><body><header class="top"><div class="wrap head"><div class="brand">COIN FLIP</div><div class="nav"><a href="index.html">Lobby</a><a href="profile.html">Profile</a><a href="deposit.html">Deposit</a><a href="withdrawal.html">Withdrawal</a><button id="logout" class="btn soft">Logout</button></div></div></header><main class="wrap page"><section class="card"><h1>Deposit <span id="vipBadge" class="vip-badge">VIP 0</span></h1><p class="small">Deposit karein aur VIP rank unlock karein. Higher VIP = Better daily rewards!</p><div class="tiles"><div class="tile"><span>Current Balance</span><b id="bal">0</b></div><div class="tile"><span>Total Deposited</span><b id="total">0</b></div><div class="tile"><span>Current VIP</span><b id="vip">0</b></div></div><div id="msg" class="msg"></div><div class="field" style="max-width:400px;margin:20px auto"><label>Amount</label><input id="amount" type="number" min="1" step=".01" value="100"></div><div class="field" style="max-width:400px;margin:16px auto"><label>Coin</label><select id="coin"><option value="hfc">HFC</option></select></div><button id="deposit" class="btn primary" style="width:100%;max-width:400px;display:block;margin:20px auto">💰 Deposit Request</button><div class="small" style="margin-top:20px;padding:14px;background:#faf6ef;border-radius:9px"><b>VIP Progress:</b> <span id="progress">VIP 0 → VIP 1 (300 deposit required)</span></div><p class="small" style="margin-top:10px">⏳ Deposit request admin approval ke baad balance mein add hoti hai (secure rules ke mutabiq).</p></section></main><script type="module">const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Deposit</title><style>
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;display:flex;flex-direction:column;overflow:hidden;
+  background:linear-gradient(180deg,#3a7bd5 0%,#7ec3e8 22%,#ffd9a0 48%,#ff9a8a 68%,#c86dd7 100%);
+  color:#fff;font-family:Arial,sans-serif;
+}
+.wrap{width:min(1180px,96%);margin:auto}
+
+/* ===== TOP BAR (magenta, gold border) ===== */
+.top{flex:0 0 auto;background:linear-gradient(180deg,#d5488a,#a02870);border-bottom:3px solid #ffd700;box-shadow:0 4px 20px rgba(0,0,0,.35)}
+.head{height:54px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{font-weight:900;letter-spacing:1px;font-size:18px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+
+/* ===== BOTTOM NAV (green bar) ===== */
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;justify-content:space-around;align-items:center;gap:4px;background:linear-gradient(180deg,#3aa04a,#1c6b2a);border-top:3px solid #ffd700;padding:7px 6px calc(7px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px rgba(0,0,0,.4)}
+.nav a,.nav button{color:#fff;text-decoration:none;font-weight:800;font-size:12px;padding:8px 11px;border-radius:10px;background:rgba(255,255,255,.14);border:0;cursor:pointer;transition:.2s}
+.nav a::after,.nav button::after{display:none}
+.nav a:hover,.nav button:hover{background:rgba(255,255,255,.28)}
+
+/* ===== PAGE: fit screen ===== */
+.page{flex:1;min-height:0;overflow-y:auto;padding:8px 0 62px;-webkit-overflow-scrolling:touch}
+
+.card{border:2px solid #ffd700;border-radius:16px;padding:14px;margin-bottom:10px;box-shadow:0 8px 24px rgba(0,0,0,.35);background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.06))}
+
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0}
+.tile{padding:8px 6px;border:1px solid rgba(255,215,0,.5);border-radius:12px;background:rgba(0,0,0,.25);text-align:center}
+.tile span{font-size:9px;color:rgba(255,255,255,.85);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.tile b{display:block;font-size:16px;margin-top:2px;font-weight:900;color:#ffd700}
+
+h1{margin:0 0 8px;font-size:24px;color:#ffd700;text-shadow:0 2px 8px rgba(0,0,0,.5);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.small{font-size:12px;color:rgba(255,255,255,.85);margin:4px 0}
+
+.field{margin:10px 0}
+.field label{display:block;font-size:10px;font-weight:800;margin-bottom:4px;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.9)}
+.field input,.field select{width:100%;padding:10px;border:1px solid rgba(255,215,0,.5);border-radius:10px;background:rgba(0,0,0,.3);color:#fff;font-size:15px;font-weight:700}
+.field input:focus,.field select:focus{outline:none;border-color:#ffd700;box-shadow:0 0 0 3px rgba(255,215,0,.2)}
+.field select option{background:#2a1650;color:#fff}
+
+.btn{border:0;border-radius:12px;padding:12px 18px;font-weight:800;cursor:pointer;font-size:15px;transition:.2s}
+.btn:hover{transform:translateY(-2px)}
+.primary{background:linear-gradient(180deg,#ffd700,#f0a000);color:#5a2a00;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.primary:hover{box-shadow:0 6px 20px rgba(0,0,0,.5)}
+.soft{background:rgba(255,255,255,.2);color:#fff}
+
+.msg{display:none;padding:10px;border-radius:10px;margin:12px 0;font-size:13px;font-weight:700}
+.show{display:block}
+.ok{background:#0e2b1e;color:#7ee2a8;border:1px solid #1e4d34}
+.err{background:#33141a;color:#ff9d9d;border:1px solid #5a2025}
+
+.vip-badge{display:inline-block;padding:4px 12px;border-radius:16px;font-size:12px;font-weight:800;background:linear-gradient(135deg,#ffd700,#ffed4e);color:#8d2b2b;box-shadow:0 2px 8px rgba(0,0,0,.35);margin-left:8px}
+
+.progress-box{margin-top:14px;padding:12px;background:rgba(0,0,0,.3);border:1px solid rgba(255,215,0,.4);border-radius:10px;font-size:13px;color:#ffd700;text-shadow:0 1px 4px rgba(0,0,0,.4)}
+.progress-box b{color:#fff}
+
+@media(max-width:640px){
+  .head{height:48px}
+  .brand{font-size:15px}
+  .nav a,.nav button{font-size:11px;padding:7px 9px}
+  .tiles{grid-template-columns:1fr}
+  h1{font-size:20px}
+}
+</style></head><body><header class="top"><div class="wrap head"><div class="brand">💰 DEPOSIT</div><div class="nav"><a href="index.html">Lobby</a><a href="profile.html">Profile</a><a href="deposit.html">Deposit</a><a href="withdrawal.html">Withdrawal</a><button id="logout" class="btn soft">Logout</button></div></div></header><main class="wrap page"><section class="card"><h1>Deposit <span id="vipBadge" class="vip-badge">VIP 0</span></h1><p class="small">Deposit karein aur VIP rank unlock karein. Higher VIP = Better daily rewards!</p><div class="tiles"><div class="tile"><span>Current Balance</span><b id="bal">0</b></div><div class="tile"><span>Total Deposited</span><b id="total">0</b></div><div class="tile"><span>Current VIP</span><b id="vip">0</b></div></div><div id="msg" class="msg"></div><div class="field" style="max-width:400px;margin:16px auto"><label>Amount</label><input id="amount" type="number" min="1" step=".01" value="100"></div><div class="field" style="max-width:400px;margin:12px auto"><label>Coin</label><select id="coin"><option value="hfc">HFC</option></select></div><button id="deposit" class="btn primary" style="width:100%;max-width:400px;display:block;margin:16px auto">💰 Deposit Request</button><div class="progress-box" style="margin-top:16px"><b>VIP Progress:</b> <span id="progress">VIP 0 → VIP 1 (300 deposit required)</span></div><p class="small" style="margin-top:12px">⏳ Deposit request admin approval ke baad balance mein add hoti hai (secure rules ke mutabiq).</p></section></main><script type="module">const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 import{getAuth,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 import{getFirestore,doc,getDoc,getDocs,collection,onSnapshot,addDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
@@ -23,18 +86,15 @@ onAuthStateChanged(auth,async user=>{
     const vSnap=await getDoc(doc(db,"settings","vip"));
     if(vSnap.exists())vipSettings={...vipSettings,...vSnap.data()};
 
-    // FIX 1: Coins list sahi tarike se load karo (getDocs on collection)
     const cSnap=await getDocs(collection(db,"coins"));
     const coins=cSnap.docs.map(d=>({id:d.id,...d.data()})).filter(c=>c.active!==false);
     $("coin").innerHTML=(coins.length?coins:[{id:"hfc",name:"HFC"}]).map(c=>`<option value="${c.id}">${c.name||String(c.id).toUpperCase()}</option>`).join("");
 
-    // Balance (selected coin ke mutabiq, live)
     let lastWallet={};
     function renderBal(){$("bal").textContent=readBal(lastWallet.balances||lastWallet.coins||{},$("coin").value).toLocaleString();}
     onSnapshot(doc(db,"wallets",user.uid),s=>{lastWallet=s.exists()?s.data():{};renderBal();},()=>{$("bal").textContent="—"});
     $("coin").onchange=renderBal;
 
-    // Total deposited + VIP progress (live)
     onSnapshot(doc(db,"users",user.uid),s=>{
       const u=s.exists()?s.data():{};
       const total=Number(u.totalDeposited||0);
@@ -50,7 +110,6 @@ onAuthStateChanged(auth,async user=>{
         :`VIP ${currentVIP} (Max VIP reached!)`;
     });
 
-    // FIX 2: Deposit ab PENDING REQUEST hai (rules ke mutabiq admin approve karega)
     $("deposit").onclick=async()=>{
       const amount=Number($("amount").value);
       const coinId=$("coin").value;
