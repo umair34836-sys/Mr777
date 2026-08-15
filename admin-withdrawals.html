@@ -224,7 +224,7 @@ h2{margin:6px 0 16px;color:#392d20;letter-spacing:-.3px}
   .page{padding-top:20px}
   table{min-width:700px}
 }
-</style></head><body><header class="top"><div class="wrap head"><div class="brand">⚙️ ADMIN PANEL</div><div class="adminnav"><a href="admin-deposits.html">💰 Deposits</a><a href="admin-withdrawals.html" class="active">💸 Withdrawals</a><a href="admin-users.html">👥 Users</a></div></div></header><main class="wrap page"><section class="card"><h1>💸 Withdrawal Requests</h1><p class="small">User ki withdrawal requests ko approve ya reject karo. Approve karne par user ka balance automatically deduct hoga.</p><div id="msg" class="msg"></div><div class="tabs"><button class="tab active" data-filter="pending">Pending</button><button class="tab" data-filter="approved">Approved</button><button class="tab" data-filter="rejected">Rejected</button><button class="tab" data-filter="all">All</button></div><div class="table"><table><thead><tr><th>Date</th><th>User</th><th>Coin</th><th>Amount</th><th>Details</th><th>Status</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table></div></section></main><script type="module">
+</style></head><body><header class="top"><div class="wrap head"><div class="brand">⚙️ ADMIN PANEL</div><div class="adminnav"><a href="admin.html">📊 Dashboard</a><a href="admin-deposits.html">💰 Deposits</a><a href="admin-withdrawals.html" class="active">💸 Withdrawals</a><a href="admin-users.html">👥 Users</a></div></div></header><main class="wrap page"><section class="card"><h1>💸 Withdrawal Requests</h1><p class="small">User ki withdrawal requests ko approve ya reject karo. Approve karne par user ka balance automatically deduct hoga.</p><div id="msg" class="msg"></div><div class="tabs"><button class="tab active" data-filter="pending">Pending</button><button class="tab" data-filter="approved">Approved</button><button class="tab" data-filter="rejected">Rejected</button><button class="tab" data-filter="all">All</button></div><div class="table"><table><thead><tr><th>Date</th><th>User</th><th>Coin</th><th>Amount</th><th>Details</th><th>Status</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table></div></section></main><script type="module">
 const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
 
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
@@ -238,6 +238,11 @@ function showMsg(type,text){
   m.className="msg show "+type;
   m.textContent=text;
   setTimeout(()=>{m.className="msg"},4000);
+}
+
+// FIX: Aapke system ke mutabiq admin check (isAdmin === true) + role fallback
+function isAdminUser(data){
+  return data && (data.isAdmin===true || data.role==="admin");
 }
 
 let allRequests=[];
@@ -337,7 +342,8 @@ onAuthStateChanged(auth,async user=>{
   
   try{
     const uSnap=await getDoc(doc(db,"users",user.uid));
-    if(!uSnap.exists()||uSnap.data().role!=="admin"){
+    // FIX: Ab isAdmin === true check hota hai (aapke existing system jaisa)
+    if(!uSnap.exists()||!isAdminUser(uSnap.data())){
       showMsg("err","Access denied. Admin privileges required.");
       setTimeout(()=>location.href="index.html",2000);
       return;
