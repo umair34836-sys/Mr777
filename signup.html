@@ -1,17 +1,67 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sign Up</title><style>*{box-sizing:border-box}body{margin:0;background:#f6f0e5;color:#29231d;font-family:Arial,sans-serif}.wrap{width:min(1180px,92%);margin:auto}.top{height:68px;background:#fffdf9;border-bottom:1px solid #e5dbcc}.head{height:100%;display:flex;align-items:center;justify-content:space-between;gap:15px}.brand{font-weight:900;color:#8d632b;letter-spacing:.5px}.page{padding:28px 0 55px}.card{background:#fffdf9;border:1px solid #e5dbcc;border-radius:18px;padding:22px;box-shadow:0 10px 28px #51391a12;margin-bottom:18px}.field{margin:11px 0}.field label{display:block;font-size:12px;font-weight:800;margin-bottom:6px}.field input{width:100%;padding:11px;border:1px solid #e5dbcc;border-radius:9px;background:#fff;color:#29231d;font-size:14px}.btn{border:0;border-radius:10px;padding:12px 14px;font-weight:800;cursor:pointer;font-size:15px}.btn:disabled{opacity:.5;cursor:not-allowed}.primary{background:linear-gradient(135deg,#c49b5d,#8d632b);color:#fff}.msg{display:none;padding:11px;border-radius:10px;margin-bottom:14px;font-size:13px;font-weight:700}.show{display:block}.ok{background:#edf8f1;color:#286f43}.err{background:#fff0ef;color:#963530}.small{font-size:12px;color:#81786d}.center{text-align:center}@media(max-width:780px){.head{height:auto;min-height:68px;padding:10px 0}.top{height:auto}.page{padding-top:20px}}</style></head><body><header class="top"><div class="wrap head"><div class="brand">COIN FLIP</div></div></header><main class="wrap page"><section class="card" style="max-width:480px;margin:30px auto"><h1 class="center">Create Account</h1><p class="small center">Username, email aur phone required hain.</p><div id="msg" class="msg"></div><div class="field"><label>Username</label><input id="username" placeholder="Enter username"></div><div class="field"><label>Email</label><input id="email" type="email" placeholder="your@email.com"></div><div class="field"><label>Phone Number</label><input id="phone" type="tel" placeholder="+92 300 1234567"></div><div class="field"><label>Password</label><input id="password" type="password" placeholder="Minimum 6 characters"></div><div class="field"><label>Confirm Password</label><input id="confirm" type="password" placeholder="Re-enter password"></div><button id="signup" class="btn primary" style="width:100%">Create Account</button><p class="small center">Already have account? <a href="login.html">Login</a></p></section></main><script type="module">const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sign Up</title><style>
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;display:flex;flex-direction:column;overflow:hidden;
+  background:linear-gradient(180deg,#3a7bd5 0%,#7ec3e8 22%,#ffd9a0 48%,#ff9a8a 68%,#c86dd7 100%);
+  color:#fff;font-family:Arial,sans-serif;
+}
+.wrap{width:min(1180px,96%);margin:auto}
+
+/* ===== TOP BAR (magenta, gold border) ===== */
+.top{flex:0 0 auto;background:linear-gradient(180deg,#d5488a,#a02870);border-bottom:3px solid #ffd700;box-shadow:0 4px 20px rgba(0,0,0,.35)}
+.head{height:54px;display:flex;align-items:center;justify-content:center;gap:10px}
+.brand{font-weight:900;letter-spacing:1px;font-size:20px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+
+/* ===== PAGE: fit screen, center card ===== */
+.page{flex:1;min-height:0;overflow-y:auto;display:flex;align-items:center;justify-content:center;padding:20px;-webkit-overflow-scrolling:touch}
+
+.card{border:3px solid #ffd700;border-radius:18px;padding:24px;box-shadow:0 12px 40px rgba(0,0,0,.5), inset 0 0 40px rgba(255,215,0,.1);background:linear-gradient(145deg,rgba(70,25,110,.95),rgba(45,15,80,.95));width:100%;max-width:480px}
+
+h1{margin:0 0 12px;font-size:26px;color:#ffd700;text-shadow:0 2px 8px rgba(0,0,0,.5);text-align:center}
+
+.field{margin:12px 0}
+.field label{display:block;font-size:10px;font-weight:800;margin-bottom:4px;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.9)}
+.field input{width:100%;padding:11px;border:2px solid rgba(255,215,0,.5);border-radius:12px;background:rgba(0,0,0,.4);color:#fff;font-size:14px;font-weight:600}
+.field input:focus{outline:none;border-color:#ffd700;box-shadow:0 0 0 4px rgba(255,215,0,.25)}
+.field input::placeholder{color:rgba(255,255,255,.4)}
+
+.btn{border:0;border-radius:12px;padding:13px 20px;font-weight:800;cursor:pointer;transition:.2s;font-size:15px;letter-spacing:.5px;width:100%}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.primary{background:linear-gradient(180deg,#ffd700,#f0a000);color:#5a2a00;box-shadow:0 6px 20px rgba(0,0,0,.4)}
+.primary:hover:not(:disabled){box-shadow:0 8px 28px rgba(0,0,0,.5)}
+
+.msg{display:none;padding:11px;border-radius:10px;margin-bottom:14px;font-size:13px;font-weight:700}
+.show{display:block}
+.ok{background:#0e2b1e;color:#7ee2a8;border:1px solid #1e4d34}
+.err{background:#33141a;color:#ff9d9d;border:1px solid #5a2025}
+
+.small{font-size:12px;color:rgba(255,255,255,.85);text-align:center;margin:6px 0 16px}
+.center{text-align:center}
+.small a{color:#ffd700;font-weight:800;text-decoration:none}
+.small a:hover{color:#fff2b0;text-decoration:underline}
+
+@media(max-width:640px){
+  .head{height:48px}
+  .brand{font-size:17px}
+  .card{padding:20px}
+  h1{font-size:22px}
+  .field input{padding:10px;font-size:13px}
+  .btn{padding:12px 16px;font-size:14px}
+}
+</style></head><body><header class="top"><div class="wrap head"><div class="brand">🪙 COIN FLIP</div></div></header><main class="wrap page"><section class="card"><h1 class="center">Create Account</h1><p class="small center">Username, email aur phone required hain.</p><div id="msg" class="msg"></div><div class="field"><label>Username</label><input id="username" placeholder="Enter username"></div><div class="field"><label>Email</label><input id="email" type="email" placeholder="your@email.com"></div><div class="field"><label>Phone Number</label><input id="phone" type="tel" placeholder="+92 300 1234567"></div><div class="field"><label>Password</label><input id="password" type="password" placeholder="Minimum 6 characters"></div><div class="field"><label>Confirm Password</label><input id="confirm" type="password" placeholder="Re-enter password"></div><button id="signup" class="btn primary" style="margin-top:12px">Create Account</button><p class="small" style="margin-top:16px">Already have account? <a href="login.html">Login</a></p></section></main><script type="module">const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 import{getAuth,onAuthStateChanged,createUserWithEmailAndPassword,signInWithEmailAndPassword}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 import{getFirestore,doc,getDoc,setDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 
-// FIX 1: Ye flag listener ko signup ke dauran interfere karne se rokta hai
 let creating=false;
 
 function showMsg(t,x){const m=$("msg");m.textContent=x;m.className="msg show "+t;if(t==="ok")setTimeout(()=>{m.className="msg"},4000);}
 function validEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)}
 function validPhone(p){const c=p.replace(/\D/g,'');return c.length>=10&&c.length<=15}
 
-// FIX 2: Agar profile missing ho (orphan account) to use bana deta hai
 async function ensureProfile(uid,data){
   const ref=doc(db,"users",uid);
   const s=await getDoc(ref);
@@ -34,11 +84,10 @@ async function ensureProfile(uid,data){
 }
 
 onAuthStateChanged(auth,async u=>{
-  if(creating) return; // signup chal raha hai to kuch mat karo
+  if(creating) return;
   if(u){
     const s=await getDoc(doc(db,"users",u.uid));
     if(s.exists()&&s.data().status!=="blocked"){location.href="index.html";}
-    // profile missing ho to sign out NAHI karte — signup khud repair karega
   }
 });
 
@@ -64,7 +113,6 @@ $("signup").onclick=async()=>{
       cred=await createUserWithEmailAndPassword(auth,email,pw);
     }catch(err){
       if(err.code==="auth/email-already-in-use"){
-        // FIX 3: Orphan account repair — sign in karo, missing profile bana do
         cred=await signInWithEmailAndPassword(auth,email,pw);
       }else{
         throw err;
@@ -72,11 +120,8 @@ $("signup").onclick=async()=>{
     }
     const uid=cred.user.uid;
 
-    // Profile ensure karo (nayi banegi ya orphan repair hogi)
     await ensureProfile(uid,{username,email,phone});
 
-    // Wallet/stats: rules admin-only rakhte hain, is liye try karo, fail ho to chup skip
-    // (balance admin panel / deposit se add hoga, pehle jaisa)
     try{await setDoc(doc(db,"wallets",uid),{balances:{hfc:100},createdAt:serverTimestamp()});}catch(e){console.warn("wallet skipped:",e.code||e.message);}
     try{await setDoc(doc(db,"gameStats",uid),{totalGames:0,wins:0,losses:0});}catch(e){console.warn("stats skipped:",e.code||e.message);}
 
