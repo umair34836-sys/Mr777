@@ -1,0 +1,354 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin - Withdrawals</title><style>
+*{box-sizing:border-box}
+
+@keyframes bgShift {
+  0%,100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+body{
+  margin:0;
+  background:linear-gradient(135deg,#f6f0e5 0%,#fff5e1 25%,#f6f0e5 50%,#e9d9c0 75%,#f6f0e5 100%);
+  background-size:400% 400%;
+  animation:bgShift 20s ease infinite;
+  color:#29231d;
+  font-family:Arial,sans-serif;
+  min-height:100vh;
+}
+
+.wrap{width:min(1400px,96%);margin:auto}
+
+.top{
+  height:68px;
+  background:linear-gradient(180deg,rgba(255,253,249,.95),rgba(255,253,249,.85));
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid #e5dbcc;
+  box-shadow:0 4px 20px rgba(81,57,26,.08);
+  position:sticky;
+  top:0;
+  z-index:50;
+}
+.head{height:100%;display:flex;align-items:center;justify-content:space-between;gap:15px}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.brand{
+  font-weight:900;
+  letter-spacing:1px;
+  font-size:18px;
+  background:linear-gradient(90deg,#8d632b 0%,#c49b5d 25%,#ffd98a 50%,#c49b5d 75%,#8d632b 100%);
+  background-size:200% auto;
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:shimmer 4s linear infinite;
+}
+
+.adminnav{display:flex;gap:8px;flex-wrap:wrap}
+.adminnav a{
+  padding:9px 14px;
+  border-radius:9px;
+  background:#eee6da;
+  text-decoration:none;
+  color:#392d20;
+  font-size:12px;
+  font-weight:800;
+  transition:all .3s ease;
+  position:relative;
+}
+.adminnav a::after{
+  content:'';
+  position:absolute;
+  bottom:2px;left:50%;
+  width:0;height:2px;
+  background:linear-gradient(90deg,#c49b5d,#8d632b);
+  transition:all .3s ease;
+  transform:translateX(-50%);
+}
+.adminnav a:hover{background:#f2e9d6;transform:translateY(-1px)}
+.adminnav a:hover::after{width:60%}
+.adminnav a.active{background:#8d632b;color:#fff}
+
+.page{padding:28px 0 55px}
+
+@keyframes cardIn {
+  from { opacity:0; transform:translateY(20px); }
+  to { opacity:1; transform:translateY(0); }
+}
+.card{
+  background:linear-gradient(145deg,#fffdf9,#f8f1e3);
+  border:1px solid #e5dbcc;
+  border-radius:18px;
+  padding:22px;
+  box-shadow:0 10px 28px rgba(81,57,26,.08), inset 0 1px 0 rgba(255,255,255,.8);
+  margin-bottom:18px;
+  animation:cardIn .6s ease backwards;
+  transition:transform .3s ease, box-shadow .3s ease;
+  position:relative;
+  overflow:hidden;
+}
+
+.card::before{
+  content:'';
+  position:absolute;
+  top:-50%;left:-50%;
+  width:200%;height:200%;
+  background:linear-gradient(45deg,transparent 30%,rgba(255,255,255,.4) 50%,transparent 70%);
+  transform:translateX(-100%);
+  transition:transform .8s ease;
+  pointer-events:none;
+}
+.card:hover::before{transform:translateX(100%)}
+
+.tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.tab{
+  padding:10px 18px;
+  border-radius:10px;
+  background:#eee6da;
+  border:0;
+  font-weight:800;
+  font-size:13px;
+  cursor:pointer;
+  transition:all .3s ease;
+  position:relative;
+  overflow:hidden;
+}
+.tab::before{
+  content:'';
+  position:absolute;
+  top:0;left:-100%;
+  width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);
+  transition:left .6s ease;
+}
+.tab:hover::before{left:100%}
+.tab.active{background:linear-gradient(135deg,#c49b5d,#8d632b);color:#fff;box-shadow:0 4px 14px rgba(141,99,43,.3)}
+
+.table{overflow:auto;border-radius:12px}
+table{width:100%;border-collapse:collapse;min-width:900px}
+th,td{text-align:left;padding:12px;border-bottom:1px solid #eee6da;font-size:13px}
+th{font-size:11px;color:#81786d;text-transform:uppercase;letter-spacing:.5px;font-weight:800;background:#faf6ef}
+tbody tr{transition:background .2s ease}
+tbody tr:hover{background:#faf4e7}
+td.username{font-weight:700;color:#392d20}
+td.amount{font-weight:800;color:#8d632b}
+
+.badge{
+  display:inline-block;
+  padding:5px 10px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+.badge.pending{background:#fff5e1;color:#b78a4b;border:1px solid #f0d9a8}
+.badge.approved{background:#edf8f1;color:#286f43;border:1px solid #c9e7d5;animation:badgePulse 2s ease-in-out infinite}
+.badge.rejected{background:#fff0ef;color:#963530;border:1px solid #f5d1ce}
+
+@keyframes badgePulse {
+  0%,100% { box-shadow:0 0 0 0 rgba(40,111,67,.4); }
+  50% { box-shadow:0 0 0 6px rgba(40,111,67,0); }
+}
+
+.btn{
+  border:0;
+  border-radius:8px;
+  padding:8px 14px;
+  font-weight:800;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+  transition:all .3s ease;
+  font-size:12px;
+  letter-spacing:.3px;
+}
+.btn::before{
+  content:'';
+  position:absolute;
+  top:0;left:-100%;
+  width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);
+  transition:left .6s ease;
+}
+.btn:hover::before{left:100%}
+.btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.btn:active{transform:translateY(0)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn:disabled::before{display:none}
+
+.approve{background:linear-gradient(135deg,#3ddc84,#0f9d58);color:#fff;box-shadow:0 3px 10px rgba(61,220,132,.3)}
+.reject{background:linear-gradient(135deg,#ff6b6b,#c92a2a);color:#fff;box-shadow:0 3px 10px rgba(255,107,107,.3)}
+
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+
+h1{margin:0 0 16px;font-size:32px;background:linear-gradient(135deg,#29231d,#8d632b);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.5px}
+h2{margin:6px 0 16px;color:#392d20;letter-spacing:-.3px}
+
+.msg{
+  display:none;
+  padding:11px;
+  border-radius:10px;
+  margin:14px 0;
+  font-size:13px;
+  font-weight:700;
+  animation:msgIn .4s ease;
+}
+@keyframes msgIn {
+  from { opacity:0; transform:translateY(-8px); }
+  to { opacity:1; transform:translateY(0); }
+}
+.show{display:block}
+.ok{background:#edf8f1;color:#286f43;border:1px solid #c9e7d5}
+.err{background:#fff0ef;color:#963530;border:1px solid #f5d1ce}
+
+.empty{
+  text-align:center;
+  padding:40px 20px;
+  color:#81786d;
+  font-weight:700;
+}
+
+.details{
+  font-size:12px;
+  color:#6e522d;
+  max-width:250px;
+  word-break:break-word;
+}
+
+@media(max-width:780px){
+  .head{height:auto;min-height:68px;padding:10px 0}
+  .top{height:auto}
+  .page{padding-top:20px}
+  table{min-width:700px}
+}
+</style></head><body><header class="top"><div class="wrap head"><div class="brand">⚙️ ADMIN PANEL</div><div class="adminnav"><a href="admin-deposits.html">💰 Deposits</a><a href="admin-withdrawals.html" class="active">💸 Withdrawals</a><a href="admin-users.html">👥 Users</a></div></div></header><main class="wrap page"><section class="card"><h1>💸 Withdrawal Requests</h1><p class="small">User ki withdrawal requests ko approve ya reject karo. Approve karne par user ka balance automatically deduct hoga.</p><div id="msg" class="msg"></div><div class="tabs"><button class="tab active" data-filter="pending">Pending</button><button class="tab" data-filter="approved">Approved</button><button class="tab" data-filter="rejected">Rejected</button><button class="tab" data-filter="all">All</button></div><div class="table"><table><thead><tr><th>Date</th><th>User</th><th>Coin</th><th>Amount</th><th>Details</th><th>Status</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table></div></section></main><script type="module">
+const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
+
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import{getAuth,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+import{getFirestore,doc,getDoc,collection,query,where,orderBy,limit,onSnapshot,updateDoc,serverTimestamp,runTransaction}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
+
+function showMsg(type,text){
+  const m=$("msg");
+  m.className="msg show "+type;
+  m.textContent=text;
+  setTimeout(()=>{m.className="msg"},4000);
+}
+
+let allRequests=[];
+let currentFilter="pending";
+
+function renderRequests(){
+  const filtered=currentFilter==="all"?allRequests:allRequests.filter(r=>r.status===currentFilter);
+  const rowsEl=$("rows");
+  
+  if(filtered.length===0){
+    rowsEl.innerHTML=`<tr><td colspan="7" class="empty">No ${currentFilter} requests found</td></tr>`;
+    return;
+  }
+  
+  rowsEl.innerHTML=filtered.map(r=>{
+    const isPending=r.status==="pending";
+    return `<tr>
+      <td>${r.createdAt?.toDate?.()?.toLocaleString()||"—"}</td>
+      <td class="username">${r.username||"Unknown"}<br><span class="details" style="font-size:10px;color:#81786d">${r.uid}</span></td>
+      <td>${r.coinId||"-"}</td>
+      <td class="amount">${Number(r.amount).toLocaleString()}</td>
+      <td class="details">${r.details||"-"}</td>
+      <td><span class="badge ${r.status}">${r.status}</span></td>
+      <td><div class="actions">
+        ${isPending?`
+          <button class="btn approve" onclick="approveRequest('${r.id}','${r.uid}','${r.coinId}',${r.amount})">✓ Approve</button>
+          <button class="btn reject" onclick="rejectRequest('${r.id}')">✗ Reject</button>
+        `:'—'}
+      </div></td>
+    </tr>`;
+  }).join("");
+}
+
+window.approveRequest=async(id,uid,coinId,amount)=>{
+  if(!confirm(`Approve withdrawal of ${amount} ${coinId}? User ka balance deduct hoga.`))return;
+  
+  try{
+    await runTransaction(db,async tx=>{
+      const walletRef=doc(db,"wallets",uid);
+      const requestRef=doc(db,"withdrawals",id);
+      const wSnap=await tx.get(walletRef);
+      
+      if(!wSnap.exists()) throw new Error("User wallet not found");
+      
+      const wData=wSnap.data();
+      const field=("balances" in wData)?"balances":("coins" in wData)?"coins":"balances";
+      const bals=wData[field]||{};
+      const key=String(coinId||"").toLowerCase();
+      const bal=Number(bals[key]||0);
+      
+      if(amount>bal) throw new Error(`Insufficient balance. User has only ${bal} ${coinId}`);
+      
+      tx.update(requestRef,{
+        status:"approved",
+        processedAt:serverTimestamp(),
+        processedBy:"admin"
+      });
+      
+      tx.update(walletRef,{
+        [field+"."+key]:bal-amount,
+        lastWithdrawalAt:serverTimestamp()
+      });
+    });
+    
+    showMsg("ok",`Withdrawal approved! ${amount} ${coinId} deducted from user balance.`);
+  }catch(err){
+    showMsg("err",err.message||"Failed to approve withdrawal");
+  }
+};
+
+window.rejectRequest=async(id)=>{
+  if(!confirm("Reject this withdrawal request?"))return;
+  
+  try{
+    await updateDoc(doc(db,"withdrawals",id),{
+      status:"rejected",
+      processedAt:serverTimestamp(),
+      processedBy:"admin"
+    });
+    showMsg("ok","Withdrawal request rejected");
+  }catch(err){
+    showMsg("err",err.message||"Failed to reject request");
+  }
+};
+
+document.querySelectorAll(".tab").forEach(tab=>{
+  tab.onclick=()=>{
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    tab.classList.add("active");
+    currentFilter=tab.dataset.filter;
+    renderRequests();
+  };
+});
+
+onAuthStateChanged(auth,async user=>{
+  if(!user){location.href="login.html";return}
+  
+  try{
+    const uSnap=await getDoc(doc(db,"users",user.uid));
+    if(!uSnap.exists()||uSnap.data().role!=="admin"){
+      showMsg("err","Access denied. Admin privileges required.");
+      setTimeout(()=>location.href="index.html",2000);
+      return;
+    }
+    
+    onSnapshot(query(collection(db,"withdrawals"),orderBy("createdAt","desc"),limit(100)),snap=>{
+      allRequests=snap.docs.map(d=>({id:d.id,...d.data()}));
+      renderRequests();
+    });
+  }catch(err){
+    showMsg("err","Failed to load admin panel: "+err.message);
+  }
+});
+</script></body></html>
