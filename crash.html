@@ -6,7 +6,6 @@ body{
   color:#eaf2ff;font-family:Arial,sans-serif;
   background:linear-gradient(180deg,#070b18 0%,#0d1430 45%,#0a0f22 100%);
 }
-/* Starfield overlay */
 body::before{
   content:'';position:fixed;inset:0;pointer-events:none;opacity:.55;
   background-image:
@@ -19,16 +18,26 @@ body::before{
 }
 .wrap{width:min(720px,96%);margin:auto}
 
-/* ===== TOP BAR ===== */
+/* ===== TOP BAR (sirf brand, compact) ===== */
 .top{flex:0 0 auto;background:linear-gradient(180deg,rgba(10,15,34,.96),rgba(10,15,34,.85));border-bottom:1px solid #22305e;backdrop-filter:blur(8px)}
-.head{height:52px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.head{height:48px;display:flex;align-items:center;justify-content:space-between;gap:8px}
 .brand{font-weight:900;font-size:16px;letter-spacing:.5px;color:#7fd4ff;text-shadow:0 0 14px rgba(80,180,255,.6)}
-.nav{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
-.nav a{color:#9fb4e8;text-decoration:none;font-weight:700;font-size:12px;padding:6px 9px;border-radius:8px;transition:.2s}
-.nav a:hover{background:#16204a;color:#7fd4ff}
 
-/* ===== PAGE: game fit, history scroll ===== */
-.page{flex:1;min-height:0;overflow-y:auto;padding:10px 0 14px;-webkit-overflow-scrolling:touch}
+/* ===== NAV = BOTTOM BAR (header overflow fix) ===== */
+.nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:100;
+  display:flex;justify-content:space-around;align-items:center;gap:4px;
+  background:linear-gradient(180deg,#101a3d,#0a1226);
+  border-top:2px solid #2a3a6e;
+  padding:7px 6px calc(7px + env(safe-area-inset-bottom));
+  box-shadow:0 -6px 20px rgba(0,0,0,.5);
+}
+.nav a{color:#9fb4e8;text-decoration:none;font-weight:700;font-size:12px;padding:8px 10px;border-radius:10px;background:rgba(127,212,255,.12);transition:.2s}
+.nav a:hover{background:rgba(127,212,255,.25);color:#7fd4ff}
+.nav .btn{padding:8px 12px;font-size:12px;box-shadow:none;background:rgba(255,120,120,.15);color:#ffb8c0}
+
+/* ===== PAGE ===== */
+.page{flex:1;min-height:0;overflow-y:auto;padding:8px 0 64px;-webkit-overflow-scrolling:touch}
 
 .card{
   background:linear-gradient(160deg,rgba(16,24,52,.92),rgba(10,16,36,.92));
@@ -36,27 +45,25 @@ body::before{
   box-shadow:0 8px 24px rgba(0,0,0,.5);
 }
 
-/* Compact stat tiles */
 .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.tile{padding:8px 6px;border:1px solid #2a3a6e;border-radius:10px;background:rgba(18,26,56,.8);text-align:center}
+.tile{padding:7px 6px;border:1px solid #2a3a6e;border-radius:10px;background:rgba(18,26,56,.8);text-align:center}
 .tile span{font-size:9px;color:#8fa3d8;text-transform:uppercase;letter-spacing:.5px;font-weight:700}
-.tile b{display:block;font-size:15px;margin-top:2px;color:#7fd4ff}
+.tile b{display:block;font-size:14px;margin-top:2px;color:#7fd4ff}
 
-/* Bet input */
-.field{margin:8px 0}
+/* Bet input (inline margin override) */
+.field{margin:6px 0}
+.field[style]{margin:8px auto !important}
 .field label{display:block;font-size:10px;font-weight:700;margin-bottom:4px;color:#8fa3d8;text-transform:uppercase}
-.field input{width:100%;padding:10px;border:1px solid #2a3a6e;border-radius:10px;background:#0b1226;color:#eaf2ff;font-size:16px;font-weight:700}
+.field input{width:100%;padding:9px;border:1px solid #2a3a6e;border-radius:10px;background:#0b1226;color:#eaf2ff;font-size:16px;font-weight:700}
 .field input:focus{outline:none;border-color:#7fd4ff;box-shadow:0 0 0 3px rgba(80,180,255,.15)}
 
-/* Buttons */
-.btn{border:0;border-radius:12px;padding:12px 16px;font-weight:800;cursor:pointer;font-size:15px;transition:.2s}
+/* Buttons (compact) */
+.btn{border:0;border-radius:12px;padding:11px 14px;font-weight:800;cursor:pointer;font-size:14px;transition:.2s}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 .primary{background:linear-gradient(180deg,#43e08a,#0f9d58);color:#06301c;box-shadow:0 4px 16px rgba(40,220,130,.35)}
-.primary:hover{box-shadow:0 6px 22px rgba(40,220,130,.5)}
 .cash{background:linear-gradient(180deg,#ff9d3d,#e05b00);color:#fff;box-shadow:0 4px 16px rgba(255,150,60,.35)}
-.cash:hover{box-shadow:0 6px 22px rgba(255,150,60,.5)}
 .soft{background:#1a2450;color:#cdd8ff}
-.center .btn{width:48%;max-width:230px;margin:0 .5%}
+.center .btn{width:48%;max-width:220px;margin:0 .5%}
 
 .msg{display:none;padding:10px;border-radius:10px;margin:10px auto 0;font-size:13px;font-weight:700;max-width:560px}
 .show{display:block}
@@ -64,9 +71,9 @@ body::before{
 .err{background:#33141a;color:#ff9d9d;border:1px solid #5a2025}
 .small{font-size:12px;color:#8fa3d8}
 
-/* ===== GAME STAGE (space graph) ===== */
+/* ===== STAGE (chhota taake fit aaye) ===== */
 .stage{
-  position:relative;height:clamp(210px,44vh,400px);border-radius:14px;overflow:hidden;
+  position:relative;height:clamp(150px,32vh,300px);border-radius:14px;overflow:hidden;
   border:1px solid #2a3a6e;
   background:
     radial-gradient(120% 90% at 70% -20%, rgba(70,40,140,.5), transparent 60%),
@@ -76,30 +83,30 @@ body::before{
 }
 canvas{width:100%;height:100%;display:block}
 
-/* Big multiplier */
 .mult{
-  position:absolute;top:32%;left:0;right:0;text-align:center;
-  font-size:clamp(44px,13vw,80px);font-weight:900;color:#fff;
+  position:absolute;top:30%;left:0;right:0;text-align:center;
+  font-size:clamp(38px,12vw,70px);font-weight:900;color:#fff;
   text-shadow:0 4px 30px #000,0 0 26px rgba(255,255,255,.35);
 }
-.mult.crash{color:#ff5d6c;text-shadow:0 4px 30px #000,0 0 26px rgba(255,93,108,.5)}
-.mult.win{color:#43e08a;text-shadow:0 4px 30px #000,0 0 26px rgba(67,224,138,.5)}
+.mult.crash{color:#ff5d6c}
+.mult.win{color:#43e08a}
 
 .center{text-align:center}
 h2{margin:6px 0 12px;color:#eaf2ff}
 
-/* History (compact, scroll) */
-.table{overflow:auto;border-radius:12px;max-height:220px}
-table{width:100%;border-collapse:collapse;min-width:560px}
-th,td{text-align:left;padding:9px;border-bottom:1px solid #1a2450;font-size:12px}
+/* History (compact scroll) */
+.table{overflow:auto;border-radius:12px;max-height:180px}
+table{width:100%;border-collapse:collapse;min-width:520px}
+th,td{text-align:left;padding:8px;border-bottom:1px solid #1a2450;font-size:12px}
 th{font-size:10px;color:#8fa3d8;text-transform:uppercase;letter-spacing:.5px}
 tbody tr:hover{background:rgba(80,180,255,.05)}
 
 @media(max-width:480px){
-  .head{height:48px}
+  .head{height:44px}
   .brand{font-size:14px}
-  .nav a{font-size:11px;padding:5px 7px}
-  .tile b{font-size:13px}
+  .nav a{font-size:11px;padding:7px 8px}
+  .tile b{font-size:12px}
+  .stage{height:clamp(140px,30vh,260px)}
 }
 </style></head><body><header class="top"><div class="wrap head"><div class="brand">🚀 ROCKET CRASH</div><div class="nav"><a href="index.html">Lobby</a><a href="coinflip.html">Coin Flip</a><a href="profile.html">Profile</a><a href="deposit.html">Deposit</a><button id="logout" class="btn soft">Logout</button></div></div></header><main class="wrap page"><section class="card"><div class="tiles"><div class="tile"><span>Balance</span><b id="bal">0</b></div><div class="tile"><span>Min Bet</span><b id="min">1</b></div><div class="tile"><span>Max Bet</span><b id="max">1000</b></div></div><div class="field" style="max-width:380px;margin:20px auto"><label>Bet Amount</label><input id="bet" type="number" min="1" step=".01" value="1"></div><div class="stage"><canvas id="cv"></canvas><div id="mult" class="mult">1.00x</div></div><p class="small center" style="margin-top:10px">Rocket crash hone se pehle Cash Out karo! Max multiplier: <b id="maxm">—</b></p><div class="center" style="margin-top:12px"><button id="launch" class="btn primary">🚀 Launch Rocket</button> <button id="cash" class="btn cash" disabled>💰 Cash Out</button></div><div id="msg" class="msg"></div></section><section class="card"><h2 style="color:#e8e6f0">Recent Rounds</h2><div class="table"><table><thead><tr><th>Time</th><th>Stake</th><th>Cashed At</th><th>Crash Point</th><th>Outcome</th></tr></thead><tbody id="history"></tbody></table></div></section></main><script type="module">const firebaseConfig={
   apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",
@@ -159,7 +166,6 @@ onAuthStateChanged(auth,async user=>{
       </tr>`).join("")||'<tr><td colspan="5">No rounds yet.</td></tr>';
     },()=>{$("history").innerHTML='<tr><td colspan="5">History unavailable.</td></tr>'});
 
-    // ---- GAME ENGINE ----
     let phase="idle",startTs=0,crashPoint=1,raf=0,pts=[],stake=0,curM=1;
     const growth=ms=>Math.pow(1.00024,ms);
     function genCrash(){
