@@ -1,0 +1,72 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Daily Rewards Admin</title><style>*{box-sizing:border-box}body{margin:0;background:#f6f0e5;color:#29231d;font-family:Arial,sans-serif}.wrap{width:min(1180px,92%);margin:auto}.top{height:68px;background:#fffdf9;border-bottom:1px solid #e5dbcc}.head{height:100%;display:flex;align-items:center;justify-content:space-between;gap:15px}.brand{font-weight:900;color:#8d632b;letter-spacing:.5px}.nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.nav a{color:#6e522d;text-decoration:none;font-weight:800;font-size:13px}.page{padding:28px 0 55px}.card{background:#fffdf9;border:1px solid #e5dbcc;border-radius:18px;padding:22px;box-shadow:0 10px 28px #51391a12;margin-bottom:18px}.field{margin:11px 0}.field label{display:block;font-size:12px;font-weight:800;margin-bottom:6px}.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer}.primary{background:linear-gradient(135deg,#c49b5d,#8d632b);color:#fff}.soft{background:#eee6da;color:#392d20}.msg{display:none;padding:11px;border-radius:10px;margin-bottom:14px;font-size:13px;font-weight:700}.show{display:block}.ok{background:#edf8f1;color:#286f43}.err{background:#fff0ef;color:#963530}.small{font-size:12px;color:#81786d}.adminnav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.adminnav a{padding:9px 12px;border-radius:9px;background:#eee6da;text-decoration:none;color:#392d20;font-size:12px;font-weight:800}.vip-section{margin-bottom:24px;padding:20px;background:#faf6ef;border:1px solid #e5dbcc;border-radius:13px}.vip-section h3{margin:0 0 16px;color:#8d632b;font-size:18px}.days-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}@media(max-width:780px){.days-grid{grid-template-columns:repeat(2,1fr)}.head{height:auto;min-height:68px;padding:10px 0}.top{height:auto}.nav{justify-content:flex-end}.page{padding-top:20px}}</style></head><body><header class="top"><div class="wrap head"><div class="brand">🎁 DAILY REWARDS ADMIN</div><div class="nav"><a href="index.html">Lobby</a><button id="logout" class="btn soft">Logout</button></div></div></header><main class="wrap page"><div class="adminnav"><a href="admin.html">Dashboard</a><a href="admin-users.html">Users</a><a href="admin-coins.html">Coins</a><a href="admin-games.html">Games</a><a href="admin-coinflip.html">Coin Flip</a><a href="admin-crash.html">Crash</a><a href="admin-mines.html">Mines</a><a href="admin-vip.html">VIP</a><a href="admin-daily.html">Daily Rewards</a><a href="admin-transactions.html">Transactions</a></div><section class="card"><h1>🎁 Daily Rewards - 7 Day Streak System</h1><p class="small">Har VIP level ke liye 7 din ka reward schedule set karein. Users daily login karke rewards collect karenge!</p><div id="msg" class="msg"></div><div id="vipSections"></div><button id="save" class="btn primary" style="width:100%;padding:14px;font-size:16px">💾 Save Daily Rewards</button></section></main><script type="module">const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import{getAuth,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+import{getFirestore,doc,getDoc,setDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
+if($("logout"))$("logout").onclick=async()=>{await signOut(auth);location.href="login.html"};
+
+onAuthStateChanged(auth,async u=>{
+  if(!u)return location.href="login.html";
+  const s=await getDoc(doc(db,"users",u.uid));
+  if(!s.exists()||s.data().status==="blocked"||s.data().isAdmin!==true){await signOut(auth);return location.href="index.html"}
+
+  // Default: VIP 0-5, har level ke liye 7 days
+  let dailyRewards={
+    vip0:[0.5,1,1.5,2,3,5,10],
+    vip1:[1,2,3,5,8,12,25],
+    vip2:[2,5,8,12,20,30,60],
+    vip3:[5,10,20,35,50,80,150],
+    vip4:[10,25,50,100,150,250,500],
+    vip5:[25,50,100,200,400,600,1200]
+  };
+
+  const snap=await getDoc(doc(db,"settings","dailyRewards"));
+  if(snap.exists()){dailyRewards=snap.data().rewards||dailyRewards;}
+
+  function render(){
+    const vipLevels=Object.keys(dailyRewards).sort((a,b)=>{
+      const numA=parseInt(a.replace('vip',''));
+      const numB=parseInt(b.replace('vip',''));
+      return numA-numB;
+    });
+
+    $("vipSections").innerHTML=vipLevels.map(vipKey=>{
+      const vipNum=vipKey.replace('vip','');
+      const days=dailyRewards[vipKey];
+      return `<div class="vip-section">
+        <h3>🏆 VIP ${vipNum} - 7 Day Rewards</h3>
+        <div class="days-grid">
+          ${days.map((val,i)=>`
+            <div class="field">
+              <label>Day ${i+1}</label>
+              <input type="number" step="0.01" value="${val}" data-vip="${vipKey}" data-day="${i}">
+            </div>
+          `).join('')}
+        </div>
+      </div>`;
+    }).join('');
+
+    // Attach change listeners
+    document.querySelectorAll('.days-grid input').forEach(inp=>{
+      inp.onchange=e=>{
+        const vipKey=e.target.dataset.vip;
+        const day=parseInt(e.target.dataset.day);
+        const val=parseFloat(e.target.value)||0;
+        dailyRewards[vipKey][day]=val;
+      };
+    });
+  }
+
+  $("save").onclick=async()=>{
+    await setDoc(doc(db,"settings","dailyRewards"),{
+      rewards:dailyRewards,
+      updatedAt:serverTimestamp()
+    },{merge:true});
+    $("msg").textContent="✅ Daily rewards saved successfully!";
+    $("msg").className="msg show ok";
+    setTimeout(()=>{$("msg").className="msg"},3000);
+  };
+
+  render();
+});
+</script></body></html>
