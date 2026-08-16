@@ -60,17 +60,26 @@ h2{margin:6px 0 12px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4);font-siz
 
 .wager-info{padding:14px;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.4);border-radius:12px;margin:12px 0}
 .wager-info h3{margin:0 0 8px;font-size:16px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4)}
-.progress-bar{width:100%;height:22px;background:rgba(0,0,0,.3);border-radius:11px;overflow:hidden;margin:8px 0;border:1px solid rgba(255,215,0,.3)}
-.progress-fill{height:100%;background:linear-gradient(90deg,#ffd700,#f0a000);transition:width .5s ease;display:flex;align-items:center;justify-content:center;color:#5a2a00;font-weight:800;font-size:12px}
+
+/* NEW: Per-coin wager items */
+.coin-wager-item{padding:10px;background:rgba(0,0,0,.3);border:1px solid rgba(255,215,0,.3);border-radius:10px;margin-bottom:8px}
+.coin-wager-item:last-child{margin-bottom:0}
+.cw-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:4px}
+.cw-coin-name{font-weight:800;color:#ffd700;font-size:14px;text-transform:uppercase}
+.cw-status{font-size:12px;font-weight:700;padding:2px 8px;border-radius:10px}
+.cw-status.complete{background:#0e2b1e;color:#7ee2a8;border:1px solid #1e4d34}
+.cw-status.pending{background:#33141a;color:#ff9d9d;border:1px solid #5a2025}
+
+.progress-bar{width:100%;height:18px;background:rgba(0,0,0,.4);border-radius:9px;overflow:hidden;margin:6px 0;border:1px solid rgba(255,215,0,.2)}
+.progress-fill{height:100%;background:linear-gradient(90deg,#ffd700,#f0a000);transition:width .5s ease;display:flex;align-items:center;justify-content:center;color:#5a2a00;font-weight:800;font-size:11px}
 .progress-fill.complete{background:linear-gradient(90deg,#0f9d58,#43e08a)}
 
-.income-breakdown{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
-.income-item{padding:8px;background:rgba(0,0,0,.3);border:1px solid rgba(255,215,0,.4);border-radius:10px;text-align:center}
-.income-item .label{font-size:9px;color:rgba(255,255,255,.85);font-weight:700;text-transform:uppercase;margin-bottom:4px;letter-spacing:.5px}
-.income-item .value{font-size:15px;font-weight:900;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4)}
-.income-item.remaining .value{color:#ff9d9d}
+.cw-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:6px;font-size:10px}
+.cw-stat{text-align:center;padding:4px;background:rgba(0,0,0,.3);border-radius:6px}
+.cw-stat .label{color:rgba(255,255,255,.7);margin-bottom:2px;text-transform:uppercase;letter-spacing:.3px}
+.cw-stat .value{color:#ffd700;font-weight:700;font-size:12px}
+.cw-stat.win-stat .value{color:#7ee2a8}
 
-/* ===== NEW: COIN RATES + IMPORTANT NOTE ===== */
 .rates-info{padding:14px;background:rgba(255,100,50,.1);border:2px solid rgba(255,150,50,.5);border-radius:12px;margin:12px 0}
 .rates-info h3{margin:0 0 10px;font-size:16px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4)}
 .rates-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:10px}
@@ -90,17 +99,15 @@ h2{margin:6px 0 12px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4);font-siz
   .brand{font-size:15px}
   .nav a,.nav button{font-size:11px;padding:7px 9px}
   .grid,.coins-grid{grid-template-columns:1fr}
-  .income-breakdown{grid-template-columns:repeat(2,1fr)}
   .rates-grid{grid-template-columns:repeat(2,1fr)}
   h1{font-size:20px}
   .coin-box .amount{font-size:20px}
-  .income-item .value{font-size:14px}
   .rate-box .rate-value{font-size:14px}
   .important-note .note-text{font-size:12px}
 }
 </style></head><body><header class="top"><div class="wrap head"><div class="brand">💸 WITHDRAWAL</div><div class="nav"><a href="index.html">Lobby</a><a href="profile.html">Profile</a><a href="deposit.html">Deposit</a><a href="withdrawal.html">Withdrawal</a><button id="logout" class="btn soft">Logout</button></div></div></header><main class="wrap page"><section class="card"><h1>Withdrawal</h1><p class="small">Minimum 300 withdraw. Pehle wager complete karein (games jeet kar).</p><p><a class="btn primary" href="https://wa.me/message/66Q4PMXC7LUCJ1" target="_blank">WhatsApp Admin</a></p>
 
-<!-- NEW: Coin PKR Rates Section -->
+<!-- Coin PKR Rates Section -->
 <div class="rates-info">
   <h3>💰 Coin Rates (PKR)</h3>
   <p class="small">Current exchange rates - 1 coin = ? PKR</p>
@@ -112,7 +119,7 @@ h2{margin:6px 0 12px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4);font-siz
     </div>
   </div>
   
-  <!-- NEW: Important Note -->
+  <!-- Important Note -->
   <div class="important-note">
     <div class="note-icon">⚠️</div>
     <div class="note-title">IMPORTANT NOTICE</div>
@@ -121,7 +128,16 @@ h2{margin:6px 0 12px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4);font-siz
   </div>
 </div>
 
-<div class="wager-info"><h3>🎯 Wager Status</h3><p class="small">Deposit + Rewards = Wager. Games jeet kar wager 0 karein, phir withdraw le sakte hain.</p><div class="income-breakdown"><div class="income-item"><div class="label">💰 Deposits</div><div class="value" id="depVal">0</div></div><div class="income-item"><div class="label">🎁 Rewards</div><div class="value" id="rewVal">0</div></div><div class="income-item"><div class="label">🎮 Jeeta Hua</div><div class="value" id="winVal">0</div></div><div class="income-item remaining"><div class="label">⏳ Remaining</div><div class="value" id="remVal">0</div></div></div><div class="progress-bar"><div class="progress-fill" id="wagerProgress" style="width:0%">0%</div></div></div><div id="msg" class="msg"></div><div class="grid"><div class="field"><label>Coin</label><input id="coin" placeholder="e.g., hfc"></div><div class="field"><label>Amount (Minimum 300)</label><input id="amount" type="number" min="300" placeholder="300"></div></div><div class="field"><label>Withdrawal Details</label><textarea id="details" placeholder="Wallet address, payment method, etc."></textarea></div><button id="send" class="btn primary">Submit Request</button></section><section class="card"><h2>Available Coins</h2><p class="small">Aapke paas maujood saare coins:</p><div class="coins-grid" id="availableCoins"></div></section><section class="card"><h2>Request History</h2><div class="table"><table><thead><tr><th>Date</th><th>Coin</th><th>Amount</th><th>Status</th></tr></thead><tbody id="rows"></tbody></table></div></section></main><script type="module">
+<!-- Per-Coin Wager Info -->
+<div class="wager-info">
+  <h3>🎯 Wager Status (Per Coin)</h3>
+  <p class="small">Har coin ka apna wager hai. Jis coin ko withdraw karna hai, uska wager pehle complete karein (games jeet kar).</p>
+  <div id="coinWagers" style="margin-top:10px">
+    <p class="muted">Loading wager status...</p>
+  </div>
+</div>
+
+<div id="msg" class="msg"></div><div class="grid"><div class="field"><label>Coin</label><input id="coin" placeholder="e.g., hfc"></div><div class="field"><label>Amount (Minimum 300)</label><input id="amount" type="number" min="300" placeholder="300"></div></div><div class="field"><label>Withdrawal Details</label><textarea id="details" placeholder="Wallet address, payment method, etc."></textarea></div><button id="send" class="btn primary">Submit Request</button></section><section class="card"><h2>Available Coins</h2><p class="small">Aapke paas maujood saare coins:</p><div class="coins-grid" id="availableCoins"></div></section><section class="card"><h2>Request History</h2><div class="table"><table><thead><tr><th>Date</th><th>Coin</th><th>Amount</th><th>Status</th></tr></thead><tbody id="rows"></tbody></table></div></section></main><script type="module">
 const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 import{getAuth,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
@@ -129,66 +145,118 @@ import{getFirestore,doc,getDoc,getDocs,collection,query,where,orderBy,onSnapshot
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 if($("logout"))$("logout").onclick=async()=>{await signOut(auth);location.href="login.html"};
 
-async function computeWager(uid){
-  const events=[];
-  let dep=0;
+// NEW: Compute wager PER COIN
+async function computeWagerPerCoin(uid){
+  const coinWagers={}; // {coinId: {dep, rew, win, remaining}}
+  
+  const ensureCoin=(cid)=>{
+    if(!coinWagers[cid]) coinWagers[cid]={dep:0,rew:0,win:0,remaining:0};
+  };
+
+  // 1) Deposits grouped by coinId (only completed)
   const dSnap=await getDocs(query(collection(db,"deposits"),where("uid","==",uid)));
-  dSnap.forEach(d=>{const x=d.data();
+  dSnap.forEach(d=>{
+    const x=d.data();
     if(x.status==="completed"){
+      const cid=(x.coinId||"hfc").toLowerCase();
       const amt=Number(x.amount||0);
-      dep+=amt;
-      events.push({t:x.createdAt?.toMillis?.()||0,type:"add",amt});
+      ensureCoin(cid);
+      coinWagers[cid].dep+=amt;
     }
   });
-  let rew=0;
+
+  // 2) Rewards - daily rewards typically go to HFC coin
   const uSnap=await getDoc(doc(db,"users",uid));
   const ud=uSnap.exists()?uSnap.data():{};
   const vip=Number(ud.currentVIP||0);
   const streak=Number(ud.dailyStreak||0);
-  const rewTime=ud.lastDailyReward?.toMillis?.()||0;
   const vSnap=await getDoc(doc(db,"settings","dailyRewards"));
   const dr=vSnap.exists()?(vSnap.data().rewards||{}):{};
   const sched=dr["vip"+vip]||dr["vip0"]||[];
-  for(let i=0;i<streak&&i<sched.length;i++)rew+=Number(sched[i]||0);
-  if(rew>0)events.push({t:rewTime,type:"add",amt:rew});
+  let rew=0;
+  for(let i=0;i<streak&&i<sched.length;i++) rew+=Number(sched[i]||0);
+  if(rew>0){
+    ensureCoin("hfc");
+    coinWagers["hfc"].rew+=rew;
+  }
+
+  // 3) Wins grouped by coinId (net profit only)
   const gSnap=await getDocs(query(collection(db,"games"),where("uid","==",uid)));
-  gSnap.forEach(g=>{const x=g.data();
+  gSnap.forEach(g=>{
+    const x=g.data();
     if(x.outcome==="win"){
+      const cid=(x.coinId||"hfc").toLowerCase();
       const m=Number(x.cashedAt||x.payoutMultiplier||2);
-      events.push({t:x.createdAt?.toMillis?.()||0,type:"sub",amt:Number(x.stake||0)*(m-1)});
+      const amt=Number(x.stake||0)*(m-1);
+      ensureCoin(cid);
+      coinWagers[cid].win+=amt;
     }
   });
-  events.sort((a,b)=>a.t-b.t);
-  let balance=0,winApplied=0;
-  for(const e of events){
-    if(e.type==="add"){balance+=e.amt;}
-    else{const used=Math.min(balance,e.amt);balance-=used;winApplied+=used;}
+
+  // 4) Calculate remaining for each coin
+  for(const cid in coinWagers){
+    const w=coinWagers[cid];
+    const total=w.dep+w.rew;
+    w.remaining=Math.max(0,total-w.win);
   }
-  return{dep,rew,win:winApplied,remaining:balance};
+
+  return coinWagers;
 }
 
+// NEW: Render per-coin wager display
 async function renderWager(uid){
-  const{dep,rew,win,remaining}=await computeWager(uid);
-  const total=dep+rew;
-  const progress=total>0?Math.min(100,(win/total)*100):100;
-  $("depVal").textContent=dep.toLocaleString();
-  $("rewVal").textContent=rew.toLocaleString();
-  $("winVal").textContent=win.toLocaleString();
-  $("remVal").textContent=remaining.toLocaleString();
-  const fill=$("wagerProgress");
-  fill.style.width=progress+"%";fill.textContent=Math.floor(progress)+"%";
-  if(remaining<=0)fill.classList.add("complete");else fill.classList.remove("complete");
-  return remaining;
+  const coinWagers=await computeWagerPerCoin(uid);
+  const container=$("coinWagers");
+
+  const entries=Object.entries(coinWagers);
+  if(entries.length===0){
+    container.innerHTML='<p class="muted" style="text-align:center;padding:10px">No wager activity yet. Deposit ya games khelne par wager dikhega.</p>';
+    return coinWagers;
+  }
+
+  container.innerHTML=entries.map(([cid,w])=>{
+    const total=w.dep+w.rew;
+    const progress=total>0?Math.min(100,(w.win/total)*100):100;
+    const complete=w.remaining<=0;
+    return `
+      <div class="coin-wager-item">
+        <div class="cw-header">
+          <span class="cw-coin-name">${cid}</span>
+          <span class="cw-status ${complete?'complete':'pending'}">
+            ${complete?'✅ Ready to withdraw':'⏳ '+w.remaining.toLocaleString()+' remaining'}
+          </span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill ${complete?'complete':''}" style="width:${progress}%">${Math.floor(progress)}%</div>
+        </div>
+        <div class="cw-stats">
+          <div class="cw-stat">
+            <div class="label">💰 Deposits</div>
+            <div class="value">${w.dep.toLocaleString()}</div>
+          </div>
+          <div class="cw-stat">
+            <div class="label">🎁 Rewards</div>
+            <div class="value">${w.rew.toLocaleString()}</div>
+          </div>
+          <div class="cw-stat win-stat">
+            <div class="label">🎮 Jeeta</div>
+            <div class="value">${w.win.toLocaleString()}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  return coinWagers;
 }
 
-// NEW: Load Coin PKR Rates
+// Load Coin PKR Rates
 async function loadCoinRates(){
   try{
     const ratesSnap=await getDoc(doc(db,"settings","coinRates"));
     const grid=$("ratesGrid");
     
     if(!ratesSnap.exists()){
-      // Default rates if settings not found
       grid.innerHTML=`<div class="rate-box">
         <div class="coin-name">HFC</div>
         <div class="rate-value">10</div>
@@ -232,7 +300,6 @@ onAuthStateChanged(auth,async u=>{
   if(!s.exists()||s.data().status==="blocked"){await signOut(auth);return location.href="login.html"}
   window.ME={...s.data(),uid:u.uid};window.DB=db;
 
-  // Load coin rates
   loadCoinRates();
 
   onSnapshot(doc(db,"wallets",u.uid),snap=>{
@@ -246,19 +313,27 @@ onAuthStateChanged(auth,async u=>{
   $("send").onclick=async()=>{
     try{
       const amount=Number($("amount").value);
-      const coinId=$("coin").value.trim();
+      const coinId=$("coin").value.trim().toLowerCase();
       const details=$("details").value.trim();
       if(!coinId)throw Error("Coin ID enter karein.");
       if(!amount||amount<300)throw Error("Minimum withdrawal amount 300 hai.");
-      const remaining=await renderWager(ME.uid);
-      if(remaining>0)throw Error(`Wager complete nahi hua. Aapko ${remaining.toLocaleString()} aur games mein jeetna hoga withdrawal se pehle.`);
+
+      // NEW: Check wager for the SPECIFIC coin being withdrawn
+      const coinWagers=await computeWagerPerCoin(ME.uid);
+      const coinWager=coinWagers[coinId]||{dep:0,rew:0,win:0,remaining:0};
+      
+      if(coinWager.remaining>0){
+        throw Error(`${coinId.toUpperCase()} ka wager complete nahi hua. Aapko ${coinWager.remaining.toLocaleString()} aur games mein jeetna hoga is coin ko withdraw karne se pehle.`);
+      }
+
       const walletSnap=await getDoc(doc(DB,"wallets",ME.uid));
       if(!walletSnap.exists())throw Error("Wallet not found.");
       const balances=walletSnap.data().balances||walletSnap.data().coins||{};
-      const currentBal=Number(balances[coinId.toLowerCase()]||0);
+      const currentBal=Number(balances[coinId]||0);
       if(amount>currentBal)throw Error(`Insufficient balance. Aapke paas sirf ${currentBal.toLocaleString()} ${coinId.toUpperCase()} hai.`);
+      
       await addDoc(collection(DB,"withdrawals"),{uid:ME.uid,username:ME.username||"",coinId,amount,details,status:"pending",createdAt:serverTimestamp()});
-      $("msg").textContent="✅ Withdrawal request submitted! Admin review karega.";
+      $("msg").textContent=`✅ ${coinId.toUpperCase()} withdrawal request submitted! Admin review karega.`;
       $("msg").className="msg show ok";
       $("coin").value="";$("amount").value="";$("details").value="";
     }catch(e){
