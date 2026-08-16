@@ -54,14 +54,16 @@ h1{margin:0 0 10px;font-size:24px;color:#ffd700;text-shadow:0 2px 8px rgba(0,0,0
   .grid{grid-template-columns:1fr}
   h1{font-size:20px}
 }
-</style></head><body><header class="top"><div class="wrap head"><div class="brand">💎 MINES ADMIN</div><div class="nav"><a href="index.html">Lobby</a><a href="admin.html">Dashboard</a></div></div></header><main class="wrap page"><div class="adminnav"><a href="admin.html">Dashboard</a><a href="admin-users.html">Users</a><a href="admin-coins.html">Coins</a><a href="admin-games.html">Games</a><a href="admin-coinflip.html">Coin Flip</a><a href="admin-crash.html">Crash</a><a href="admin-mines.html" class="active">Mines</a><a href="admin-dragontiger.html">Dragon Tiger</a><a href="admin-transactions.html">Transactions</a><a href="admin-affiliate.html">Affiliate</a></div><section class="card"><h1>💎 Mines Control</h1><p class="small">Win chance aur game settings yahan se control hongi — game mein foran sync hongi.</p><div class="info-box"><b>ℹ️ How it works:</b> Jab admin settings save karta hai admin panel se, to game page (<code>mines.html</code>) automatically update ho jata hai via <code>onSnapshot</code> listener. User ko page refresh karne ki zaroorat nahi.</div><div id="msg" class="msg"></div><div class="grid"><div class="field"><label>Game Status</label><select id="gameStatus"><option value="enabled">Enabled</option><option value="disabled">Disabled</option></select></div><div class="field"><label>Win Chance (%)</label><input id="winChance" type="number" min="0" max="100" step="1" value="50"></div><div class="field"><label>Min Bet</label><input id="minBet" type="number" step=".01" value="1"></div><div class="field"><label>Max Bet</label><input id="maxBet" type="number" step=".01" value="1000"></div><div class="field"><label>Max Multiplier (x)</label><input id="maxMultiplier" type="number" step="1" value="50"></div><div class="field"><label>Default Mines</label><select id="mines"><option>1</option><option>3</option><option selected>5</option><option>10</option><option>15</option><option>20</option></select></div></div><button id="save" class="btn primary">💾 Save Mines Settings</button></section></main><script type="module">const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
+</style></head><body><header class="top"><div class="wrap head"><div class="brand">💎 MINES ADMIN</div><div class="nav"><a href="index.html">Lobby</a><a href="admin.html">Dashboard</a></div></div></header><main class="wrap page"><div class="adminnav"><a href="admin.html">Dashboard</a><a href="admin-users.html">Users</a><a href="admin-coins.html">Coins</a><a href="admin-games.html">Games</a><a href="admin-coinflip.html">Coin Flip</a><a href="admin-crash.html">Crash</a><a href="admin-mines.html" class="active">Mines</a><a href="admin-dragontiger.html">Dragon Tiger</a><a href="admin-transactions.html">Transactions</a><a href="admin-affiliate.html">Affiliate</a></div><section class="card"><h1>💎 Mines Control</h1><p class="small">Win chance aur game settings yahan se control hongi — game mein foran sync hongi.</p><div class="info-box"><b>ℹ️ How it works:</b> Jab admin settings save karta hai admin panel se, to game page (<code>mines.html</code>) automatically update ho jata hai via <code>onSnapshot</code> listener. User ko page refresh karne ki zaroorat nahi. <b>Game Coin</b> select karein jo mines game use karega.</div><div id="msg" class="msg"></div><div class="grid"><div class="field"><label>Game Status</label><select id="gameStatus"><option value="enabled">Enabled</option><option value="disabled">Disabled</option></select></div><div class="field"><label>Game Coin</label><select id="gameCoin"><option value="">Loading...</option></select></div><div class="field"><label>Win Chance (%)</label><input id="winChance" type="number" min="0" max="100" step="1" value="50"></div><div class="field"><label>Min Bet</label><input id="minBet" type="number" step=".01" value="1"></div><div class="field"><label>Max Bet</label><input id="maxBet" type="number" step=".01" value="1000"></div><div class="field"><label>Max Multiplier (x)</label><input id="maxMultiplier" type="number" step="1" value="50"></div><div class="field"><label>Default Mines</label><select id="mines"><option>1</option><option>3</option><option selected>5</option><option>10</option><option>15</option><option>20</option></select></div></div><button id="save" class="btn primary">💾 Save Mines Settings</button></section></main><script type="module">const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 import{getAuth,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
-import{getFirestore,doc,getDoc,setDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+import{getFirestore,doc,getDoc,setDoc,serverTimestamp,collection,getDocs}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 if($("logout"))$("logout").onclick=async()=>{await signOut(auth);location.href="login.html"};
 
 function showMsg(t,x){const m=$("msg");m.className="msg show "+t;m.textContent=x;if(t==="ok")setTimeout(()=>{m.className="msg"},4000);}
+
+let availableCoins=[];
 
 onAuthStateChanged(auth,async u=>{
   if(!u){location.replace("login.html");return}
@@ -69,10 +71,14 @@ onAuthStateChanged(auth,async u=>{
   if(!s.exists()||s.data().status==="blocked"){await signOut(auth);location.replace("login.html");return}
   if(s.data().isAdmin!==true){location.replace("index.html");return}
 
-  // Load coin settings
-  const cf=await getDoc(doc(db,"settings","coinflip"));
-  let coinId="hfc",coinName="HFC";
-  if(cf.exists()){coinId=cf.data().coinId||"hfc";coinName=cf.data().coinName||"HFC";}
+  // Load all available coins
+  const coinsSnap=await getDocs(collection(db,"coins"));
+  availableCoins=coinsSnap.docs.map(d=>({id:d.id,...d.data()})).filter(c=>c.active!==false);
+  
+  // Populate coin dropdown
+  $("gameCoin").innerHTML=availableCoins.length
+    ?availableCoins.map(c=>`<option value="${c.id}">${c.name||c.id.toUpperCase()} (${c.id})</option>`).join("")
+    :'<option value="hfc">HFC (Default)</option>';
 
   // Load existing mines settings
   const cur=await getDoc(doc(db,"settings","mines"));
@@ -84,9 +90,13 @@ onAuthStateChanged(auth,async u=>{
     $("maxBet").value=d.maxBet??1000;
     $("maxMultiplier").value=d.maxMultiplier??50;
     $("mines").value=String(d.mines??5);
+    if(d.coinId)$("gameCoin").value=d.coinId;
   }
 
   $("save").onclick=async()=>{
+    const selectedCoinId=$("gameCoin").value;
+    const selectedCoin=availableCoins.find(c=>c.id===selectedCoinId)||{id:"hfc",name:"HFC"};
+    
     $("save").disabled=true;
     $("save").textContent="Saving...";
     try{
@@ -97,10 +107,11 @@ onAuthStateChanged(auth,async u=>{
         maxBet:Number($("maxBet").value)||1000,
         maxMultiplier:Number($("maxMultiplier").value)||50,
         mines:Number($("mines").value)||5,
-        coinId,coinName,
+        coinId:selectedCoin.id,
+        coinName:selectedCoin.name||selectedCoin.id.toUpperCase(),
         updatedAt:serverTimestamp()
       },{merge:true});
-      showMsg("ok","✅ Mines settings saved! Game mein foran apply hongi.");
+      showMsg("ok",`✅ Mines settings saved! Game "${selectedCoin.name}" coin use karega.`);
     }catch(err){
       showMsg("err","Failed to save: "+err.message);
     }finally{
