@@ -4,66 +4,347 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>User Details | Coin Flip Admin</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#f6f0e5;color:#29231d;font-family:Arial,sans-serif}.wrap{width:min(1180px,92%);margin:auto}.top{background:#fffdf9;border-bottom:1px solid #e5dbcc}.head{min-height:68px;display:flex;align-items:center;justify-content:space-between;gap:15px}.brand{font-weight:900;color:#8d632b;letter-spacing:.5px}.nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.nav a{color:#6e522d;text-decoration:none;font-weight:800;font-size:13px}.page{padding:28px 0 55px}.adminnav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.adminnav a{padding:9px 12px;border-radius:9px;background:#eee6da;text-decoration:none;color:#392d20;font-size:12px;font-weight:800}.card{background:#fffdf9;border:1px solid #e5dbcc;border-radius:18px;padding:22px;box-shadow:0 10px 28px #51391a12;margin-bottom:18px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.tile{padding:17px;border:1px solid #e5dbcc;border-radius:13px;background:#faf6ef}.tile span{font-size:12px;color:#81786d}.tile b{display:block;font-size:23px;color:#8d632b;margin-top:4px;word-break:break-word}.field{margin:11px 0}.field label{display:block;font-size:12px;font-weight:800;margin-bottom:6px}.field input,.field select{width:100%;padding:11px;border:1px solid #e5dbcc;border-radius:9px;background:#fff;color:#29231d}.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer}.primary{background:linear-gradient(135deg,#c49b5d,#8d632b);color:#fff}.soft{background:#eee6da;color:#392d20}.danger{background:#b63e39;color:#fff}.msg{padding:11px;border-radius:10px;margin-bottom:14px;font-size:13px;font-weight:700}.ok{background:#edf8f1;color:#286f43}.err{background:#fff0ef;color:#963530}.hidden{display:none}.small{font-size:12px;color:#81786d}.actions{display:flex;gap:8px;flex-wrap:wrap}@media(max-width:780px){.grid,.tiles{grid-template-columns:1fr}.head{padding:10px 0}.page{padding-top:20px}}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;display:flex;flex-direction:column;overflow:hidden;background:linear-gradient(180deg,#3a7bd5 0%,#7ec3e8 22%,#ffd9a0 48%,#ff9a8a 68%,#c86dd7 100%);color:#fff;font-family:Arial,sans-serif}
+.wrap{width:min(1180px,96%);margin:auto}
+
+.top{flex:0 0 auto;background:linear-gradient(180deg,#d5488a,#a02870);border-bottom:3px solid #ffd700;box-shadow:0 4px 20px rgba(0,0,0,.35)}
+.head{height:54px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{font-weight:900;letter-spacing:1px;font-size:18px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;justify-content:space-around;align-items:center;gap:4px;background:linear-gradient(180deg,#3aa04a,#1c6b2a);border-top:3px solid #ffd700;padding:7px 6px calc(7px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px rgba(0,0,0,.4)}
+.nav a,.nav button{color:#fff;text-decoration:none;font-weight:800;font-size:12px;padding:8px 11px;border-radius:10px;background:rgba(255,255,255,.14);border:0;cursor:pointer;transition:.2s}
+.nav a:hover,.nav button:hover{background:rgba(255,255,255,.28)}
+
+.page{flex:1;min-height:0;overflow-y:auto;padding:8px 0 62px;-webkit-overflow-scrolling:touch}
+
+.adminnav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;padding:0 4px}
+.adminnav a{padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.15);text-decoration:none;color:#fff;font-size:11px;font-weight:800;transition:.2s}
+.adminnav a:hover{background:rgba(255,215,0,.3);color:#ffd700;transform:translateY(-2px)}
+.adminnav a.active{background:linear-gradient(180deg,#ffd700,#f0a000);color:#5a2a00}
+
+.card{border:2px solid #ffd700;border-radius:16px;padding:14px;margin-bottom:10px;box-shadow:0 8px 24px rgba(0,0,0,.35);background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.06))}
+
+h1{margin:0 0 10px;font-size:24px;color:#ffd700;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+h2{margin:6px 0 12px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4);font-size:18px}
+
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+
+.tile{padding:10px 8px;border:1px solid rgba(255,215,0,.5);border-radius:12px;background:rgba(0,0,0,.25);text-align:center}
+.tile span{font-size:9px;color:rgba(255,255,255,.85);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.tile b{display:block;font-size:16px;margin-top:3px;font-weight:900;color:#ffd700;word-break:break-word}
+
+.field{margin:10px 0}
+.field label{display:block;font-size:10px;font-weight:800;margin-bottom:4px;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.9)}
+.field input,.field select{width:100%;padding:10px;border:1px solid rgba(255,215,0,.5);border-radius:10px;background:rgba(0,0,0,.3);color:#fff;font-size:14px;font-weight:600}
+.field input:focus,.field select:focus{outline:none;border-color:#ffd700;box-shadow:0 0 0 3px rgba(255,215,0,.2)}
+.field input[readonly]{background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);cursor:not-allowed}
+.field select option{background:#2a1650;color:#fff}
+
+.btn{border:0;border-radius:12px;padding:11px 16px;font-weight:800;cursor:pointer;transition:.2s;font-size:14px}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.primary{background:linear-gradient(180deg,#ffd700,#f0a000);color:#5a2a00;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.soft{background:rgba(255,255,255,.2);color:#fff}
+.danger{background:linear-gradient(180deg,#ff6a2a,#d02a1a);color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+
+.msg{padding:10px;border-radius:10px;margin:10px 0;font-size:13px;font-weight:700}
+.msg.hidden{display:none}
+.ok{background:#0e2b1e;color:#7ee2a8;border:1px solid #1e4d34}
+.err{background:#33141a;color:#ff9d9d;border:1px solid #5a2025}
+
+.small{font-size:12px;color:rgba(255,255,255,.85)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* NEW: Coin selector with rate info */
+.coin-selector-wrap{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.coin-info-box{padding:10px;background:rgba(100,200,255,.1);border:1px solid rgba(100,200,255,.4);border-radius:10px;font-size:12px;color:#fff;line-height:1.5}
+.coin-info-box b{color:#ffd700}
+.coin-info-box .rate-display{font-size:14px;font-weight:800;color:#7ee2a8;margin-top:4px}
+
+@media(max-width:640px){
+  .head{height:48px}
+  .brand{font-size:15px}
+  .nav a,.nav button{font-size:11px;padding:7px 9px}
+  .grid,.tiles{grid-template-columns:1fr}
+  .coin-selector-wrap{grid-template-columns:1fr}
+  h1{font-size:20px}
+  .tile b{font-size:14px}
+}
 </style>
 </head>
 <body>
-<header class="top"><div class="wrap head"><div class="brand">COIN FLIP</div><div class="nav"><a href="index.html">Lobby</a><a href="profile.html">Profile</a><a href="deposit.html">Deposit</a><a href="withdrawal.html">Withdrawal</a><button id="logout" class="btn soft">Logout</button></div></div></header>
+<header class="top"><div class="wrap head"><div class="brand">👤 USER DETAILS</div><div class="nav"><a href="index.html">Lobby</a><a href="admin.html">Dashboard</a><a href="admin-users.html">Users</a></div></div></header>
 <main class="wrap page">
-<div class="adminnav"><a href="admin.html">Dashboard</a><a href="admin-users.html">Users</a><a href="admin-coins.html">Coins</a><a href="admin-games.html">Games</a><a href="admin-coinflip.html">Coin Flip</a><a href="admin-transactions.html">Transactions</a></div>
-<section class="card"><h1>User Details</h1><div id="msg" class="msg hidden"></div>
-<div class="grid">
-<div class="field"><label>Username</label><input id="username" readonly></div><div class="field"><label>Email</label><input id="email" readonly></div>
-<div class="field"><label>Phone</label><input id="phone" readonly></div><div class="field"><label>UID</label><input id="uid" readonly></div>
-<div class="field"><label>Status</label><select id="status"><option value="active">active</option><option value="blocked">blocked</option></select></div>
-<div class="field"><label>Total Games</label><input id="games" readonly></div><div class="field"><label>Wins</label><input id="wins" readonly></div><div class="field"><label>Losses</label><input id="losses" readonly></div>
-</div><button id="saveStatus" class="btn primary">Save Status</button></section>
-<section class="card"><h2>Coin Balance Control</h2><p class="small">Wallet data is loaded from <b>wallets/{uid}</b>. If the wallet document does not exist, it will be created when coins are added.</p>
-<div class="grid"><div class="field"><label>Coin ID</label><input id="coin" placeholder="e.g. HFC"></div><div class="field"><label>Amount</label><input id="amount" type="number" min="0.00000001" step="any" placeholder="0"></div></div>
-<div class="actions"><button id="add" class="btn primary">Add Coins</button><button id="remove" class="btn danger">Remove Coins</button></div><div id="balances" class="tiles" style="margin-top:15px"></div></section>
-<section class="card"><h2>Game Statistics</h2><div id="stats" class="tiles"></div></section>
+<div class="adminnav">
+  <a href="admin.html">Dashboard</a>
+  <a href="admin-users.html" class="active">Users</a>
+  <a href="admin-coins.html">Coins</a>
+  <a href="admin-games.html">Games</a>
+  <a href="admin-coinflip.html">Coin Flip</a>
+  <a href="admin-crash.html">Crash</a>
+  <a href="admin-mines.html">Mines</a>
+  <a href="admin-dragontiger.html">Dragon Tiger</a>
+  <a href="admin-transactions.html">Transactions</a>
+  <a href="admin-affiliate.html">Affiliate</a>
+</div>
+
+<section class="card">
+  <h1>👤 User Details</h1>
+  <div id="msg" class="msg hidden"></div>
+  <div class="grid">
+    <div class="field"><label>Username</label><input id="username" readonly></div>
+    <div class="field"><label>Email</label><input id="email" readonly></div>
+    <div class="field"><label>Phone</label><input id="phone" readonly></div>
+    <div class="field"><label>UID</label><input id="uid" readonly></div>
+    <div class="field"><label>Status</label>
+      <select id="status">
+        <option value="active">Active</option>
+        <option value="blocked">Blocked</option>
+      </select>
+    </div>
+    <div class="field"><label>Total Games</label><input id="games" readonly></div>
+    <div class="field"><label>Wins</label><input id="wins" readonly></div>
+    <div class="field"><label>Losses</label><input id="losses" readonly></div>
+  </div>
+  <button id="saveStatus" class="btn primary">💾 Save Status</button>
+</section>
+
+<section class="card">
+  <h2>💰 Coin Balance Control</h2>
+  <p class="small">Wallet data <b>wallets/{uid}</b> se load hota hai. Sirf registered aur active coins hi add/remove kar sakte hain (coins <code>admin-coins.html</code> se manage hote hain).</p>
+  
+  <div class="coin-selector-wrap">
+    <div class="field" style="margin:0">
+      <label>Select Coin</label>
+      <select id="coin">
+        <option value="">Loading coins...</option>
+      </select>
+    </div>
+    <div class="field" style="margin:0">
+      <label>Amount</label>
+      <input id="amount" type="number" min="0.00000001" step="any" placeholder="Enter amount">
+    </div>
+  </div>
+  
+  <div class="coin-info-box" id="coinInfo" style="margin-top:10px">
+    <b>Selected Coin:</b> <span id="selectedCoinName">—</span><br>
+    <b>Current PKR Rate:</b> <span class="rate-display" id="selectedCoinRate">— PKR</span>
+  </div>
+  
+  <div class="actions" style="margin-top:12px">
+    <button id="add" class="btn primary">➕ Add Coins</button>
+    <button id="remove" class="btn danger">➖ Remove Coins</button>
+  </div>
+  
+  <div id="balances" class="tiles" style="margin-top:15px"></div>
+</section>
+
+<section class="card">
+  <h2>📊 Game Statistics</h2>
+  <div id="stats" class="tiles"></div>
+</section>
 </main>
+
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 import {getAuth,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
-import {getFirestore,doc,getDoc,setDoc,updateDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
-const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
-const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app); const $=id=>document.getElementById(id);
-function message(text,ok=false){const el=$("msg");el.textContent=text;el.className="msg "+(ok?"ok":"err");}
+import {getFirestore,doc,getDoc,setDoc,updateDoc,serverTimestamp,collection,getDocs} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+
+const firebaseConfig={
+  apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",
+  authDomain:"mr777-c72fc.firebaseapp.com",
+  projectId:"mr777-c72fc",
+  storageBucket:"mr777-c72fc.firebasestorage.app",
+  messagingSenderId:"1027130368908",
+  appId:"1:1027130368908:web:7e3cf883e137935523eca9",
+  measurementId:"G-3GTQHMNF9"
+};
+
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+const $=id=>document.getElementById(id);
+
+function message(text,ok=false){
+  const el=$("msg");
+  el.textContent=text;
+  el.className="msg "+(ok?"ok":"err");
+}
+
 $("logout").onclick=async()=>{await signOut(auth);location.href="login.html"};
-function getTarget(){const p=new URLSearchParams(location.search);return (p.get("uid")||p.get("id")||"").trim()}
-async function load(){
- try{
-  const me=auth.currentUser;if(!me){location.href="login.html";return}
-  const meSnap=await getDoc(doc(db,"users",me.uid)); if(!meSnap.exists()){location.href="login.html";return}
-  const meData=meSnap.data(); if(meData.status==="blocked"){await signOut(auth);location.href="login.html";return}
-  if(meData.isAdmin!==true){location.href="index.html";return}
-  const target=getTarget(); if(!target){message("User UID missing. Users page se Manage button use karein.");return}
-  const userRef=doc(db,"users",target), walletRef=doc(db,"wallets",target), statsRef=doc(db,"gameStats",target);
-  const [us,ws,gs]=await Promise.all([getDoc(userRef),getDoc(walletRef),getDoc(statsRef)]);
-  if(!us.exists()){message("User document nahi mila. UID check karein: "+target);return}
-  let user=us.data(), wallet=ws.exists()?ws.data():{}, stats=gs.exists()?gs.data():{};
-  const uid=us.id; user.uid=user.uid||uid;
-  render(user,wallet,stats,uid);
-  $("saveStatus").onclick=async()=>{try{await updateDoc(userRef,{status:$("status").value,updatedAt:serverTimestamp()});user.status=$("status").value;message("Account status successfully updated.",true)}catch(e){message("Status update failed: "+e.message)}};
-  async function adjust(direction){
-   const coin=$("coin").value.trim(); const amount=Number($("amount").value);
-   if(!coin||!Number.isFinite(amount)||amount<=0){message("Coin ID aur valid amount enter karein.");return}
-   const balances={...(wallet.balances||wallet.coins||{})}; const old=Number(balances[coin]||0), next=old+(direction*amount);
-   if(next<0){message("Balance negative nahi ho sakta.");return}
-   balances[coin]=next;
-   try{await setDoc(walletRef,{uid,balances,updatedAt:serverTimestamp()},{merge:true});wallet={...wallet,uid,balances};render(user,wallet,stats,uid);message((direction>0?"Coins added: ":"Coins removed: ")+amount+" "+coin,true)}catch(e){message("Balance update failed: "+e.message)}
+
+function getTarget(){
+  const p=new URLSearchParams(location.search);
+  return (p.get("uid")||p.get("id")||"").trim();
+}
+
+let availableCoins=[];
+let coinRates={};
+
+async function loadCoins(){
+  try{
+    const coinsSnap=await getDocs(collection(db,"coins"));
+    availableCoins=coinsSnap.docs.map(d=>({id:d.id,...d.data()})).filter(c=>c.active!==false);
+    
+    // Load rates
+    const ratesSnap=await getDoc(doc(db,"settings","coinRates"));
+    coinRates=ratesSnap.exists()?ratesSnap.data():{};
+    
+    // Populate dropdown
+    const coinSelect=$("coin");
+    if(availableCoins.length===0){
+      coinSelect.innerHTML='<option value="">No active coins available</option>';
+      coinSelect.disabled=true;
+      $("add").disabled=true;
+      $("remove").disabled=true;
+      return;
+    }
+    
+    coinSelect.innerHTML=availableCoins.map(c=>{
+      const rate=coinRates[c.id]||c.pkrValue||0;
+      return `<option value="${c.id}">${c.name||c.id.toUpperCase()} (${c.id}) - ${rate} PKR</option>`;
+    }).join("");
+    
+    updateCoinInfo();
+  }catch(err){
+    console.error("Failed to load coins:",err);
+    $("coin").innerHTML='<option value="">Error loading coins</option>';
   }
-  $("add").onclick=()=>adjust(1);$("remove").onclick=()=>adjust(-1);
- }catch(e){console.error(e);message("Page error: "+e.message)}
 }
+
+function updateCoinInfo(){
+  const selectedId=$("coin").value;
+  const coin=availableCoins.find(c=>c.id===selectedId);
+  
+  if(coin){
+    const rate=coinRates[coin.id]||coin.pkrValue||0;
+    $("selectedCoinName").textContent=`${coin.name||coin.id.toUpperCase()} (${coin.id})`;
+    $("selectedCoinRate").textContent=`${rate.toLocaleString()} PKR`;
+  }else{
+    $("selectedCoinName").textContent="—";
+    $("selectedCoinRate").textContent="— PKR";
+  }
+}
+
+async function load(){
+  try{
+    const me=auth.currentUser;
+    if(!me){location.href="login.html";return}
+    
+    const meSnap=await getDoc(doc(db,"users",me.uid));
+    if(!meSnap.exists()){location.href="login.html";return}
+    
+    const meData=meSnap.data();
+    if(meData.status==="blocked"){await signOut(auth);location.href="login.html";return}
+    if(meData.isAdmin!==true){location.href="index.html";return}
+    
+    // Load coins first
+    await loadCoins();
+    
+    const target=getTarget();
+    if(!target){message("User UID missing. Users page se Manage button use karein.");return}
+    
+    const userRef=doc(db,"users",target);
+    const walletRef=doc(db,"wallets",target);
+    const statsRef=doc(db,"gameStats",target);
+    
+    const [us,ws,gs]=await Promise.all([getDoc(userRef),getDoc(walletRef),getDoc(statsRef)]);
+    
+    if(!us.exists()){message("User document nahi mila. UID check karein: "+target);return}
+    
+    let user=us.data(), wallet=ws.exists()?ws.data():{}, stats=gs.exists()?gs.data():{};
+    const uid=us.id;
+    user.uid=user.uid||uid;
+    
+    render(user,wallet,stats,uid);
+    
+    $("saveStatus").onclick=async()=>{
+      try{
+        await updateDoc(userRef,{status:$("status").value,updatedAt:serverTimestamp()});
+        user.status=$("status").value;
+        message("✅ Account status successfully updated.",true);
+      }catch(e){
+        message("Status update failed: "+e.message);
+      }
+    };
+    
+    async function adjust(direction){
+      const coinId=$("coin").value.trim();
+      const amount=Number($("amount").value);
+      
+      if(!coinId){message("Coin select karein.");return}
+      if(!Number.isFinite(amount)||amount<=0){message("Valid amount enter karein.");return}
+      
+      const balances={...(wallet.balances||wallet.coins||{})};
+      const old=Number(balances[coinId]||0);
+      const next=old+(direction*amount);
+      
+      if(next<0){message("Balance negative nahi ho sakta.");return}
+      
+      balances[coinId]=next;
+      
+      try{
+        await setDoc(walletRef,{uid,balances,updatedAt:serverTimestamp()},{merge:true});
+        wallet={...wallet,uid,balances};
+        render(user,wallet,stats,uid);
+        
+        const coin=availableCoins.find(c=>c.id===coinId);
+        const coinName=coin?coin.name:coinId.toUpperCase();
+        message(`✅ ${direction>0?"Added":"Removed"}: ${amount} ${coinName}`,true);
+      }catch(e){
+        message("Balance update failed: "+e.message);
+      }
+    }
+    
+    $("add").onclick=()=>adjust(1);
+    $("remove").onclick=()=>adjust(-1);
+    $("coin").onchange=updateCoinInfo;
+    
+  }catch(e){
+    console.error(e);
+    message("Page error: "+e.message);
+  }
+}
+
 function render(user,wallet,stats,uid){
- $("username").value=user.username||"";$("email").value=user.email||"";$("phone").value=user.phone||"";$("uid").value=uid;$("status").value=user.status||"active";
- const total=Number(stats.totalGames??user.totalGames??0),wins=Number(stats.wins??user.wins??0),losses=Number(stats.losses??user.losses??0);
- $("games").value=total;$("wins").value=wins;$("losses").value=losses;
- $("stats").innerHTML=`<div class="tile"><span>Total Games</span><b>${total}</b></div><div class="tile"><span>Wins</span><b>${wins}</b></div><div class="tile"><span>Losses</span><b>${losses}</b></div><div class="tile"><span>Win Rate</span><b>${total?(wins/total*100).toFixed(1):"0.0"}%</b></div>`;
- const balances=wallet.balances||wallet.coins||{}; const entries=Object.entries(balances);$("balances").innerHTML=entries.length?entries.map(([k,v])=>`<div class="tile"><span>${k}</span><b>${Number(v).toLocaleString()}</b></div>`).join(""):"<div class='tile'><span>Wallet</span><b>0</b></div>";
+  $("username").value=user.username||"";
+  $("email").value=user.email||"";
+  $("phone").value=user.phone||"";
+  $("uid").value=uid;
+  $("status").value=user.status||"active";
+  
+  const total=Number(stats.totalGames??user.totalGames??0);
+  const wins=Number(stats.wins??user.wins??0);
+  const losses=Number(stats.losses??user.losses??0);
+  
+  $("games").value=total;
+  $("wins").value=wins;
+  $("losses").value=losses;
+  
+  $("stats").innerHTML=`
+    <div class="tile"><span>Total Games</span><b>${total}</b></div>
+    <div class="tile"><span>Wins</span><b>${wins}</b></div>
+    <div class="tile"><span>Losses</span><b>${losses}</b></div>
+    <div class="tile"><span>Win Rate</span><b>${total?(wins/total*100).toFixed(1):"0.0"}%</b></div>
+  `;
+  
+  const balances=wallet.balances||wallet.coins||{};
+  const entries=Object.entries(balances);
+  
+  $("balances").innerHTML=entries.length
+    ?entries.map(([k,v])=>{
+        const coin=availableCoins.find(c=>c.id===k);
+        const coinName=coin?coin.name:k.toUpperCase();
+        return `<div class="tile"><span>${coinName}</span><b>${Number(v).toLocaleString()}</b></div>`;
+      }).join("")
+    :"<div class='tile'><span>Wallet</span><b>0</b></div>";
 }
-onAuthStateChanged(auth,u=>{if(!u){location.href="login.html";return}load()});
+
+onAuthStateChanged(auth,u=>{
+  if(!u){location.href="login.html";return}
+  load();
+});
 </script>
-</body></html>
+</body>
+</html>
