@@ -73,7 +73,7 @@ h2{margin:6px 0 12px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4);font-siz
 </style>
 </head>
 <body>
-<header class="top"><div class="wrap head"><div class="brand">👤 USER DETAILS</div><div class="nav"><a href="index.html">Lobby</a><a href="admin.html">Dashboard</a><a href="admin-users.html">Users</a></div></div></header>
+<header class="top"><div class="wrap head"><div class="brand">👤 USER DETAILS</div><div class="nav"><a href="index.html">Lobby</a><a href="admin.html">Dashboard</a><a href="admin-users.html">Users</a><button id="logout">Logout</button></div></div></header>
 <main class="wrap page">
 <div class="adminnav">
   <a href="admin.html">Dashboard</a>
@@ -169,7 +169,8 @@ function message(text,ok=false){
   el.className="msg "+(ok?"ok":"err");
 }
 
-$("logout").onclick=async()=>{await signOut(auth);location.href="login.html"};
+// ✅ FIX: null-guard — agar element na ho to script crash nahi hogi
+if($("logout"))$("logout").onclick=async()=>{await signOut(auth);location.href="login.html"};
 
 function getTarget(){
   const p=new URLSearchParams(location.search);
