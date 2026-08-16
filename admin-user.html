@@ -58,9 +58,7 @@ h2{margin:6px 0 12px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4);font-siz
 .small{font-size:12px;color:rgba(255,255,255,.85)}
 .actions{display:flex;gap:8px;flex-wrap:wrap}
 
-/* NEW: Coin selector with rate info */
-.coin-selector-wrap{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-.coin-info-box{padding:10px;background:rgba(100,200,255,.1);border:1px solid rgba(100,200,255,.4);border-radius:10px;font-size:12px;color:#fff;line-height:1.5}
+.coin-info-box{padding:10px;background:rgba(100,200,255,.1);border:1px solid rgba(100,200,255,.4);border-radius:10px;margin-top:10px;font-size:12px;color:#fff;line-height:1.5}
 .coin-info-box b{color:#ffd700}
 .coin-info-box .rate-display{font-size:14px;font-weight:800;color:#7ee2a8;margin-top:4px}
 
@@ -69,7 +67,6 @@ h2{margin:6px 0 12px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4);font-siz
   .brand{font-size:15px}
   .nav a,.nav button{font-size:11px;padding:7px 9px}
   .grid,.tiles{grid-template-columns:1fr}
-  .coin-selector-wrap{grid-template-columns:1fr}
   h1{font-size:20px}
   .tile b{font-size:14px}
 }
@@ -116,20 +113,20 @@ h2{margin:6px 0 12px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4);font-siz
   <h2>💰 Coin Balance Control</h2>
   <p class="small">Wallet data <b>wallets/{uid}</b> se load hota hai. Sirf registered aur active coins hi add/remove kar sakte hain (coins <code>admin-coins.html</code> se manage hote hain).</p>
   
-  <div class="coin-selector-wrap">
-    <div class="field" style="margin:0">
+  <div class="grid">
+    <div class="field">
       <label>Select Coin</label>
       <select id="coin">
         <option value="">Loading coins...</option>
       </select>
     </div>
-    <div class="field" style="margin:0">
+    <div class="field">
       <label>Amount</label>
       <input id="amount" type="number" min="0.00000001" step="any" placeholder="Enter amount">
     </div>
   </div>
   
-  <div class="coin-info-box" id="coinInfo" style="margin-top:10px">
+  <div class="coin-info-box" id="coinInfo">
     <b>Selected Coin:</b> <span id="selectedCoinName">—</span><br>
     <b>Current PKR Rate:</b> <span class="rate-display" id="selectedCoinRate">— PKR</span>
   </div>
@@ -187,11 +184,9 @@ async function loadCoins(){
     const coinsSnap=await getDocs(collection(db,"coins"));
     availableCoins=coinsSnap.docs.map(d=>({id:d.id,...d.data()})).filter(c=>c.active!==false);
     
-    // Load rates
     const ratesSnap=await getDoc(doc(db,"settings","coinRates"));
     coinRates=ratesSnap.exists()?ratesSnap.data():{};
     
-    // Populate dropdown
     const coinSelect=$("coin");
     if(availableCoins.length===0){
       coinSelect.innerHTML='<option value="">No active coins available</option>';
@@ -239,7 +234,6 @@ async function load(){
     if(meData.status==="blocked"){await signOut(auth);location.href="login.html";return}
     if(meData.isAdmin!==true){location.href="index.html";return}
     
-    // Load coins first
     await loadCoins();
     
     const target=getTarget();
