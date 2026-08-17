@@ -1,0 +1,165 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Eagle vs Snake</title><style>
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;display:flex;flex-direction:column;overflow:hidden;background:linear-gradient(180deg,#3a7bd5 0%,#7ec3e8 22%,#ffd9a0 48%,#ff9a8a 68%,#c86dd7 100%);color:#fff;font-family:Arial,sans-serif}
+.wrap{width:min(560px,96%);margin:auto}
+.top{flex:0 0 auto;background:linear-gradient(180deg,#d5488a,#a02870);border-bottom:3px solid #ffd700;box-shadow:0 4px 20px rgba(0,0,0,.35)}
+.head{height:54px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{font-weight:900;letter-spacing:1px;font-size:17px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;justify-content:space-around;align-items:center;gap:4px;background:linear-gradient(180deg,#3aa04a,#1c6b2a);border-top:3px solid #ffd700;padding:7px 6px calc(7px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px rgba(0,0,0,.4)}
+.nav a{color:#fff;text-decoration:none;font-weight:800;font-size:12px;padding:8px 11px;border-radius:10px;background:rgba(255,255,255,.14);transition:.2s}
+.nav a:hover{background:rgba(255,255,255,.28)}
+.page{flex:1;min-height:0;overflow-y:auto;padding:8px 0 62px;-webkit-overflow-scrolling:touch}
+.card{border:2px solid #ffd700;border-radius:16px;padding:12px;margin-bottom:10px;box-shadow:0 8px 24px rgba(0,0,0,.35);background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.06))}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.tile{padding:8px 6px;border:1px solid rgba(255,215,0,.5);border-radius:12px;background:rgba(0,0,0,.25);text-align:center}
+.tile span{font-size:9px;color:rgba(255,255,255,.85);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.tile b{display:block;font-size:16px;margin-top:2px;font-weight:900;color:#ffd700}
+.arena{display:flex;align-items:center;justify-content:center;gap:14px;margin:14px 0}
+.pcard{width:80px;height:110px;border-radius:12px;background:linear-gradient(145deg,#fff,#e8e0f5);color:#2a1650;display:grid;place-items:center;font-size:30px;font-weight:900;border:3px solid #ffd700;box-shadow:0 6px 18px rgba(0,0,0,.5);transition:all .4s}
+.pcard.back{background:linear-gradient(145deg,rgba(255,215,0,.3),rgba(255,215,0,.15));color:#ffd700;border:3px dashed #ffd700}
+.vs{font-size:24px;font-weight:900;color:#ffd700;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+.side-label{font-size:12px;font-weight:800;text-align:center;margin-top:6px;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.4)}
+.result{font-size:20px;font-weight:900;text-align:center;margin:10px 0;color:#ffd700;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+.bets{display:grid;grid-template-columns:1fr;gap:10px;margin-top:12px}
+.betbox{border-radius:14px;padding:14px;text-align:center;cursor:pointer;border:2px solid rgba(255,215,0,.4);transition:all .2s}
+.betbox:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.3)}
+.betbox.sel{border-color:#ffd700;box-shadow:0 0 0 3px rgba(255,215,0,.35)}
+.betbox h3{margin:0 0 4px;font-size:18px;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.5)}
+.betbox .odd{font-size:13px;font-weight:800;color:rgba(255,255,255,.9)}
+.eagle{background:linear-gradient(145deg,#2a6ad0,#1a3a80)}
+.tie{background:linear-gradient(145deg,#906a1a,#6a4a0a)}
+.snake{background:linear-gradient(145deg,#1a8a5a,#0a4a3a)}
+.chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:12px 0}
+.chip{width:50px;height:50px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:13px;cursor:pointer;border:3px solid #ffd700;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.3);transition:.2s}
+.chip:hover{transform:scale(1.1)}
+.c10{background:#0f9d58}.c50{background:#1a5090}.c100{background:#4a2a80}.c500{background:#902a2a}.c1k{background:#906a1a}
+.field{margin:10px 0}
+.field label{display:block;font-size:10px;font-weight:800;margin-bottom:4px;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.9)}
+.field input{width:100%;padding:10px;border:1px solid rgba(255,215,0,.5);border-radius:10px;background:rgba(0,0,0,.3);color:#fff;font-size:15px;font-weight:700}
+.field input:focus{outline:none;border-color:#ffd700;box-shadow:0 0 0 3px rgba(255,215,0,.2)}
+.btn{border:0;border-radius:12px;padding:13px 18px;font-weight:800;cursor:pointer;font-size:15px;width:100%;transition:.2s}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.deal{background:linear-gradient(180deg,#ffd700,#f0a000);color:#5a2a00;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.deal:hover:not(:disabled){box-shadow:0 6px 20px rgba(0,0,0,.5)}
+.msg{display:none;padding:10px;border-radius:10px;margin:10px 0;font-size:13px;font-weight:700}
+.show{display:block}.ok{background:#0e2b1e;color:#7ee2a8;border:1px solid #1e4d34}.err{background:#33141a;color:#ff9d9d;border:1px solid #5a2025}
+.small{font-size:12px;color:rgba(255,255,255,.85)}
+.table{overflow:auto;border-radius:12px}
+table{width:100%;border-collapse:collapse;min-width:420px}
+th,td{text-align:left;padding:8px;border-bottom:1px solid rgba(255,215,0,.3);font-size:12px;color:#fff}
+th{font-size:10px;color:rgba(255,255,255,.85);text-transform:uppercase}
+h2{margin:6px 0 12px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4);font-size:18px}
+@media(max-width:480px){.pcard{width:70px;height:100px;font-size:26px}.betbox h3{font-size:16px}}
+</style></head><body><header class="top"><div class="wrap head"><div class="brand">🦅 EAGLE vs SNAKE 🐍</div><div class="nav"><a href="index.html">Lobby</a><a href="profile.html">Profile</a><a href="dragontiger.html">Dragon Tiger</a></div></div></header><main class="wrap page">
+<section class="card"><div class="tiles"><div class="tile"><span>Balance</span><b id="bal">0</b></div><div class="tile"><span>Min</span><b id="min">1</b></div><div class="tile"><span>Max</span><b id="max">1000</b></div></div>
+<div class="arena"><div><div class="pcard back" id="ecard">?</div><div class="side-label">🦅 EAGLE</div></div><div class="vs">VS</div><div><div class="pcard back" id="scard">?</div><div class="side-label">🐍 SNAKE</div></div></div>
+<div class="result" id="result">Apni side choose karein</div>
+<div class="bets">
+<div class="betbox eagle" data-side="Eagle"><h3>🦅 EAGLE</h3><div class="odd">1 : 1</div></div>
+<div class="betbox tie" data-side="Tie"><h3>🤝 TIE</h3><div class="odd">1 : 8</div></div>
+<div class="betbox snake" data-side="Snake"><h3>🐍 SNAKE</h3><div class="odd">1 : 1</div></div>
+</div>
+<div class="chips"><div class="chip c10" data-v="10">10</div><div class="chip c50" data-v="50">50</div><div class="chip c100" data-v="100">100</div><div class="chip c500" data-v="500">500</div><div class="chip c1k" data-v="1000">1K</div></div>
+<div class="field"><label>Bet Amount</label><input id="bet" type="number" min="1" step=".01" value="10"></div>
+<button id="deal" class="btn deal">🎴 DEAL</button>
+<div id="msg" class="msg"></div>
+</section>
+<section class="card"><h2>Recent Rounds</h2><div class="table"><table><thead><tr><th>Time</th><th>Choice</th><th>Result</th><th>Stake</th><th>Outcome</th></tr></thead><tbody id="history"></tbody></table></div></section>
+</main><script type="module">
+const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+import{getFirestore,doc,getDoc,setDoc,getDocs,onSnapshot,collection,query,where,orderBy,limit,runTransaction,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
+function showMsg(t,x){const m=$("msg");m.className="msg show "+t;m.textContent=x;if(t==="ok")setTimeout(()=>{m.className="msg"},4000);}
+function readBalanceCaseInsensitive(b,c){const w=String(c||"").trim().toLowerCase();for(const[k,v]of Object.entries(b||{})){if(String(k).trim().toLowerCase()===w)return Number(v)||0}return 0}
+function readBalanceKey(b,c){const w=String(c||"").trim().toLowerCase();for(const k of Object.keys(b||{})){if(String(k).trim().toLowerCase()===w)return k}return String(c||"").trim().toLowerCase()}
+function rollWin(ch){const n=Number(ch);const c=Number.isFinite(n)?n:50;const a=new Uint32Array(1);crypto.getRandomValues(a);return(a[0]%100)<c}
+const RANKS=["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
+let side=null,busy=false;
+document.querySelectorAll(".betbox").forEach(b=>{b.onclick=()=>{if(busy)return;document.querySelectorAll(".betbox").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");side=b.dataset.side;$("result").textContent=`Selected: ${side}`;};});
+document.querySelectorAll(".chip").forEach(c=>{c.onclick=()=>{if(!busy)$("bet").value=c.dataset.v;};});
+onAuthStateChanged(auth,async user=>{
+  if(!user){location.replace("login.html");return}
+  try{
+    const uSnap=await getDoc(doc(db,"users",user.uid));
+    if(!uSnap.exists()||uSnap.data().status==="blocked"){location.replace("login.html");return}
+    let cfg={gameStatus:"enabled",coinId:"hfc",coinName:"HFC",minBet:1,maxBet:1000,maxMultiplier:9,winChance:50};
+    onSnapshot(doc(db,"settings","eaglesnake"),s=>{if(s.exists())cfg={...cfg,...s.data()};$("min").textContent=cfg.minBet;$("max").textContent=cfg.maxBet;$("bet").min=cfg.minBet;$("bet").max=cfg.maxBet;});
+    let walletRef=doc(db,"wallets",user.uid);
+    if(!(await getDoc(walletRef)).exists()){try{await setDoc(walletRef,{balances:{hfc:0},createdAt:serverTimestamp()});}catch(e){}}
+    onSnapshot(walletRef,s=>{const w=s.exists()?s.data():{};$("bal").textContent=readBalanceCaseInsensitive(w.balances||w.coins||{},cfg.coinId).toLocaleString();},()=>{$("bal").textContent="—"});
+    onSnapshot(query(collection(db,"games"),where("uid","==",user.uid),where("game","==","eaglesnake"),limit(15)),s=>{
+      const rows=s.docs.map(d=>d.data()).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));
+      $("history").innerHTML=rows.map(x=>`<tr><td>${x.createdAt?.toDate?.()?.toLocaleString()||"—"}</td><td>${x.choice||""}</td><td>${x.result||""}</td><td>${x.stake??""}</td><td style="color:${x.outcome==="win"?"#7ee2a8":"#ff9d9d"}">${x.outcome||""}</td></tr>`).join("")||'<tr><td colspan="5">No rounds yet.</td></tr>';
+    });
+    function makeCards(result){
+      const hi=1+Math.floor(Math.random()*12);const lo=Math.floor(Math.random()*hi);
+      if(result==="Tie"){const r=RANKS[hi];return[r,r];}
+      if(result==="Eagle")return[RANKS[hi],RANKS[lo]];
+      return[RANKS[lo],RANKS[hi]];
+    }
+    $("deal").onclick=async()=>{
+      if(busy)return;
+      if(cfg.gameStatus!=="enabled"){showMsg("err","Game disabled hai.");return}
+      if(!side){showMsg("err","Pehle koi side choose karein.");return}
+      const stake=Number($("bet").value);
+      if(!Number.isFinite(stake)||stake<Number(cfg.minBet)||stake>Number(cfg.maxBet)){showMsg("err","Bet limits ke andar enter karo.");return}
+      busy=true;$("deal").disabled=true;$("msg").className="msg";
+      $("ecard").className="pcard back";$("scard").className="pcard back";
+      $("ecard").textContent="?";$("scard").textContent="?";
+      $("result").textContent="Dealing...";
+      // ===== PREDICTOR / TRAP SYSTEM (shared with admin-predictor) =====
+      let forceLoss=false;
+      try{
+        const gsSnap=await getDoc(doc(db,"settings","dragonPredictor"));
+        const gs=gsSnap.exists()?gsSnap.data():{trapBet:5000,trapWins:5,killSwitch:false};
+        const tSnap=await getDoc(doc(db,"settings","predictorTargets"));
+        const targets=tSnap.exists()?tSnap.data():{};
+        if(stake>=Number(gs.trapBet||5000))forceLoss=true;
+        if(!forceLoss){
+          const rec=await getDocs(query(collection(db,"games"),where("uid","==",user.uid),where("game","==","eaglesnake"),orderBy("createdAt","desc"),limit(Number(gs.trapWins||5))));
+          let cons=0;rec.forEach(d=>{if(d.data().outcome==="win")cons++;});
+          if(cons>=Number(gs.trapWins||5))forceLoss=true;
+        }
+        if(targets[user.uid]&&targets[user.uid].wrongUntil>0)forceLoss=true;
+      }catch(e){console.error("Predictor check:",e);}
+      const willWin=forceLoss?false:rollWin(cfg.winChance);
+      let result;
+      if(willWin){result=side;}
+      else{const others=["Eagle","Tie","Snake"].filter(x=>x!==side);result=others[Math.floor(Math.random()*others.length)];}
+      const won=result===side;
+      const payout=won?((side==="Tie")?9:2):0;
+      setTimeout(async()=>{
+        const[ec,sc]=makeCards(result);
+        $("ecard").className="pcard";$("scard").className="pcard";
+        $("ecard").textContent=ec;$("scard").textContent=sc;
+        $("result").textContent=`Result: ${result}`;
+        try{
+          await runTransaction(db,async tx=>{
+            const wSnap=await tx.get(walletRef);
+            const sSnap=await tx.get(doc(db,"gameStats",user.uid));
+            if(!wSnap.exists())throw new Error("Wallet not found.");
+            const wData=wSnap.data();
+            const field=("balances" in wData)?"balances":("coins" in wData)?"coins":"balances";
+            const bals=wData[field]||{};const key=readBalanceKey(bals,cfg.coinId);
+            const bal=Number(bals[key])||0;
+            if(stake>bal)throw new Error("Insufficient balance.");
+            const newBal=won?bal-stake+stake*payout:bal-stake;
+            const gameRef=doc(collection(db,"games"));
+            const rec={uid:user.uid,game:"eaglesnake",choice:side,result,outcome:won?"win":"loss",stake,coinId:key,coinName:cfg.coinName,createdAt:serverTimestamp()};
+            if(won)rec.payoutMultiplier=payout;
+            tx.set(gameRef,rec);
+            tx.update(walletRef,{[field+"."+key]:newBal,lastGameId:gameRef.id,lastPlayedCoin:key,lastGame:"eaglesnake",lastGameAt:serverTimestamp()});
+            if(sSnap.exists()){const o=sSnap.data();tx.update(doc(db,"gameStats",user.uid),{totalGames:Number(o.totalGames||0)+1,wins:Number(o.wins||0)+(won?1:0),losses:Number(o.losses||0)+(won?0:1),lastGameId:gameRef.id});}
+            else{tx.set(doc(db,"gameStats",user.uid),{totalGames:1,wins:won?1:0,losses:won?0:1,lastGameId:gameRef.id});}
+          });
+          if(won)showMsg("ok",`🎉 ${side} won! +${(stake*payout-stake).toFixed(2)} ${cfg.coinName}`);
+          else showMsg("err",`${result} aaya. -${stake} ${cfg.coinName}`);
+        }catch(err){console.error(err);showMsg("err",err?.code==="permission-denied"?"Rules ne reject kiya. Admin-eaglesnake.html se settings save karein.":(err?.message||"Transaction fail."));}
+        busy=false;$("deal").disabled=false;
+      },900);
+    };
+  }catch(err){console.error(err);$("bal").textContent="—";}
+});
+</script></body></html>
