@@ -1,0 +1,246 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dice Game</title><style>
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;display:flex;flex-direction:column;overflow:hidden;
+  background:linear-gradient(180deg,#3a7bd5 0%,#7ec3e8 22%,#ffd9a0 48%,#ff9a8a 68%,#c86dd7 100%);
+  color:#fff;font-family:Arial,sans-serif;
+}
+.wrap{width:min(1180px,96%);margin:auto}
+
+.top{flex:0 0 auto;background:linear-gradient(180deg,#d5488a,#a02870);border-bottom:3px solid #ffd700;box-shadow:0 4px 20px rgba(0,0,0,.35)}
+.head{height:54px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{font-weight:900;letter-spacing:1px;font-size:18px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;justify-content:space-around;align-items:center;gap:4px;background:linear-gradient(180deg,#3aa04a,#1c6b2a);border-top:3px solid #ffd700;padding:7px 6px calc(7px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px rgba(0,0,0,.4)}
+.nav a{color:#fff;text-decoration:none;font-weight:800;font-size:12px;padding:8px 11px;border-radius:10px;background:rgba(255,255,255,.14);transition:.2s}
+.nav a:hover{background:rgba(255,255,255,.28)}
+
+.page{flex:1;min-height:0;overflow-y:auto;padding:8px 0 62px;-webkit-overflow-scrolling:touch}
+
+.card{border:2px solid #ffd700;border-radius:16px;padding:12px;margin-bottom:10px;box-shadow:0 8px 24px rgba(0,0,0,.35);background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.06))}
+
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.tile{padding:8px 6px;border:1px solid rgba(255,215,0,.5);border-radius:12px;background:rgba(0,0,0,.25);text-align:center}
+.tile span{font-size:9px;color:rgba(255,255,255,.85);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.tile b{display:block;font-size:16px;margin-top:2px;font-weight:900;color:#ffd700}
+
+.field{margin:8px 0}
+.field label{display:block;font-size:10px;font-weight:800;margin-bottom:4px;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.9)}
+.field input,.field select{width:100%;padding:10px;border:1px solid rgba(255,215,0,.5);border-radius:10px;background:rgba(0,0,0,.3);color:#fff;font-size:14px;font-weight:700}
+.field input:focus,.field select:focus{outline:none;border-color:#ffd700;box-shadow:0 0 0 3px rgba(255,215,0,.2)}
+
+.btn{border:0;border-radius:12px;padding:11px 16px;font-weight:800;cursor:pointer;transition:.2s;font-size:14px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.primary{background:linear-gradient(180deg,#ffd700,#f0a000);color:#5a2a00;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.primary:hover:not(:disabled){box-shadow:0 6px 20px rgba(0,0,0,.5)}
+.soft{background:rgba(255,255,255,.2);color:#fff}
+
+.msg{display:none;padding:10px;border-radius:10px;margin:10px auto 0;font-size:13px;font-weight:700;max-width:560px}
+.show{display:block}
+.ok{background:#0e2b1e;color:#7ee2a8;border:1px solid #1e4d34}
+.err{background:#33141a;color:#ff9d9d;border:1px solid #5a2025}
+
+.small{font-size:12px;color:rgba(255,255,255,.85)}
+
+.dice-display{text-align:center;margin:20px 0}
+.dice-result{font-size:72px;font-weight:900;color:#ffd700;text-shadow:0 4px 12px rgba(0,0,0,.5);margin:10px 0;min-height:90px}
+.dice-result.win{color:#7ee2a8}
+.dice-result.loss{color:#ff9d9d}
+
+.controls{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}
+.control-btn{padding:12px;border-radius:10px;background:rgba(255,255,255,.15);color:#fff;border:2px solid rgba(255,215,0,.4);font-weight:800;cursor:pointer;transition:.2s}
+.control-btn.active{background:linear-gradient(180deg,#ffd700,#f0a000);color:#5a2a00;border-color:#ffd700}
+.control-btn:hover:not(.active){background:rgba(255,255,255,.25)}
+
+.slider-container{margin:16px 0}
+.slider{width:100%;height:8px;border-radius:5px;background:rgba(0,0,0,.3);outline:none;-webkit-appearance:none}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#ffd700;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#ffd700;cursor:pointer;border:none;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+
+.multiplier-display{text-align:center;font-size:32px;font-weight:900;color:#ffd700;margin:12px 0;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+
+.table{overflow:auto;border-radius:12px;max-height:280px}
+table{width:100%;border-collapse:collapse;min-width:620px}
+th,td{text-align:left;padding:9px;border-bottom:1px solid rgba(255,215,0,.3);font-size:12px;color:#fff}
+th{font-size:10px;color:rgba(255,255,255,.85);text-transform:uppercase;letter-spacing:.5px}
+tbody tr:hover{background:rgba(255,215,0,.1)}
+
+h2{margin:6px 0 12px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4);font-size:18px}
+
+@media(max-width:640px){
+  .head{height:48px}
+  .brand{font-size:15px}
+  .nav a{font-size:11px;padding:7px 9px}
+  .tiles{grid-template-columns:1fr}
+  .controls{grid-template-columns:1fr}
+  .dice-result{font-size:56px}
+  .multiplier-display{font-size:26px}
+}
+</style></head><body><header class="top"><div class="wrap head"><div class="brand">🎲 DICE GAME</div><div class="nav"><a href="index.html">Lobby</a><a href="coinflip.html">Coin Flip</a><a href="crash.html">Crash</a><a href="mines.html">Mines</a><a href="profile.html">Profile</a></div></div></header><main class="wrap page"><section class="card"><div class="tiles"><div class="tile"><span>Balance</span><b id="bal">0</b></div><div class="tile"><span>Min Bet</span><b id="min">1</b></div><div class="tile"><span>Max Bet</span><b id="max">1000</b></div></div><div class="dice-display"><div class="dice-result" id="diceResult">🎲</div><div class="multiplier-display" id="multiplier">2.00x</div></div><div class="field" style="max-width:300px;margin:16px auto"><label>Bet Amount</label><input id="bet" type="number" min="1" step=".01" value="10"></div><div class="slider-container"><label style="display:flex;justify-content:space-between;margin-bottom:8px"><span>Roll Under:</span><b id="targetNum">50</b></label><input type="range" min="2" max="98" value="50" class="slider" id="targetSlider"></div><div class="controls"><button class="control-btn active" data-mode="under">Roll Under</button><button class="control-btn" data-mode="over">Roll Over</button></div><button id="roll" class="btn primary" style="width:100%;max-width:400px;margin:16px auto;display:block">🎲 Roll Dice</button><div id="msg" class="msg"></div></section><section class="card"><h2>Recent Rolls</h2><div class="table"><table><thead><tr><th>Time</th><th>Target</th><th>Mode</th><th>Result</th><th>Outcome</th><th>Payout</th></tr></thead><tbody id="history"></tbody></table></div></section></main><script type="module">
+const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import{getAuth,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+import{getFirestore,doc,getDoc,setDoc,onSnapshot,collection,query,where,limit,runTransaction,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
+
+function showMsg(t,x){const m=$("msg");m.className="msg show "+t;m.textContent=x;if(t==="ok")setTimeout(()=>{m.className="msg"},4000);}
+function readBalanceCaseInsensitive(b,c){const w=String(c||"").trim().toLowerCase();for(const[k,v]of Object.entries(b||{})){if(String(k).trim().toLowerCase()===w)return Number(v)||0}return 0}
+function readBalanceKey(b,c){const w=String(c||"").trim().toLowerCase();for(const k of Object.keys(b||{})){if(String(k).trim().toLowerCase()===w)return k}return String(c||"").trim().toLowerCase()}
+
+let mode="under";
+document.querySelectorAll(".control-btn").forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll(".control-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    mode=btn.dataset.mode;
+    updateMultiplier();
+  };
+});
+
+$("targetSlider").oninput=function(){
+  $("targetNum").textContent=this.value;
+  updateMultiplier();
+};
+
+function updateMultiplier(){
+  const target=Number($("targetSlider").value);
+  const winChance=mode==="under"?target:(100-target);
+  const mult=winChance>0?(99/winChance).toFixed(2):"0.00";
+  $("multiplier").textContent=mult+"x";
+}
+
+updateMultiplier();
+
+onAuthStateChanged(auth,async user=>{
+  if(!user){location.replace("login.html");return}
+  try{
+    const uSnap=await getDoc(doc(db,"users",user.uid));
+    if(!uSnap.exists()||uSnap.data().status==="blocked"){await signOut(auth);location.replace("login.html");return}
+
+    let cfg={gameStatus:"enabled",coinId:"hfc",coinName:"HFC",minBet:1,maxBet:1000,maxMultiplier:99,houseEdge:1};
+    const settingsSnap=await getDoc(doc(db,"settings","dice"));
+    if(settingsSnap.exists()) cfg={...cfg,...settingsSnap.data()};
+
+    $("min").textContent=cfg.minBet;
+    $("max").textContent=cfg.maxBet;
+    $("bet").min=cfg.minBet;
+    $("bet").max=cfg.maxBet;
+    $("bet").value=cfg.minBet;
+
+    onSnapshot(doc(db,"wallets",user.uid),snap=>{
+      const w=snap.exists()?snap.data():{};
+      $("bal").textContent=readBalanceCaseInsensitive(w.balances||w.coins||{},cfg.coinId).toLocaleString();
+    },()=>{$("bal").textContent="—"});
+
+    onSnapshot(query(collection(db,"games"),where("uid","==",user.uid),where("game","==","dice"),limit(20)),snap=>{
+      const rows=snap.docs.map(d=>d.data()).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));
+      $("history").innerHTML=rows.map(x=>`<tr>
+        <td>${x.createdAt?.toDate?.()?.toLocaleString()||"—"}</td>
+        <td>${x.target}</td>
+        <td>${x.mode}</td>
+        <td style="color:${x.outcome==="win"?"#7ee2a8":"#ff9d9d"}">${x.result}</td>
+        <td style="color:${x.outcome==="win"?"#7ee2a8":"#ff9d9d"}">${x.outcome==="win"?"WIN":"LOSS"}</td>
+        <td>${x.outcome==="win"?"+"+(x.stake*x.payoutMultiplier-x.stake).toFixed(2):"-"+x.stake} ${x.coinName||""}</td>
+      </tr>`).join("")||'<tr><td colspan="6">No rolls yet.</td></tr>';
+    });
+
+    $("roll").onclick=async()=>{
+      if(cfg.gameStatus!=="enabled"){showMsg("err","Game disabled hai.");return}
+      const stake=Number($("bet").value);
+      const target=Number($("targetSlider").value);
+      if(!Number.isFinite(stake)||stake<Number(cfg.minBet)||stake>Number(cfg.maxBet)){showMsg("err","Bet limits ke andar enter karo.");return}
+
+      $("roll").disabled=true;
+      $("roll").textContent="Rolling...";
+      $("diceResult").textContent="🎲";
+      $("diceResult").className="dice-result";
+      $("msg").className="msg";
+
+      try{
+        await runTransaction(db,async tx=>{
+          const walletRef=doc(db,"wallets",user.uid);
+          const statsRef=doc(db,"gameStats",user.uid);
+          const wSnap=await tx.get(walletRef);
+          const sSnap=await tx.get(statsRef);
+          if(!wSnap.exists()) throw new Error("Wallet not found.");
+
+          const wData=wSnap.data();
+          const field=("balances" in wData)?"balances":("coins" in wData)?"coins":"balances";
+          const bals=wData[field]||{};
+          const key=readBalanceKey(bals,cfg.coinId);
+          const bal=Number(bals[key])||0;
+          if(stake>bal) throw new Error("Insufficient balance.");
+
+          // Generate random result 1-100
+          const rand=new Uint32Array(1);
+          crypto.getRandomValues(rand);
+          const result=1+(rand[0]%100);
+
+          // Check win
+          const won=mode==="under"?result<target:result>target;
+          const winChance=mode==="under"?target:(100-target);
+          const payoutMult=won?(99/winChance):0;
+
+          const newBal=won?bal-stake+stake*payoutMult:bal-stake;
+
+          const gameRef=doc(collection(db,"games"));
+          tx.set(gameRef,{
+            uid:user.uid,
+            game:"dice",
+            mode,
+            target,
+            result,
+            outcome:won?"win":"loss",
+            stake,
+            coinId:key,
+            coinName:cfg.coinName,
+            payoutMultiplier:payoutMult,
+            createdAt:serverTimestamp()
+          });
+
+          tx.update(walletRef,{
+            [field+"."+key]:newBal,
+            lastGameId:gameRef.id,
+            lastPlayedCoin:key,
+            lastGame:"dice",
+            lastGameAt:serverTimestamp()
+          });
+
+          if(sSnap.exists()){
+            const o=sSnap.data();
+            tx.update(statsRef,{
+              totalGames:Number(o.totalGames||0)+1,
+              wins:Number(o.wins||0)+(won?1:0),
+              losses:Number(o.losses||0)+(won?0:1),
+              lastGameId:gameRef.id
+            });
+          }else{
+            tx.set(statsRef,{totalGames:1,wins:won?1:0,losses:won?0:1,lastGameId:gameRef.id});
+          }
+
+          setTimeout(()=>{
+            $("diceResult").textContent=result;
+            $("diceResult").className="dice-result "+(won?"win":"loss");
+            if(won){
+              showMsg("ok",`🎉 Won! Result: ${result} | +${(stake*payoutMult-stake).toFixed(2)} ${cfg.coinName}`);
+            }else{
+              showMsg("err",`Result: ${result} | -${stake} ${cfg.coinName}`);
+            }
+            $("roll").disabled=false;
+            $("roll").textContent="🎲 Roll Dice";
+          },800);
+        });
+      }catch(err){
+        console.error(err);
+        showMsg("err",err?.code==="permission-denied"?"Rules ne reject kiya.":(err?.message||"Transaction fail."));
+        $("roll").disabled=false;
+        $("roll").textContent="🎲 Roll Dice";
+      }
+    };
+  }catch(err){
+    console.error(err);
+    $("bal").textContent="—";
+  }
+});
+</script></body></html>
