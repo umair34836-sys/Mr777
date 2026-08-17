@@ -1,0 +1,350 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dice Admin</title><style>
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;display:flex;flex-direction:column;overflow:hidden;background:linear-gradient(180deg,#3a7bd5 0%,#7ec3e8 22%,#ffd9a0 48%,#ff9a8a 68%,#c86dd7 100%);color:#fff;font-family:Arial,sans-serif}
+.wrap{width:min(1180px,96%);margin:auto}
+
+.top{flex:0 0 auto;background:linear-gradient(180deg,#d5488a,#a02870);border-bottom:3px solid #ffd700;box-shadow:0 4px 20px rgba(0,0,0,.35)}
+.head{height:54px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{font-weight:900;letter-spacing:1px;font-size:18px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;justify-content:space-around;align-items:center;gap:4px;background:linear-gradient(180deg,#3aa04a,#1c6b2a);border-top:3px solid #ffd700;padding:7px 6px calc(7px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px rgba(0,0,0,.4)}
+.nav a{color:#fff;text-decoration:none;font-weight:800;font-size:12px;padding:8px 11px;border-radius:10px;background:rgba(255,255,255,.14);transition:.2s}
+.nav a:hover{background:rgba(255,255,255,.28)}
+
+.page{flex:1;min-height:0;overflow-y:auto;padding:8px 0 62px;-webkit-overflow-scrolling:touch}
+
+.adminnav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;padding:0 4px}
+.adminnav a{padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.15);text-decoration:none;color:#fff;font-size:11px;font-weight:800;transition:.2s}
+.adminnav a:hover{background:rgba(255,215,0,.3);color:#ffd700;transform:translateY(-2px)}
+.adminnav a.active{background:linear-gradient(180deg,#ffd700,#f0a000);color:#5a2a00}
+
+.card{border:2px solid #ffd700;border-radius:16px;padding:14px;margin-bottom:10px;box-shadow:0 8px 24px rgba(0,0,0,.35);background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.06))}
+
+h1{margin:0 0 10px;font-size:24px;color:#ffd700;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+h2{margin:16px 0 10px;font-size:18px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+h3{margin:12px 0 8px;font-size:16px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px}
+.field{margin:10px 0}
+.field label{display:block;font-size:10px;font-weight:800;margin-bottom:4px;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.9)}
+.field input,.field select{width:100%;padding:10px;border:1px solid rgba(255,215,0,.5);border-radius:10px;background:rgba(0,0,0,.3);color:#fff;font-size:14px;font-weight:600}
+.field input:focus,.field select:focus{outline:none;border-color:#ffd700;box-shadow:0 0 0 3px rgba(255,215,0,.2)}
+.field select option{background:#2a1650;color:#fff}
+
+.btn{border:0;border-radius:12px;padding:11px 16px;font-weight:800;cursor:pointer;transition:.2s;font-size:14px}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.primary{background:linear-gradient(180deg,#ffd700,#f0a000);color:#5a2a00;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.primary:hover:not(:disabled){box-shadow:0 6px 20px rgba(0,0,0,.5)}
+.soft{background:rgba(255,255,255,.2);color:#fff}
+.danger{background:linear-gradient(180deg,#ff6a2a,#d02a1a);color:#fff}
+
+.msg{display:none;padding:10px;border-radius:10px;margin:10px 0;font-size:13px;font-weight:700}
+.show{display:block}
+.ok{background:#0e2b1e;color:#7ee2a8;border:1px solid #1e4d34}
+.err{background:#33141a;color:#ff9d9d;border:1px solid #5a2025}
+
+.small{font-size:12px;color:rgba(255,255,255,.85)}
+
+.info-box{padding:12px;background:rgba(100,200,255,.1);border:1px solid rgba(100,200,255,.4);border-radius:10px;margin:12px 0;font-size:13px;color:#fff;line-height:1.5}
+.info-box b{color:#ffd700}
+
+.user-control{padding:12px;background:rgba(255,215,0,.1);border:2px solid rgba(255,215,0,.4);border-radius:12px;margin-bottom:10px}
+.user-control h4{margin:0 0 10px;color:#ffd700;font-size:15px}
+.user-control .grid{grid-template-columns:1fr 1fr 1fr}
+
+.coin-control{padding:10px;background:rgba(0,0,0,.3);border:1px solid rgba(255,215,0,.3);border-radius:10px;margin-top:8px}
+.coin-control-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.coin-name{font-weight:800;color:#ffd700;text-transform:uppercase}
+
+.progressive-control{padding:10px;background:rgba(255,100,50,.1);border:1px solid rgba(255,150,50,.4);border-radius:10px;margin-top:8px}
+
+.table{overflow:auto;border-radius:12px;max-height:400px}
+table{width:100%;border-collapse:collapse;min-width:720px}
+th,td{text-align:left;padding:9px;border-bottom:1px solid rgba(255,215,0,.3);font-size:12px;color:#fff}
+th{font-size:10px;color:rgba(255,255,255,.85);text-transform:uppercase;letter-spacing:.5px}
+tbody tr:hover{background:rgba(255,215,0,.1)}
+
+.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+
+@media(max-width:640px){
+  .head{height:48px}
+  .brand{font-size:15px}
+  .nav a{font-size:11px;padding:7px 9px}
+  .grid,.user-control .grid{grid-template-columns:1fr}
+  h1{font-size:20px}
+  table{min-width:600px}
+}
+</style></head><body><header class="top"><div class="wrap head"><div class="brand">🎲 DICE ADMIN</div><div class="nav"><a href="index.html">Lobby</a><a href="admin.html">Dashboard</a></div></div></header><main class="wrap page"><div class="adminnav"><a href="admin.html">Dashboard</a><a href="admin-users.html">Users</a><a href="admin-coins.html">Coins</a><a href="admin-games.html">Games</a><a href="admin-coinflip.html">Coin Flip</a><a href="admin-crash.html">Crash</a><a href="admin-mines.html">Mines</a><a href="admin-dice.html" class="active">Dice</a><a href="admin-dragontiger.html">Dragon Tiger</a><a href="admin-transactions.html">Transactions</a><a href="admin-affiliate.html">Affiliate</a></div>
+
+<section class="card">
+  <h1>🎲 Dice Game Control</h1>
+  <div class="info-box"><b>ℹ️ Advanced Control:</b> Is panel se aap global settings, user-specific win chance, coin-specific control, aur progressive win/loss logic set kar sakte hain. Sab settings real-time sync hoti hain.</div>
+  <div id="msg" class="msg"></div>
+  
+  <h2>🌍 Global Settings</h2>
+  <div class="grid">
+    <div class="field"><label>Game Status</label><select id="gameStatus"><option value="enabled">Enabled</option><option value="disabled">Disabled</option></select></div>
+    <div class="field"><label>Game Coin</label><select id="gameCoin"><option value="">Loading...</option></select></div>
+    <div class="field"><label>Min Bet</label><input id="minBet" type="number" step=".01" value="1"></div>
+    <div class="field"><label>Max Bet</label><input id="maxBet" type="number" step=".01" value="1000"></div>
+    <div class="field"><label>House Edge (%)</label><input id="houseEdge" type="number" min="0" max="20" step="0.1" value="1"></div>
+    <div class="field"><label>Max Multiplier</label><input id="maxMultiplier" type="number" step="1" value="99"></div>
+  </div>
+  <button id="saveGlobal" class="btn primary">💾 Save Global Settings</button>
+</section>
+
+<section class="card">
+  <h2>👤 User-Specific Win Chance</h2>
+  <p class="small">Har user ke liye alag win chance set karein. Agar user yahan set hai, to global win chance override ho jayega.</p>
+  
+  <div class="user-control">
+    <div class="grid">
+      <div class="field"><label>Search User (UID or Email)</label><input id="userSearch" placeholder="Enter UID or email"></div>
+      <div class="field"><label>Win Chance (%)</label><input id="userWinChance" type="number" min="0" max="100" step="1" value="50"></div>
+      <div class="field"><label>Max Wins Before Loss</label><input id="userMaxWins" type="number" min="0" step="1" value="0" placeholder="0 = unlimited"></div>
+    </div>
+    <div class="actions">
+      <button id="searchUser" class="btn soft">🔍 Search User</button>
+      <button id="setUserControl" class="btn primary">✓ Set Control</button>
+      <button id="removeUserControl" class="btn danger">✗ Remove Control</button>
+    </div>
+  </div>
+  
+  <h3>Active User Controls</h3>
+  <div class="table"><table><thead><tr><th>User</th><th>Win Chance</th><th>Max Wins</th><th>Current Wins</th><th>Status</th><th>Action</th></tr></thead><tbody id="userControls"></tbody></table></div>
+</section>
+
+<section class="card">
+  <h2>🪙 Coin-Specific Control</h2>
+  <p class="small">Har coin ke liye alag win/loss logic set karein. User is coin par tab tak jeetega jab tak specified limit na aa jaye.</p>
+  
+  <div id="coinControls"></div>
+  
+  <button id="saveCoinControls" class="btn primary" style="margin-top:12px">💾 Save Coin Controls</button>
+</section>
+
+<section class="card">
+  <h2>📊 Recent Dice Games</h2>
+  <div class="table"><table><thead><tr><th>Time</th><th>User</th><th>Bet</th><th>Target</th><th>Result</th><th>Outcome</th></tr></thead><tbody id="recentGames"></tbody></table></div>
+</section>
+</main>
+
+<script type="module">
+const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import{getAuth,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+import{getFirestore,doc,getDoc,setDoc,updateDoc,deleteDoc,onSnapshot,collection,query,where,orderBy,limit,getDocs}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
+
+function showMsg(t,x){const m=$("msg");m.className="msg show "+t;m.textContent=x;if(t==="ok")setTimeout(()=>{m.className="msg"},4000);}
+
+let availableCoins=[];
+let currentUserData=null;
+
+onAuthStateChanged(auth,async u=>{
+  if(!u){location.replace("login.html");return}
+  const s=await getDoc(doc(db,"users",u.uid));
+  if(!s.exists()||s.data().isAdmin!==true){location.replace("index.html");return}
+
+  // Load coins
+  const coinsSnap=await getDocs(collection(db,"coins"));
+  availableCoins=coinsSnap.docs.map(d=>({id:d.id,...d.data()})).filter(c=>c.active!==false);
+  
+  const coinSelect=$("gameCoin");
+  coinSelect.innerHTML=availableCoins.length
+    ?availableCoins.map(c=>`<option value="${c.id}">${c.name||c.id.toUpperCase()} (${c.id})</option>`).join("")
+    :'<option value="hfc">HFC (Default)</option>';
+
+  // Load global settings
+  const cur=await getDoc(doc(db,"settings","dice"));
+  if(cur.exists()){
+    const d=cur.data();
+    $("gameStatus").value=d.gameStatus??"enabled";
+    $("gameCoin").value=d.coinId||"hfc";
+    $("minBet").value=d.minBet??1;
+    $("maxBet").value=d.maxBet??1000;
+    $("houseEdge").value=d.houseEdge??1;
+    $("maxMultiplier").value=d.maxMultiplier??99;
+  }
+
+  $("saveGlobal").onclick=async()=>{
+    const selectedCoinId=$("gameCoin").value;
+    const selectedCoin=availableCoins.find(c=>c.id===selectedCoinId)||{id:"hfc",name:"HFC"};
+    
+    $("saveGlobal").disabled=true;
+    $("saveGlobal").textContent="Saving...";
+    try{
+      await setDoc(doc(db,"settings","dice"),{
+        gameStatus:$("gameStatus").value,
+        coinId:selectedCoin.id,
+        coinName:selectedCoin.name||selectedCoin.id.toUpperCase(),
+        minBet:Number($("minBet").value)||1,
+        maxBet:Number($("maxBet").value)||1000,
+        houseEdge:Number($("houseEdge").value)||1,
+        maxMultiplier:Number($("maxMultiplier").value)||99,
+        updatedAt:new Date()
+      },{merge:true});
+      showMsg("ok",`✅ Global settings saved! Game "${selectedCoin.name}" use karega.`);
+    }catch(err){
+      showMsg("err","Failed to save: "+err.message);
+    }finally{
+      $("saveGlobal").disabled=false;
+      $("saveGlobal").textContent="💾 Save Global Settings";
+    }
+  };
+
+  // User search
+  $("searchUser").onclick=async()=>{
+    const search=$("userSearch").value.trim();
+    if(!search){showMsg("err","UID ya email enter karein.");return}
+    
+    try{
+      let userDoc=null;
+      if(search.includes("@")){
+        const q=query(collection(db,"users"),where("email","==",search));
+        const snap=await getDocs(q);
+        if(!snap.empty) userDoc=snap.docs[0];
+      }else{
+        const snap=await getDoc(doc(db,"users",search));
+        if(snap.exists()) userDoc=snap;
+      }
+      
+      if(!userDoc){showMsg("err","User not found.");return}
+      
+      currentUserData={id:userDoc.id,...userDoc.data()};
+      showMsg("ok",`✅ Found: ${currentUserData.username} (${currentUserData.email})`);
+      
+      // Load existing control
+      const controlSnap=await getDoc(doc(db,"diceUserControls",userDoc.id));
+      if(controlSnap.exists()){
+        const c=controlSnap.data();
+        $("userWinChance").value=c.winChance??50;
+        $("userMaxWins").value=c.maxWins??0;
+      }
+    }catch(err){
+      showMsg("err","Search failed: "+err.message);
+    }
+  };
+
+  $("setUserControl").onclick=async()=>{
+    if(!currentUserData){showMsg("err","Pehle user search karein.");return}
+    
+    try{
+      await setDoc(doc(db,"diceUserControls",currentUserData.id),{
+        uid:currentUserData.id,
+        username:currentUserData.username,
+        email:currentUserData.email,
+        winChance:Number($("userWinChance").value)||50,
+        maxWins:Number($("userMaxWins").value)||0,
+        currentWins:0,
+        active:true,
+        updatedAt:new Date()
+      },{merge:true});
+      showMsg("ok",`✅ Control set for ${currentUserData.username}`);
+      loadUserControls();
+    }catch(err){
+      showMsg("err","Failed: "+err.message);
+    }
+  };
+
+  $("removeUserControl").onclick=async()=>{
+    if(!currentUserData){showMsg("err","Pehle user search karein.");return}
+    
+    if(!confirm(`Kya aap ${currentUserData.username} ka control remove karna chahte hain?`))return;
+    
+    try{
+      await deleteDoc(doc(db,"diceUserControls",currentUserData.id));
+      showMsg("ok","✅ Control removed.");
+      loadUserControls();
+    }catch(err){
+      showMsg("err","Failed: "+err.message);
+    }
+  };
+
+  // Load user controls
+  async function loadUserControls(){
+    const snap=await getDocs(collection(db,"diceUserControls"));
+    const controls=snap.docs.map(d=>({id:d.id,...d.data()}));
+    
+    $("userControls").innerHTML=controls.length?controls.map(c=>`<tr>
+      <td>${c.username||c.email||c.uid}</td>
+      <td>${c.winChance}%</td>
+      <td>${c.maxWins||"Unlimited"}</td>
+      <td>${c.currentWins||0}</td>
+      <td style="color:${c.active?'#7ee2a8':'#ff9d9d'}">${c.active?"Active":"Inactive"}</td>
+      <td><button class="btn danger" style="padding:4px 8px;font-size:11px" onclick="removeControl('${c.id}')">Remove</button></td>
+    </tr>`).join(""):'<tr><td colspan="6">No user controls set.</td></tr>';
+  }
+
+  window.removeControl=async(uid)=>{
+    if(!confirm("Remove this control?"))return;
+    await deleteDoc(doc(db,"diceUserControls",uid));
+    showMsg("ok","✅ Removed.");
+    loadUserControls();
+  };
+
+  loadUserControls();
+
+  // Coin controls
+  async function loadCoinControls(){
+    const snap=await getDoc(doc(db,"settings","diceCoinControls"));
+    const controls=snap.exists()?snap.data():{};
+    
+    $("coinControls").innerHTML=availableCoins.map(c=>{
+      const ctrl=controls[c.id]||{enabled:false,allowWins:5,thenLose:true};
+      return `<div class="coin-control">
+        <div class="coin-control-header">
+          <span class="coin-name">${c.name||c.id.toUpperCase()} (${c.id})</span>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+            <input type="checkbox" id="coin-${c.id}-enabled" ${ctrl.enabled?"checked":""} style="width:18px;height:18px">
+            <span>Enable Control</span>
+          </label>
+        </div>
+        <div class="progressive-control">
+          <div class="grid" style="grid-template-columns:1fr 1fr">
+            <div class="field"><label>Allow Wins Before Loss</label><input id="coin-${c.id}-allowWins" type="number" min="0" value="${ctrl.allowWins||5}"></div>
+            <div class="field"><label>Then Force Loss</label><select id="coin-${c.id}-thenLose"><option value="true" ${ctrl.thenLose?"selected":""}>Yes</option><option value="false" ${!ctrl.thenLose?"selected":""}>No</option></select></div>
+          </div>
+        </div>
+      </div>`;
+    }).join("");
+  }
+
+  $("saveCoinControls").onclick=async()=>{
+    const controls={};
+    availableCoins.forEach(c=>{
+      controls[c.id]={
+        enabled:$(`coin-${c.id}-enabled`).checked,
+        allowWins:Number($(`coin-${c.id}-allowWins`).value)||0,
+        thenLose:$(`coin-${c.id}-thenLose`).value==="true"
+      };
+    });
+    
+    try{
+      await setDoc(doc(db,"settings","diceCoinControls"),controls,{merge:true});
+      showMsg("ok","✅ Coin controls saved!");
+    }catch(err){
+      showMsg("err","Failed: "+err.message);
+    }
+  };
+
+  loadCoinControls();
+
+  // Recent games
+  onSnapshot(query(collection(db,"games"),where("game","==","dice"),orderBy("createdAt","desc"),limit(20)),snap=>{
+    $("recentGames").innerHTML=snap.docs.map(d=>{
+      const x=d.data();
+      return `<tr>
+        <td>${x.createdAt?.toDate?.()?.toLocaleString()||"—"}</td>
+        <td>${x.uid.substring(0,8)}...</td>
+        <td>${x.stake} ${x.coinName||""}</td>
+        <td>${x.target} (${x.mode})</td>
+        <td style="color:${x.outcome==="win"?"#7ee2a8":"#ff9d9d"}">${x.result}</td>
+        <td style="color:${x.outcome==="win"?"#7ee2a8":"#ff9d9d"}">${x.outcome==="win"?"WIN":"LOSS"}</td>
+      </tr>`;
+    }).join("")||'<tr><td colspan="6">No games yet.</td></tr>';
+  });
+});
+</script></body></html>
