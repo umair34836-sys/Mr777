@@ -1,0 +1,160 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Eagle Snake Predictor Admin</title><style>
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;display:flex;flex-direction:column;overflow:hidden;background:linear-gradient(180deg,#3a7bd5 0%,#7ec3e8 22%,#ffd9a0 48%,#ff9a8a 68%,#c86dd7 100%);color:#fff;font-family:Arial,sans-serif}
+.wrap{width:min(1180px,96%);margin:auto}
+.top{flex:0 0 auto;background:linear-gradient(180deg,#d5488a,#a02870);border-bottom:3px solid #ffd700;box-shadow:0 4px 20px rgba(0,0,0,.35)}
+.head{height:54px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{font-weight:900;letter-spacing:1px;font-size:18px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;justify-content:space-around;align-items:center;gap:4px;background:linear-gradient(180deg,#3aa04a,#1c6b2a);border-top:3px solid #ffd700;padding:7px 6px calc(7px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px rgba(0,0,0,.4)}
+.nav a{color:#fff;text-decoration:none;font-weight:800;font-size:12px;padding:8px 11px;border-radius:10px;background:rgba(255,255,255,.14);transition:.2s}
+.nav a:hover{background:rgba(255,255,255,.28)}
+.page{flex:1;min-height:0;overflow-y:auto;padding:8px 0 62px;-webkit-overflow-scrolling:touch}
+.adminnav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;padding:0 4px}
+.adminnav a{padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.15);text-decoration:none;color:#fff;font-size:11px;font-weight:800;transition:.2s}
+.adminnav a:hover{background:rgba(255,215,0,.3);color:#ffd700;transform:translateY(-2px)}
+.adminnav a.active{background:linear-gradient(180deg,#ffd700,#f0a000);color:#5a2a00}
+.card{border:2px solid #ffd700;border-radius:16px;padding:14px;margin-bottom:10px;box-shadow:0 8px 24px rgba(0,0,0,.35);background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.06))}
+h1{margin:0 0 10px;font-size:24px;color:#ffd700;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+h2{margin:16px 0 10px;font-size:18px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+h3{margin:12px 0 8px;font-size:15px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px}
+.field{margin:10px 0}
+.field label{display:block;font-size:10px;font-weight:800;margin-bottom:4px;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.9)}
+.field input,.field select{width:100%;padding:10px;border:1px solid rgba(255,215,0,.5);border-radius:10px;background:rgba(0,0,0,.3);color:#fff;font-size:14px;font-weight:600}
+.field input:focus,.field select:focus{outline:none;border-color:#ffd700;box-shadow:0 0 0 3px rgba(255,215,0,.2)}
+.field select option{background:#2a1650;color:#fff}
+.btn{border:0;border-radius:12px;padding:11px 16px;font-weight:800;cursor:pointer;transition:.2s;font-size:14px}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.primary{background:linear-gradient(180deg,#ffd700,#f0a000);color:#5a2a00;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.soft{background:rgba(255,255,255,.2);color:#fff}
+.danger{background:linear-gradient(180deg,#ff6a2a,#d02a1a);color:#fff}
+.msg{display:none;padding:10px;border-radius:10px;margin:10px 0;font-size:13px;font-weight:700}
+.show{display:block}.ok{background:#0e2b1e;color:#7ee2a8;border:1px solid #1e4d34}.err{background:#33141a;color:#ff9d9d;border:1px solid #5a2025}
+.small{font-size:12px;color:rgba(255,255,255,.85)}
+.info-box{padding:12px;background:rgba(100,200,255,.1);border:1px solid rgba(100,200,255,.4);border-radius:10px;margin:12px 0;font-size:13px;color:#fff;line-height:1.5}
+.info-box b{color:#ffd700}
+.danger-box{padding:12px;background:rgba(255,100,50,.15);border:2px solid #ff6a2a;border-radius:10px;margin:12px 0}
+.slider-wrap{margin:10px 0}
+.slider{width:100%;height:10px;border-radius:5px;background:rgba(0,0,0,.4);outline:none;-webkit-appearance:none}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#ffd700,#f0a000);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+.slider-val{display:inline-block;padding:4px 12px;background:rgba(255,215,0,.2);border:1px solid #ffd700;border-radius:8px;font-weight:900;color:#ffd700;font-size:18px;margin-left:10px}
+.toggle{position:relative;display:inline-block;width:60px;height:32px}
+.toggle input{opacity:0;width:0;height:0}
+.tslider{position:absolute;cursor:pointer;inset:0;background:#555;transition:.3s;border-radius:32px}
+.tslider:before{position:absolute;content:"";height:24px;width:24px;left:4px;bottom:4px;background:#fff;transition:.3s;border-radius:50%}
+input:checked + .tslider{background:#ff6a2a}
+input:checked + .tslider:before{transform:translateX(28px)}
+.co-admin-row{padding:12px;background:rgba(0,0,0,.3);border:1px solid rgba(255,215,0,.4);border-radius:12px;margin-top:10px}
+.ca-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.ca-name{font-weight:900;color:#ffd700;font-size:16px}
+.ca-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0;font-size:11px}
+.ca-stat{padding:6px;background:rgba(0,0,0,.3);border-radius:8px;text-align:center}
+.ca-stat .lbl{color:rgba(255,255,255,.7);margin-bottom:2px;text-transform:uppercase;font-size:9px}
+.ca-stat .val{font-weight:900;color:#ffd700;font-size:14px}
+.ca-stat.danger .val{color:#ff9d9d}.ca-stat.success .val{color:#7ee2a8}
+.ca-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:800;text-transform:uppercase}
+.badge.active{background:#0e2b1e;color:#7ee2a8;border:1px solid #1e4d34}
+.badge.targeted{background:rgba(255,100,50,.2);color:#ff9d9d;border:1px solid #ff6a2a}
+.live-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#43e08a;animation:pulse 1.5s infinite;margin-right:6px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.table{overflow:auto;border-radius:12px;max-height:300px}
+table{width:100%;border-collapse:collapse;min-width:720px}
+th,td{text-align:left;padding:8px;border-bottom:1px solid rgba(255,215,0,.3);font-size:12px;color:#fff}
+th{font-size:10px;color:rgba(255,255,255,.85);text-transform:uppercase;letter-spacing:.5px}
+tbody tr:hover{background:rgba(255,215,0,.1)}
+@media(max-width:640px){.head{height:48px}.brand{font-size:15px}.nav a{font-size:11px;padding:7px 9px}.grid{grid-template-columns:1fr}.ca-stats{grid-template-columns:repeat(2,1fr)}h1{font-size:20px}table{min-width:600px}}
+</style></head><body><header class="top"><div class="wrap head"><div class="brand">🔮 PREDICTOR MASTER CONTROL</div><div class="nav"><a href="index.html">Lobby</a><a href="admin.html">Dashboard</a></div></div></header><main class="wrap page">
+<div class="adminnav"><a href="admin.html">Dashboard</a><a href="admin-users.html">Users</a><a href="admin-coins.html">Coins</a><a href="admin-eaglesnake.html">Eagle Snake</a><a href="admin-predictor.html" class="active">Predictor</a></div>
+<section class="card"><h1>🔮 Eagle vs Snake Predictor Master Control</h1>
+<div class="info-box"><b>🎯 How It Works:</b> Aap <b>global accuracy</b> set karte hain. Sab co-admins ko same accuracy milegi. Har 4th round par unhe next 10 rounds ki Eagle/Snake predictions dikhti hain. Jab co-admin zyada bet lagaye — <b>TRAP</b> activate hota hai aur wo haarta hai. Co-admin ko <b>manipulated stats</b> dikhte hain.</div>
+<div id="msg" class="msg"></div></section>
+<section class="card"><h2>⚙️ Global Settings (All Co-Admins)</h2>
+<div class="field"><label>Prediction Accuracy: <span class="slider-val" id="accVal">75</span>%</label><div class="slider-wrap"><input type="range" min="0" max="100" value="75" class="slider" id="accuracy"></div><p class="small">⚠️ 75% = 100 mein se 75 sahi, 25 ghalat. Co-admin ko manipulated stats (e.g. 92%) dikhenge.</p></div>
+<div class="field"><label>Display Frequency (Every N Rounds)</label><select id="frequency"><option value="2">Every 2nd</option><option value="3">Every 3rd</option><option value="4" selected>Every 4th</option><option value="5">Every 5th</option><option value="10">Every 10th</option></select></div>
+<div class="grid"><div class="field"><label>Bet Threshold (TRAP)</label><input type="number" id="trapBet" value="5000" min="100"><p class="small">Is se zyada bet → next round FORCE LOSS.</p></div><div class="field"><label>Consecutive Wins Trap</label><input type="number" id="trapWins" value="5" min="1"><p class="small">Itne lagatar wins → next round FORCE LOSS.</p></div></div>
+<div class="danger-box"><h3 style="margin-top:0">🚨 KILL SWITCH</h3><p class="small">Enable = sab co-admins ki predictions band.</p><label class="toggle"><input type="checkbox" id="killSwitch"><span class="tslider"></span></label><span style="margin-left:12px;font-weight:800">Kill All Predictions</span></div>
+<button id="saveGlobal" class="btn primary" style="margin-top:14px">💾 Save Global Settings</button></section>
+<section class="card"><h2>👥 Co-Admins Management</h2><p class="small">Users jin ke paas <code>isCoAdmin: true</code> hai. Yahan se <b>Target User</b> set karein.</p><div id="coAdminsList">Loading...</div></section>
+<section class="card"><h2>🎯 Target User (Emergency Override)</h2>
+<div class="danger-box"><p class="small"><b>⚠️ Emergency:</b> Specific co-admin ko next N rounds <b>sirf ghalat</b> predictions.</p>
+<div class="grid"><div class="field"><label>Select Target Co-Admin</label><select id="targetSelect"><option value="">-- Select --</option></select></div><div class="field"><label>Force Wrong Rounds</label><input type="number" id="targetRounds" value="5" min="1" max="50"></div></div>
+<button id="setTarget" class="btn danger">🎯 Set Target</button> <button id="clearTarget" class="btn soft">Clear All Targets</button></div></section>
+<section class="card"><h2>📊 Live Activity Monitor</h2><p class="small"><span class="live-dot"></span> Real-time: kaunsa co-admin active hai, kitna bet laga raha hai.</p><div id="liveMonitor">Loading...</div></section>
+<section class="card"><h2>📜 Co-Admin Game Activity (Real Data)</h2><p class="small">Ye <b>actual data</b> hai — co-admins ko manipulated stats dikhte hain, ye nahi.</p><div class="table"><table><thead><tr><th>Time</th><th>User</th><th>Choice</th><th>Result</th><th>Outcome</th><th>Stake</th></tr></thead><tbody id="predLog"></tbody></table></div></section>
+</main><script type="module">
+const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+import{getFirestore,doc,getDoc,setDoc,onSnapshot,collection,query,where,orderBy,limit,getDocs}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
+function showMsg(t,x){const m=$("msg");m.className="msg show "+t;m.textContent=x;if(t==="ok")setTimeout(()=>{m.className="msg"},3000);}
+let coAdmins=[],targets={},globalSettings={accuracy:75,frequency:4,trapBet:5000,trapWins:5,killSwitch:false};
+$("accuracy").oninput=function(){$("accVal").textContent=this.value;};
+onAuthStateChanged(auth,async u=>{
+  if(!u){location.replace("login.html");return}
+  const s=await getDoc(doc(db,"users",u.uid));
+  if(!s.exists()||s.data().isAdmin!==true){location.replace("index.html");return}
+  const gs=await getDoc(doc(db,"settings","dragonPredictor"));
+  if(gs.exists()){globalSettings={...globalSettings,...gs.data()};$("accuracy").value=globalSettings.accuracy;$("accVal").textContent=globalSettings.accuracy;$("frequency").value=globalSettings.frequency;$("trapBet").value=globalSettings.trapBet;$("trapWins").value=globalSettings.trapWins;$("killSwitch").checked=globalSettings.killSwitch;}
+  $("saveGlobal").onclick=async()=>{
+    globalSettings={accuracy:Number($("accuracy").value),frequency:Number($("frequency").value),trapBet:Number($("trapBet").value),trapWins:Number($("trapWins").value),killSwitch:$("killSwitch").checked,updatedAt:new Date().toISOString()};
+    $("saveGlobal").disabled=true;$("saveGlobal").textContent="Saving...";
+    try{await setDoc(doc(db,"settings","dragonPredictor"),globalSettings);showMsg("ok","✅ Global settings saved! Sab co-admins par apply.");}
+    catch(e){showMsg("err","Failed: "+e.message);}
+    finally{$("saveGlobal").disabled=false;$("saveGlobal").textContent="💾 Save Global Settings";}
+  };
+  async function loadCoAdmins(){
+    const q=query(collection(db,"users"),where("isCoAdmin","==",true));
+    const snap=await getDocs(q);
+    coAdmins=snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderCoAdmins();populateTargetSelect();
+  }
+  function renderCoAdmins(){
+    if(!coAdmins.length){$("coAdminsList").innerHTML='<p style="text-align:center;padding:20px;color:rgba(255,255,255,.6)">Koi co-admin nahi. Users ko <code>isCoAdmin: true</code> dein.</p>';return;}
+    $("coAdminsList").innerHTML=coAdmins.map(ca=>{
+      const t=targets[ca.id];const isT=t&&t.wrongUntil>0;
+      return `<div class="co-admin-row"><div class="ca-head"><div><span class="ca-name">${ca.username||ca.email}</span><span class="badge ${isT?'targeted':'active'}">${isT?'🎯 TARGETED':'✅ ACTIVE'}</span></div><div class="small">UID: ${ca.id.substring(0,12)}...</div></div>
+      <div class="ca-stats"><div class="ca-stat"><div class="lbl">Total Bets</div><div class="val" id="bets-${ca.id}">—</div></div><div class="ca-stat success"><div class="lbl">Wins</div><div class="val" id="wins-${ca.id}">—</div></div><div class="ca-stat danger"><div class="lbl">Losses</div><div class="val" id="losses-${ca.id}">—</div></div><div class="ca-stat"><div class="lbl">Net P/L</div><div class="val" id="pl-${ca.id}">—</div></div></div>
+      ${isT?`<div class="small" style="color:#ff9d9d">🎯 Next ${t.wrongUntil} predictions ghalat. Reason: ${t.reason||'Manual'}</div>`:''}</div>`;
+    }).join("");
+    coAdmins.forEach(loadCoAdminStats);
+  }
+  async function loadCoAdminStats(ca){
+    try{
+      const gq=query(collection(db,"games"),where("uid","==",ca.id),where("game","==","eaglesnake"),limit(100));
+      const snap=await getDocs(gq);let wins=0,losses=0,total=0;
+      snap.forEach(d=>{const x=d.data();total+=Number(x.stake||0);if(x.outcome==="win")wins++;else losses++;});
+      const b=$(`bets-${ca.id}`);if(b)b.textContent=total.toLocaleString();
+      const w=$(`wins-${ca.id}`);if(w)w.textContent=wins;
+      const l=$(`losses-${ca.id}`);if(l)l.textContent=losses;
+      const p=$(`pl-${ca.id}`);if(p){const pl=wins*50-losses*50;p.textContent=(pl>=0?"+":"")+pl;}
+    }catch(e){}
+  }
+  function populateTargetSelect(){$("targetSelect").innerHTML='<option value="">-- Select Co-Admin --</option>'+coAdmins.map(ca=>`<option value="${ca.id}">${ca.username||ca.email}</option>`).join("");}
+  $("setTarget").onclick=async()=>{
+    const uid=$("targetSelect").value;const rounds=Number($("targetRounds").value);
+    if(!uid){showMsg("err","Co-admin select karein.");return}
+    if(!rounds||rounds<1){showMsg("err","Valid rounds enter karein.");return}
+    try{targets[uid]={wrongUntil:rounds,reason:"Manual target",setAt:new Date().toISOString()};await setDoc(doc(db,"settings","predictorTargets"),targets);showMsg("ok",`🎯 ${rounds} rounds tak ghalat predictions.`);renderCoAdmins();}
+    catch(e){showMsg("err","Failed: "+e.message);}
+  };
+  $("clearTarget").onclick=async()=>{
+    if(!confirm("Sab targets clear karein?"))return;
+    targets={};try{await setDoc(doc(db,"settings","predictorTargets"),{});showMsg("ok","✅ All targets cleared.");renderCoAdmins();}catch(e){showMsg("err","Failed: "+e.message);}
+  };
+  onSnapshot(doc(db,"settings","predictorTargets"),snap=>{targets=snap.exists()?snap.data():{};renderCoAdmins();});
+  onSnapshot(query(collection(db,"games"),where("game","==","eaglesnake"),orderBy("createdAt","desc"),limit(30)),snap=>{
+    const rows=snap.docs.map(d=>d.data());const byUser={};
+    rows.forEach(r=>{if(!byUser[r.uid])byUser[r.uid]={count:0,total:0,last:r.createdAt?.toDate?.()};byUser[r.uid].count++;byUser[r.uid].total+=Number(r.stake||0);});
+    $("liveMonitor").innerHTML=Object.keys(byUser).length?Object.entries(byUser).map(([uid,d])=>{
+      const ca=coAdmins.find(c=>c.id===uid);const name=ca?ca.username:"Player";
+      const ago=d.last?Math.floor((new Date()-d.last)/60000):0;
+      return `<div style="padding:8px;border-bottom:1px solid rgba(255,215,0,.2);display:flex;justify-content:space-between;align-items:center"><div><span class="live-dot"></span><b style="color:#ffd700">${name}</b><span class="small" style="margin-left:8px">${ago}m ago</span></div><div class="small">Games: ${d.count} | Bet: ${d.total.toLocaleString()}</div></div>`;
+    }).join(""):'<p style="text-align:center;padding:15px;color:rgba(255,255,255,.6)">Koi active user nahi.</p>';
+    $("predLog").innerHTML=rows.map(x=>`<tr><td>${x.createdAt?.toDate?.()?.toLocaleString()||"—"}</td><td>${x.uid.substring(0,8)}...</td><td>${x.choice||""}</td><td>${x.result||""}</td><td style="color:${x.outcome==="win"?"#7ee2a8":"#ff9d9d"}">${x.outcome==="win"?"WIN":"LOSS"}</td><td>${x.stake||""}</td></tr>`).join("")||'<tr><td colspan="6">No games yet.</td></tr>';
+  });
+  loadCoAdmins();
+});
+</script></body></html>
