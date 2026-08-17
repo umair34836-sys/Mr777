@@ -1,0 +1,94 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Eagle Snake Admin</title><style>
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;display:flex;flex-direction:column;overflow:hidden;background:linear-gradient(180deg,#3a7bd5 0%,#7ec3e8 22%,#ffd9a0 48%,#ff9a8a 68%,#c86dd7 100%);color:#fff;font-family:Arial,sans-serif}
+.wrap{width:min(1180px,96%);margin:auto}
+.top{flex:0 0 auto;background:linear-gradient(180deg,#d5488a,#a02870);border-bottom:3px solid #ffd700;box-shadow:0 4px 20px rgba(0,0,0,.35)}
+.head{height:54px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{font-weight:900;letter-spacing:1px;font-size:18px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;justify-content:space-around;align-items:center;gap:4px;background:linear-gradient(180deg,#3aa04a,#1c6b2a);border-top:3px solid #ffd700;padding:7px 6px calc(7px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px rgba(0,0,0,.4)}
+.nav a{color:#fff;text-decoration:none;font-weight:800;font-size:12px;padding:8px 11px;border-radius:10px;background:rgba(255,255,255,.14);transition:.2s}
+.nav a:hover{background:rgba(255,255,255,.28)}
+.page{flex:1;min-height:0;overflow-y:auto;padding:8px 0 62px;-webkit-overflow-scrolling:touch}
+.adminnav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;padding:0 4px}
+.adminnav a{padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.15);text-decoration:none;color:#fff;font-size:11px;font-weight:800;transition:.2s}
+.adminnav a:hover{background:rgba(255,215,0,.3);color:#ffd700;transform:translateY(-2px)}
+.adminnav a.active{background:linear-gradient(180deg,#ffd700,#f0a000);color:#5a2a00}
+.card{border:2px solid #ffd700;border-radius:16px;padding:14px;margin-bottom:10px;box-shadow:0 8px 24px rgba(0,0,0,.35);background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.06))}
+h1{margin:0 0 10px;font-size:24px;color:#ffd700;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px}
+.field{margin:10px 0}
+.field label{display:block;font-size:10px;font-weight:800;margin-bottom:4px;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.9)}
+.field input,.field select{width:100%;padding:10px;border:1px solid rgba(255,215,0,.5);border-radius:10px;background:rgba(0,0,0,.3);color:#fff;font-size:14px;font-weight:600}
+.field input:focus,.field select:focus{outline:none;border-color:#ffd700;box-shadow:0 0 0 3px rgba(255,215,0,.2)}
+.field select option{background:#2a1650;color:#fff}
+.btn{border:0;border-radius:12px;padding:11px 16px;font-weight:800;cursor:pointer;transition:.2s;font-size:14px}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.primary{background:linear-gradient(180deg,#ffd700,#f0a000);color:#5a2a00;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.msg{display:none;padding:10px;border-radius:10px;margin:10px 0;font-size:13px;font-weight:700}
+.show{display:block}.ok{background:#0e2b1e;color:#7ee2a8;border:1px solid #1e4d34}.err{background:#33141a;color:#ff9d9d;border:1px solid #5a2025}
+.small{font-size:12px;color:rgba(255,255,255,.85)}
+.info-box{padding:12px;background:rgba(100,200,255,.1);border:1px solid rgba(100,200,255,.4);border-radius:10px;margin:12px 0;font-size:13px;color:#fff;line-height:1.5}
+.info-box b{color:#ffd700}
+.status-ok{padding:10px;background:#0e2b1e;color:#7ee2a8;border:1px solid #1e4d34;border-radius:10px;margin:10px 0;font-weight:700}
+@media(max-width:640px){.head{height:48px}.brand{font-size:15px}.nav a{font-size:11px;padding:7px 9px}.grid{grid-template-columns:1fr}h1{font-size:20px}}
+</style></head><body><header class="top"><div class="wrap head"><div class="brand">🦅 EAGLE SNAKE ADMIN</div><div class="nav"><a href="index.html">Lobby</a><a href="admin.html">Dashboard</a></div></div></header><main class="wrap page"><div class="adminnav"><a href="admin.html">Dashboard</a><a href="admin-users.html">Users</a><a href="admin-coins.html">Coins</a><a href="admin-dragontiger.html">Dragon Tiger</a><a href="admin-eaglesnake.html" class="active">Eagle Snake</a><a href="admin-predictor.html">Predictor</a></div>
+<section class="card"><h1>🦅 Eagle vs Snake Control</h1>
+<div class="info-box"><b>ℹ️ Auto-Setup:</b> Ye page kholtay hi agar <code>settings/eaglesnake</code> document missing hai to ye <b>auto-create</b> kar deta hai (maxMultiplier=9 ke sath, taake Tie payout rules pass kare). Is ke baad sab <b>normal users</b> bina error ke khel sakte hain.</div>
+<div id="setupStatus" class="status-ok" style="display:none">✅ Settings ready — normal users ab khel sakte hain.</div>
+<div id="msg" class="msg"></div>
+<div class="grid">
+  <div class="field"><label>Game Status</label><select id="gameStatus"><option value="enabled">Enabled</option><option value="disabled">Disabled</option></select></div>
+  <div class="field"><label>Game Coin</label><select id="gameCoin"><option value="">Loading...</option></select></div>
+  <div class="field"><label>Win Chance (%)</label><input id="winChance" type="number" min="0" max="100" step="1" value="50"></div>
+  <div class="field"><label>Min Bet</label><input id="minBet" type="number" step=".01" value="1"></div>
+  <div class="field"><label>Max Bet</label><input id="maxBet" type="number" step=".01" value="1000"></div>
+  <div class="field"><label>Max Multiplier (Tie=9)</label><input id="maxMultiplier" type="number" step="1" value="9"></div>
+</div>
+<button id="save" class="btn primary">💾 Save Settings</button></section></main>
+<script type="module">
+const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+import{getFirestore,doc,getDoc,setDoc,collection,getDocs}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
+function showMsg(t,x){const m=$("msg");m.className="msg show "+t;m.textContent=x;if(t==="ok")setTimeout(()=>{m.className="msg"},3000);}
+let availableCoins=[];
+onAuthStateChanged(auth,async u=>{
+  if(!u){location.replace("login.html");return}
+  const s=await getDoc(doc(db,"users",u.uid));
+  if(!s.exists()||s.data().isAdmin!==true){location.replace("index.html");return}
+
+  // ===== AUTO-CREATE settings/eaglesnake agar missing ho (RULES FIX) =====
+  const ref=doc(db,"settings","eaglesnake");
+  const cur=await getDoc(ref);
+  if(!cur.exists()){
+    try{
+      await setDoc(ref,{gameStatus:"enabled",winChance:50,minBet:1,maxBet:1000,maxMultiplier:9,coinId:"hfc",coinName:"HFC",updatedAt:new Date()});
+      $("setupStatus").style.display="block";
+      showMsg("ok","✅ settings/eaglesnake auto-create ho gaya! Ab normal users khel sakte hain.");
+    }catch(e){showMsg("err","Auto-create failed: "+e.message);}
+  }else{
+    $("setupStatus").style.display="block";
+  }
+
+  // Coins load
+  const coinsSnap=await getDocs(collection(db,"coins"));
+  availableCoins=coinsSnap.docs.map(d=>({id:d.id,...d.data()})).filter(c=>c.active!==false);
+  $("gameCoin").innerHTML=availableCoins.length?availableCoins.map(c=>`<option value="${c.id}">${c.name||c.id.toUpperCase()} (${c.id})</option>`).join(""):'<option value="hfc">HFC (Default)</option>';
+
+  // Load existing
+  const now=await getDoc(ref);
+  if(now.exists()){const d=now.data();$("gameStatus").value=d.gameStatus??"enabled";$("winChance").value=d.winChance??50;$("minBet").value=d.minBet??1;$("maxBet").value=d.maxBet??1000;$("maxMultiplier").value=d.maxMultiplier??9;if(d.coinId)$("gameCoin").value=d.coinId;}
+
+  $("save").onclick=async()=>{
+    const cid=$("gameCoin").value;const coin=availableCoins.find(c=>c.id===cid)||{id:"hfc",name:"HFC"};
+    $("save").disabled=true;$("save").textContent="Saving...";
+    try{
+      await setDoc(ref,{gameStatus:$("gameStatus").value,winChance:Number($("winChance").value)||0,minBet:Number($("minBet").value)||1,maxBet:Number($("maxBet").value)||1000,maxMultiplier:Number($("maxMultiplier").value)||9,coinId:coin.id,coinName:coin.name||coin.id.toUpperCase(),updatedAt:new Date()},{merge:true});
+      showMsg("ok",`✅ Settings saved! Game "${coin.name}" use karega.`);
+    }catch(e){showMsg("err","Failed: "+e.message);}
+    finally{$("save").disabled=false;$("save").textContent="💾 Save Settings";}
+  };
+});
+</script></body></html>
