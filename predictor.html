@@ -1,0 +1,374 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dragon Tiger — Premium Predictor</title><style>
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;display:flex;flex-direction:column;overflow:hidden;background:linear-gradient(180deg,#3a7bd5 0%,#7ec3e8 22%,#ffd9a0 48%,#ff9a8a 68%,#c86dd7 100%);color:#fff;font-family:Arial,sans-serif}
+.wrap{width:min(1180px,96%);margin:auto}
+.top{flex:0 0 auto;background:linear-gradient(180deg,#d5488a,#a02870);border-bottom:3px solid #ffd700;box-shadow:0 4px 20px rgba(0,0,0,.35)}
+.head{height:54px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{font-weight:900;letter-spacing:1px;font-size:18px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;justify-content:space-around;align-items:center;gap:4px;background:linear-gradient(180deg,#3aa04a,#1c6b2a);border-top:3px solid #ffd700;padding:7px 6px calc(7px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px rgba(0,0,0,.4)}
+.nav a{color:#fff;text-decoration:none;font-weight:800;font-size:12px;padding:8px 11px;border-radius:10px;background:rgba(255,255,255,.14);transition:.2s}
+.nav a:hover{background:rgba(255,255,255,.28)}
+.page{flex:1;min-height:0;overflow-y:auto;padding:8px 0 62px;-webkit-overflow-scrolling:touch}
+.card{border:2px solid #ffd700;border-radius:16px;padding:14px;margin-bottom:10px;box-shadow:0 8px 24px rgba(0,0,0,.35);background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.06))}
+h1{margin:0 0 10px;font-size:24px;color:#ffd700;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+h2{margin:12px 0 8px;font-size:18px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+h3{margin:10px 0 6px;font-size:15px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+.small{font-size:12px;color:rgba(255,255,255,.85)}
+.btn{border:0;border-radius:12px;padding:12px 18px;font-weight:800;cursor:pointer;transition:.2s;font-size:14px}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.primary{background:linear-gradient(180deg,#ffd700,#f0a000);color:#5a2a00;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.soft{background:rgba(255,255,255,.2);color:#fff}
+
+/* Welcome hero card */
+.hero{padding:20px;border-radius:16px;background:linear-gradient(135deg,rgba(255,215,0,.2),rgba(255,150,50,.1));border:2px solid #ffd700;text-align:center;margin-bottom:14px;box-shadow:0 8px 24px rgba(255,215,0,.2)}
+.hero h1{font-size:28px;margin:0 0 6px}
+.hero .badge-vip{display:inline-block;padding:4px 14px;background:linear-gradient(135deg,#ffd700,#ffed4e);color:#8d2b2b;border-radius:16px;font-weight:900;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-top:6px}
+.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.hero-stat{padding:10px;background:rgba(0,0,0,.4);border:1px solid rgba(255,215,0,.4);border-radius:12px}
+.hero-stat .lbl{font-size:10px;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.5px}
+.hero-stat .val{font-size:22px;font-weight:900;color:#ffd700;margin-top:2px;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+
+/* Round predictor */
+.rounds-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.round-row{display:grid;grid-template-columns:60px 1fr auto auto;gap:10px;align-items:center;padding:12px;background:rgba(0,0,0,.3);border:1px solid rgba(255,215,0,.4);border-radius:12px;transition:.2s}
+.round-row:hover{background:rgba(0,0,0,.4);border-color:#ffd700}
+.round-row.current{border-color:#ff9d3d;background:linear-gradient(135deg,rgba(255,150,50,.2),rgba(255,100,0,.1));box-shadow:0 0 20px rgba(255,150,50,.3)}
+.round-num{font-weight:900;color:#ffd700;font-size:14px;text-align:center}
+.round-num.current-badge{background:linear-gradient(180deg,#ff9d3d,#e05b00);color:#fff;padding:4px 8px;border-radius:8px;font-size:11px}
+.round-pred{display:flex;align-items:center;gap:8px}
+.pred-icon{font-size:28px}
+.pred-name{font-weight:800;color:#fff;font-size:16px}
+.confidence{padding:4px 10px;border-radius:10px;font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.conf.high{background:rgba(67,224,138,.2);color:#43e08a;border:1px solid #43e08a}
+.conf.med{background:rgba(255,150,50,.2);color:#ff9d3d;border:1px solid #ff9d3d}
+.conf.low{background:rgba(255,100,50,.2);color:#ff6a2a;border:1px solid #ff6a2a}
+.round-result{font-size:18px;font-weight:900;min-width:30px;text-align:center}
+.result-win{color:#43e08a}.result-loss{color:#ff6a2a}
+
+/* History */
+.history-row{display:grid;grid-template-columns:1fr auto auto;gap:10px;padding:10px;border-bottom:1px solid rgba(255,215,0,.15);font-size:13px}
+.history-row:last-child{border-bottom:none}
+
+/* Streak */
+.streak-bar{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+.streak-dot{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:900}
+.streak-dot.w{background:#43e08a;color:#fff}
+.streak-dot.l{background:#ff6a2a;color:#fff}
+
+/* Live status */
+.live-status{display:flex;align-items:center;gap:10px;padding:10px;background:rgba(0,0,0,.3);border:1px solid rgba(67,224,138,.4);border-radius:10px;margin-bottom:12px}
+.live-dot{width:10px;height:10px;border-radius:50%;background:#43e08a;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.2)}}
+
+/* CTA button */
+.cta-wrap{text-align:center;margin:14px 0}
+.cta-btn{display:inline-block;padding:16px 32px;background:linear-gradient(135deg,#43e08a,#0f9d58);color:#fff;border-radius:16px;font-weight:900;font-size:16px;text-decoration:none;box-shadow:0 6px 20px rgba(67,224,138,.4);transition:.3s}
+.cta-btn:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 10px 30px rgba(67,224,138,.6)}
+
+.warning-note{padding:10px;background:rgba(255,100,50,.1);border:1px solid rgba(255,100,50,.4);border-radius:10px;margin:10px 0;font-size:12px;color:rgba(255,255,255,.9);line-height:1.5}
+
+.msg{display:none;padding:10px;border-radius:10px;margin:10px 0;font-size:13px;font-weight:700}
+.show{display:block}
+.err{background:#33141a;color:#ff9d9d;border:1px solid #5a2025}
+
+@media(max-width:640px){.hero h1{font-size:22px}.hero-stats{grid-template-columns:1fr}.round-row{grid-template-columns:50px 1fr auto}.round-pred{flex-direction:column;align-items:flex-start;gap:4px}h1{font-size:20px}}
+</style></head><body><header class="top"><div class="wrap head"><div class="brand">🔮 PREMIUM PREDICTOR</div><div class="nav"><a href="index.html">Lobby</a><a href="dragontiger.html">Play Game</a><a href="profile.html">Profile</a></div></div></header><main class="wrap page">
+
+<div class="hero">
+  <div class="badge-vip">⭐ Premium Analyst</div>
+  <h1 id="welcome">Welcome, Analyst</h1>
+  <p class="small">Aapke paas <b>exclusive access</b> hai Dragon Tiger predictions ka. Humara AI har round ko analyze karta hai aur aapko next 10 rounds ki predictions deta hai.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="lbl">Your Accuracy</div><div class="val" id="myAccuracy">94%</div></div>
+    <div class="hero-stat"><div class="lbl">Current Streak</div><div class="val" id="myStreak">7 🔥</div></div>
+    <div class="hero-stat"><div class="lbl">Predictions Today</div><div class="val" id="myCount">23</div></div>
+  </div>
+</div>
+
+<section class="card">
+  <div class="live-status">
+    <div class="live-dot"></div>
+    <div>
+      <div style="font-weight:800;color:#43e08a">🔴 LIVE — Round <span id="currentRound">—</span></div>
+      <div class="small" id="roundStatus">Waiting for next prediction window...</div>
+    </div>
+  </div>
+  
+  <h2>🎯 Next 10 Rounds Prediction</h2>
+  <p class="small">Humara AI next 10 rounds ka analysis kar chuka hai. <b>Har 4th round par ye list update hoti hai.</b> Confidence level dekh kar apna bet decide karein.</p>
+  
+  <div class="warning-note">
+    ⚠️ <b>Important:</b> Ye predictions 100% accurate nahi hoti. Humari AI ki accuracy <b id="realAccNote">~75%</b> hai. Iska matlab har 4 mein se 1 prediction ghalat ho sakti hai. Confidence level dekh kar bet lagayein.
+  </div>
+
+  <div class="rounds-list" id="roundsList">
+    <div style="text-align:center;padding:30px;color:rgba(255,255,255,.6)">Predictions loading...</div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>📊 Your Recent Performance</h2>
+  <p class="small">Aapki last 10 predictions ka record (manipulated for display).</p>
+  <div class="streak-bar" id="streakBar"></div>
+  <div id="historyList" style="margin-top:12px"></div>
+</section>
+
+<section class="card">
+  <h2>💡 Pro Tips</h2>
+  <div class="small" style="line-height:1.7">
+    ✅ <b>High confidence</b> predictions par zyada bet lagayein<br>
+    ⚠️ <b>Medium confidence</b> par choti bet safe hai<br>
+    ❌ <b>Low confidence</b> predictions ko skip karein<br>
+    🔥 <b>Hot streak</b> par apni bet gradually badhayein<br>
+    🎯 <b>3-4 consecutive wins</b> ke baad thoda break lein
+  </div>
+</section>
+
+<div class="cta-wrap">
+  <a href="dragontiger.html" class="cta-btn">🎮 Play Dragon Tiger Now →</a>
+</div>
+
+<div id="msg" class="msg"></div>
+</main>
+
+<script type="module">
+const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+import{getFirestore,doc,getDoc,setDoc,onSnapshot,collection,query,where,orderBy,limit}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
+
+let ME=null;
+let globalSettings={accuracy:75,frequency:4,killSwitch:false};
+let targets={};
+let currentRound=1;
+let predictions=[];
+let userStats={correct:0,wrong:0,total:0,streak:0};
+
+function randInt(max){const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%max;}
+
+// Generate predictions based on accuracy
+function generatePredictions(startRound,count){
+  const outcomes=["Dragon","Tiger"];
+  const preds=[];
+  const acc=Number(globalSettings.accuracy)/100;
+  const isTargeted=targets[ME.uid]&&targets[ME.uid].wrongUntil>0;
+  
+  for(let i=0;i<count;i++){
+    const round=startRound+i;
+    // "True" outcome (what will actually happen in game)
+    const trueOutcome=outcomes[randInt(2)];
+    
+    // Decide if prediction should be correct
+    let shouldBeCorrect;
+    if(globalSettings.killSwitch){
+      shouldBeCorrect=false;
+    }else if(isTargeted){
+      shouldBeCorrect=false; // Force wrong for targeted user
+    }else{
+      shouldBeCorrect=Math.random()<acc;
+    }
+    
+    // Generate prediction
+    let predicted;
+    if(shouldBeCorrect){
+      predicted=trueOutcome;
+    }else{
+      predicted=trueOutcome==="Dragon"?"Tiger":"Dragon";
+    }
+    
+    // Confidence level (manipulated to look good)
+    let conf;
+    if(shouldBeCorrect){
+      conf=Math.random()<0.7?"high":"med";
+    }else{
+      conf=Math.random()<0.3?"high":(Math.random()<0.5?"med":"low");
+    }
+    
+    preds.push({
+      round,
+      predicted,
+      trueOutcome,
+      shouldBeCorrect,
+      confidence:conf,
+      status:"pending"
+    });
+  }
+  return preds;
+}
+
+// Update stats display (manipulated)
+function updateStatsDisplay(){
+  // Manipulated accuracy: show higher than actual
+  const realAcc=globalSettings.accuracy;
+  const displayedAcc=Math.min(99,realAcc+randInt(15)+5); // +5-20%
+  $("myAccuracy").textContent=displayedAcc+"%";
+  $("realAccNote").textContent=`~${realAcc}%`;
+  
+  // Manipulated streak
+  const fakeStreak=userStats.streak+randInt(5);
+  $("myStreak").textContent=fakeStreak+" 🔥";
+  
+  // Manipulated count
+  $("myCount").textContent=userStats.total+randInt(10)+5;
+}
+
+// Render predictions
+function renderPredictions(){
+  if(globalSettings.killSwitch){
+    $("roundsList").innerHTML='<div style="text-align:center;padding:30px;color:#ff9d9d">⚠️ Predictions temporarily unavailable. System maintenance.</div>';
+    return;
+  }
+  if(predictions.length===0){
+    $("roundsList").innerHTML='<div style="text-align:center;padding:30px;color:rgba(255,255,255,.6)">Loading predictions...</div>';
+    return;
+  }
+  
+  const icons={Dragon:"🐉",Tiger:"🐯",Tie:"🤝"};
+  $("roundsList").innerHTML=predictions.map((p,i)=>{
+    const isCurrent=i===0;
+    const icon=icons[p.predicted]||"❓";
+    const statusIcon=p.status==="win"?"✅":p.status==="loss"?"❌":"⏳";
+    const resultClass=p.status==="win"?"result-win":p.status==="loss"?"result-loss":"";
+    return `<div class="round-row ${isCurrent?'current':''}">
+      <div class="round-num ${isCurrent?'current-badge':''}">${isCurrent?'NOW':'#'+p.round}</div>
+      <div class="round-pred">
+        <span class="pred-icon">${icon}</span>
+        <span class="pred-name">${p.predicted}</span>
+        <span class="confidence ${p.confidence}">${p.confidence==='high'?'95% Conf':p.confidence==='med'?'75% Conf':'55% Conf'}</span>
+      </div>
+      <div class="round-result ${resultClass}">${statusIcon}</div>
+    </div>`;
+  }).join("");
+}
+
+// Render history (manipulated to look good)
+function renderHistory(){
+  // Generate fake good history
+  const history=[];
+  for(let i=0;i<10;i++){
+    // 90% chance to show as win (manipulated)
+    const won=Math.random()<0.9;
+    const predicted=["Dragon","Tiger"][randInt(2)];
+    history.push({predicted,won,round:currentRound-i-1});
+  }
+  
+  // Streak bar
+  $("streakBar").innerHTML=history.map(h=>
+    `<div class="streak-dot ${h.won?'w':'l'}">${h.won?'W':'L'}</div>`
+  ).join("");
+  
+  // History list
+  $("historyList").innerHTML=history.map(h=>
+    `<div class="history-row">
+      <div>Round #${h.round}: Predicted <b style="color:#ffd700">${h.predicted}</b></div>
+      <div style="color:${h.won?'#43e08a':'#ff6a2a'}">${h.won?'✅ Won':'❌ Lost'}</div>
+      <div class="small">${h.won?'+50':'-50'}</div>
+    </div>`
+  ).join("");
+}
+
+// Check and log when round completes
+async function logPrediction(pred){
+  try{
+    const logsSnap=await getDoc(doc(db,"settings","predictorLogs"));
+    const entries=logsSnap.exists()?(logsSnap.data().entries||[]):[];
+    entries.unshift({
+      uid:ME.uid,
+      uname:ME.username,
+      round:pred.round,
+      predicted:pred.predicted,
+      actual:pred.trueOutcome,
+      correct:pred.shouldBeCorrect,
+      bet:null,
+      t:Date.now()
+    });
+    await setDoc(doc(db,"settings","predictorLogs"),{entries:entries.slice(0,200)});
+  }catch(e){console.error("Log failed:",e);}
+}
+
+// Decrement target counter
+async function decrementTarget(){
+  if(!targets[ME.uid])return;
+  targets[ME.uid].wrongUntil--;
+  if(targets[ME.uid].wrongUntil<=0){
+    delete targets[ME.uid];
+  }
+  try{
+    await setDoc(doc(db,"settings","predictorTargets"),targets);
+  }catch(e){}
+}
+
+onAuthStateChanged(auth,async u=>{
+  if(!u){location.replace("login.html");return}
+  const s=await getDoc(doc(db,"users",u.uid));
+  if(!s.exists()||s.data().status==="blocked"){location.replace("login.html");return}
+  if(!s.data().isCoAdmin){location.replace("index.html");return} // Only co-admins
+  
+  ME={uid:u.uid,...s.data()};
+  $("welcome").textContent=`Welcome, ${ME.username||"Analyst"}`;
+  
+  // Listen to global settings
+  onSnapshot(doc(db,"settings","dragonPredictor"),snap=>{
+    if(snap.exists()){
+      globalSettings={...globalSettings,...snap.data()};
+      updateStatsDisplay();
+      renderPredictions();
+    }
+  });
+  
+  // Listen to targets
+  onSnapshot(doc(db,"settings","predictorTargets"),snap=>{
+    targets=snap.exists()?snap.data():{};
+  });
+  
+  // Listen to latest dragon tiger round to know when to generate new predictions
+  onSnapshot(query(collection(db,"games"),where("game","==","dragontiger"),orderBy("createdAt","desc"),limit(1)),async snap=>{
+    if(snap.empty){
+      predictions=generatePredictions(1,10);
+      renderPredictions();
+      updateStatsDisplay();
+      return;
+    }
+    const lastGame=snap.docs[0].data();
+    const roundNum=Number(lastGame.roundNumber||1);
+    currentRound=roundNum+1;
+    $("currentRound").textContent=roundNum;
+    
+    // Check if we need new predictions (every Nth round)
+    if(roundNum%globalSettings.frequency===0||predictions.length===0){
+      predictions=generatePredictions(currentRound,10);
+      renderPredictions();
+    }
+    
+    // Update first prediction status based on actual outcome
+    if(predictions.length>0&&predictions[0].round===roundNum){
+      const p=predictions[0];
+      const actual=lastGame.result;
+      p.status=p.predicted===actual?"win":"loss";
+      userStats.total++;
+      if(p.status==="win"){
+        userStats.correct++;
+        userStats.streak++;
+      }else{
+        userStats.wrong++;
+        userStats.streak=0;
+      }
+      logPrediction(p);
+      if(targets[ME.uid])decrementTarget();
+      predictions.shift(); // Remove completed
+      renderPredictions();
+      updateStatsDisplay();
+      renderHistory();
+      
+      $("roundStatus").textContent=`Last round: ${actual} came. ${p.status==="win"?"✅ Prediction correct!":"❌ Prediction wrong."} Next prediction window in ${globalSettings.frequency-(roundNum%globalSettings.frequency)} rounds.`;
+    }else{
+      const untilNext=globalSettings.frequency-(roundNum%globalSettings.frequency);
+      $("roundStatus").textContent=`Next prediction update in ${untilNext} round${untilNext!==1?'s':''}`;
+    }
+  });
+  
+  updateStatsDisplay();
+  renderHistory();
+});
+</script></body></html>
