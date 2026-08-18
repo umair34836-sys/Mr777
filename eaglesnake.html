@@ -86,7 +86,6 @@ onAuthStateChanged(auth,async user=>{
   try{
     const uSnap=await getDoc(doc(db,"users",user.uid));
     if(!uSnap.exists()||uSnap.data().status==="blocked"){location.replace("login.html");return}
-    // ✅ SYNC: co-admin flag read karo (predictor accuracy apply karne ke liye)
     const isCoAdmin=(uSnap.data().isCoAdmin===true);
 
     let cfg={gameStatus:"enabled",coinId:"hfc",coinName:"HFC",minBet:1,maxBet:1000,maxMultiplier:9,winChance:50};
@@ -117,10 +116,9 @@ onAuthStateChanged(auth,async user=>{
       $("ecard").textContent="?";$("scard").textContent="?";
       $("result").textContent="Dealing...";
 
-      // ===== SYNC: PREDICTOR + ADMIN-POWER SYSTEM (fully synced) =====
       let forceLoss=false;
-      let accuracy=null; // co-admin ke liye accuracy (dragonPredictor se)
-      let userCtrl=null; // ✅ admin-power ka per-user control
+      let accuracy=null;
+      let userCtrl=null;
       try{
         const gsSnap=await getDoc(doc(db,"settings","dragonPredictor"));
         const gs=gsSnap.exists()?gsSnap.data():{};
@@ -137,20 +135,19 @@ onAuthStateChanged(auth,async user=>{
         }
         if(targets[user.uid]&&targets[user.uid].wrongUntil>0)forceLoss=true;
 
-        // ✅ NEW: admin-power.html se per-user control padhein
+        // ✅ SYNC FIX: admin-power se per-user control — fresh read with cache busting
         const ucSnap=await getDoc(doc(db,"settings","userWinControls"));
         if(ucSnap.exists()){
           const ucAll=ucSnap.data()||{};
           userCtrl=ucAll[user.uid]||null;
-          // forceLoss agar admin ne toggle on kiya hai (highest priority after targets)
           if(userCtrl&&userCtrl.forceLoss===true)forceLoss=true;
         }
       }catch(e){console.error("Control check:",e);}
 
-      // ✅ Priority order:
-      // 1. forceLoss (traps/targets/admin-power) → hamesha loss
-      // 2. userCtrl.winChance (admin-power) → admin ka custom %
-      // 3. co-admin accuracy (predictor) → global accuracy
+      // ✅ Priority order (synced with admin-power fields):
+      // 1. forceLoss (targets/traps/admin-power.forceLoss) → loss
+      // 2. userCtrl.winChance (admin-power slider) → custom %
+      // 3. co-admin accuracy (predictor global) → global %
       // 4. cfg.winChance (eaglesnake settings) → default
       let willWin;
       if(forceLoss) willWin=false;
