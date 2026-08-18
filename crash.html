@@ -98,15 +98,24 @@ onAuthStateChanged(auth,async user=>{
     let walletRef=doc(db,"wallets",user.uid);
     if(!(await getDoc(walletRef)).exists()){try{await setDoc(walletRef,{balances:{hfc:0},createdAt:serverTimestamp()});}catch(e){}}
     onSnapshot(walletRef,s=>{const w=s.exists()?s.data():{};$("bal").textContent=readBalanceCaseInsensitive(w.balances||w.coins||{},cfg.coinId).toLocaleString();},()=>{$("bal").textContent="—"});
-    onSnapshot(query(collection(db,"games"),where("uid","==",user.uid),where("game","==","crash"),limit(15)),s=>{
-      const rows=s.docs.map(d=>d.data()).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));
-      $("history").innerHTML=rows.map(x=>{
-        const won=x.outcome==="win";
-        const profit=won?((x.cashedAt||1)*x.stake-x.stake):(-x.stake);
-        const profitStr=won?`+${profit.toFixed(2)}`:profit.toFixed(2);
-        return `<tr><td>${x.createdAt?.toDate?.()?.toLocaleString()||"—"}</td><td>${x.stake??"—"} ${x.coinName||""}</td><td>${x.cashedAt?x.cashedAt.toFixed(2)+"x":"—"}</td><td style="color:#ff9d9d">${(x.crashPoint??0).toFixed(2)}x</td><td style="color:${won?"#7ee2a8":"#ff9d9d"}">${won?"✅ WON":"❌ LOST"}</td><td style="color:${won?"#7ee2a8":"#ff9d9d"};font-weight:700">${profitStr} ${x.coinName||""}</td></tr>`;
-      }).join("")||'<tr><td colspan="6">No rounds yet.</td></tr>';
-    });
+    
+    // ✅ FIX: Added error handler to catch silent failures
+    onSnapshot(query(collection(db,"games"),where("uid","==",user.uid),where("game","==","crash"),limit(15)),
+      s=>{
+        const rows=s.docs.map(d=>d.data()).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));
+        $("history").innerHTML=rows.map(x=>{
+          const won=x.outcome==="win";
+          const profit=won?((x.cashedAt||1)*x.stake-x.stake):(-x.stake);
+          const profitStr=won?`+${profit.toFixed(2)}`:profit.toFixed(2);
+          return `<tr><td>${x.createdAt?.toDate?.()?.toLocaleString()||"—"}</td><td>${x.stake??"—"} ${x.coinName||""}</td><td>${x.cashedAt?x.cashedAt.toFixed(2)+"x":"—"}</td><td style="color:#ff9d9d">${(x.crashPoint??0).toFixed(2)}x</td><td style="color:${won?"#7ee2a8":"#ff9d9d"}">${won?"✅ WON":"❌ LOST"}</td><td style="color:${won?"#7ee2a8":"#ff9d9d"};font-weight:700">${profitStr} ${x.coinName||""}</td></tr>`;
+        }).join("")||'<tr><td colspan="6">No rounds yet.</td></tr>';
+      },
+      err=>{
+        console.error("History listener error:",err);
+        $("history").innerHTML='<tr><td colspan="6" style="color:#ff9d9d">Error loading history</td></tr>';
+      }
+    );
+    
     let phase="idle",startTs=0,crashPoint=1,raf=0,pts=[],stake=0,curM=1;
     const growth=ms=>Math.pow(1.00024,ms);
     function genCrash(){const r=Math.random();if(r<0.03)return 1.00;let m=0.97/(1-r);return Math.max(1.00,Math.min(Number(cfg.maxMultiplier)||50,Math.floor(m*100)/100));}
@@ -147,7 +156,6 @@ onAuthStateChanged(auth,async user=>{
           if(!wSnap.exists())throw new Error("Wallet not found.");
           const wData=wSnap.data();const field=("balances" in wData)?"balances":("coins" in wData)?"coins":"balances";
           const bals=wData[field]||{};const key=readBalanceKey(bals,cfg.coinId);const bal=Number(bals[key])||0;
-          // ✅ FIX 1: Floating-point precision fix — allow small epsilon
           if(stake>bal+0.001)throw new Error("Insufficient balance.");
           const newBal=won?bal-stake+stake*cashMult:bal-stake;
           const gameRef=doc(collection(db,"games"));
