@@ -1,0 +1,179 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin Power Control</title><style>
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;display:flex;flex-direction:column;overflow:hidden;background:linear-gradient(180deg,#3a7bd5 0%,#7ec3e8 22%,#ffd9a0 48%,#ff9a8a 68%,#c86dd7 100%);color:#fff;font-family:Arial,sans-serif}
+.wrap{width:min(1180px,96%);margin:auto}
+.top{flex:0 0 auto;background:linear-gradient(180deg,#d5488a,#a02870);border-bottom:3px solid #ffd700;box-shadow:0 4px 20px rgba(0,0,0,.35)}
+.head{height:54px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{font-weight:900;letter-spacing:1px;font-size:18px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;justify-content:space-around;align-items:center;gap:4px;background:linear-gradient(180deg,#3aa04a,#1c6b2a);border-top:3px solid #ffd700;padding:7px 6px calc(7px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px rgba(0,0,0,.4)}
+.nav a{color:#fff;text-decoration:none;font-weight:800;font-size:12px;padding:8px 11px;border-radius:10px;background:rgba(255,255,255,.14);transition:.2s}
+.nav a:hover{background:rgba(255,255,255,.28)}
+.page{flex:1;min-height:0;overflow-y:auto;padding:8px 0 62px;-webkit-overflow-scrolling:touch}
+.adminnav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;padding:0 4px}
+.adminnav a{padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.15);text-decoration:none;color:#fff;font-size:11px;font-weight:800;transition:.2s}
+.adminnav a:hover{background:rgba(255,215,0,.3);color:#ffd700}
+.adminnav a.active{background:linear-gradient(180deg,#ffd700,#f0a000);color:#5a2a00}
+.card{border:2px solid #ffd700;border-radius:16px;padding:14px;margin-bottom:10px;box-shadow:0 8px 24px rgba(0,0,0,.35);background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.06))}
+h1{margin:0 0 10px;font-size:24px;color:#ffd700;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+h2{margin:12px 0 8px;font-size:18px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+.small{font-size:12px;color:rgba(255,255,255,.85)}
+.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.sum-box{padding:10px;background:rgba(0,0,0,.35);border:1px solid rgba(255,215,0,.4);border-radius:12px;text-align:center}
+.sum-box .lbl{font-size:10px;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.5px}
+.sum-box .val{font-size:20px;font-weight:900;color:#ffd700;margin-top:2px}
+.search{width:100%;padding:11px;border:1px solid rgba(255,215,0,.5);border-radius:10px;background:rgba(0,0,0,.3);color:#fff;font-size:14px;margin-bottom:12px}
+.search:focus{outline:none;border-color:#ffd700}
+.user-row{padding:12px;background:rgba(0,0,0,.3);border:1px solid rgba(255,215,0,.4);border-radius:12px;margin-bottom:10px}
+.u-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.u-name{font-weight:900;color:#ffd700;font-size:16px}
+.u-bal{font-size:14px;font-weight:800;color:#7ee2a8}
+.u-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center}
+.u-grid label{font-size:10px;color:rgba(255,255,255,.8);text-transform:uppercase}
+.slider{width:100%;height:8px;border-radius:5px;background:rgba(0,0,0,.4);outline:none;-webkit-appearance:none}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#ffd700,#f0a000);cursor:pointer}
+.wc-val{font-weight:900;color:#ffd700}
+.btn{border:0;border-radius:10px;padding:9px 14px;font-weight:800;cursor:pointer;font-size:13px;transition:.2s}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.primary{background:linear-gradient(180deg,#ffd700,#f0a000);color:#5a2a00}
+.danger{background:linear-gradient(180deg,#ff6a2a,#d02a1a);color:#fff}
+.soft{background:rgba(255,255,255,.2);color:#fff}
+.toggle{position:relative;display:inline-block;width:52px;height:28px}
+.toggle input{opacity:0;width:0;height:0}
+.tslider{position:absolute;cursor:pointer;inset:0;background:#555;transition:.3s;border-radius:28px}
+.tslider:before{position:absolute;content:"";height:22px;width:22px;left:3px;bottom:3px;background:#fff;transition:.3s;border-radius:50%}
+input:checked + .tslider{background:#ff6a2a}
+input:checked + .tslider:before{transform:translateX(24px)}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:800;text-transform:uppercase}
+.badge.on{background:#0e2b1e;color:#7ee2a8;border:1px solid #1e4d34}
+.badge.off{background:rgba(255,255,255,.1);color:rgba(255,255,255,.6)}
+.msg{display:none;padding:10px;border-radius:10px;margin:10px 0;font-size:13px;font-weight:700}
+.show{display:block}.ok{background:#0e2b1e;color:#7ee2a8;border:1px solid #1e4d34}.err{background:#33141a;color:#ff9d9d;border:1px solid #5a2025}
+.live-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#43e08a;animation:pulse 1.5s infinite;margin-right:6px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@media(max-width:640px){.head{height:48px}.brand{font-size:15px}.summary{grid-template-columns:1fr}.u-grid{grid-template-columns:1fr}}
+</style></head><body><header class="top"><div class="wrap head"><div class="brand">⚡ ADMIN POWER CONTROL</div><div class="nav"><a href="index.html">Lobby</a><a href="admin.html">Dashboard</a></div></div></header><main class="wrap page">
+<div class="adminnav"><a href="admin.html">Dashboard</a><a href="admin-users.html">Users</a><a href="admin-coins.html">Coins</a><a href="admin-eaglesnake.html">Eagle Snake</a><a href="admin-predictor.html">Predictor</a><a href="admin-power.html" class="active">Power</a></div>
+<section class="card"><h1>⚡ Admin Power Control</h1>
+<p class="small"><span class="live-dot"></span> Real-time: sab users ka balance live update hota hai. Har user ki <b>win chance</b> individually control karein — game par foran apply hogi.</p>
+<div id="msg" class="msg"></div>
+<div class="summary">
+  <div class="sum-box"><div class="lbl">Total Users</div><div class="val" id="totUsers">0</div></div>
+  <div class="sum-box"><div class="lbl">Total Balance (HFC)</div><div class="val" id="totBal">0</div></div>
+  <div class="sum-box"><div class="lbl">Controlled Users</div><div class="val" id="totCtrl">0</div></div>
+</div>
+<input type="text" class="search" id="search" placeholder="🔍 User search karein (name / email / uid)...">
+<div id="usersList">Loading...</div>
+</section></main>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+import{getFirestore,doc,getDoc,setDoc,onSnapshot,collection,getDocs}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
+function showMsg(t,x){const m=$("msg");m.className="msg show "+t;m.textContent=x;if(t==="ok")setTimeout(()=>{m.className="msg"},3000);}
+let usersMap={},walletsMap={},controls={},searchTerm="";
+
+onAuthStateChanged(auth,async u=>{
+  if(!u){location.replace("login.html");return}
+  const s=await getDoc(doc(db,"users",u.uid));
+  if(!s.exists()||s.data().isAdmin!==true){location.replace("index.html");return}
+
+  // Load all users
+  const uSnap=await getDocs(collection(db,"users"));
+  uSnap.forEach(d=>{usersMap[d.id]={id:d.id,...d.data()};});
+  render();
+
+  // Real-time balances
+  onSnapshot(collection(db,"wallets"),snap=>{
+    walletsMap={};
+    snap.forEach(d=>{walletsMap[d.id]=d.data();});
+    updateBalances();
+  });
+
+  // Real-time controls
+  onSnapshot(doc(db,"settings","userWinControls"),snap=>{
+    controls=snap.exists()?snap.data():{};
+    render();
+  });
+
+  $("search").oninput=e=>{searchTerm=e.target.value.toLowerCase();render();};
+});
+
+function getBal(uid){
+  const w=walletsMap[uid];
+  if(!w)return 0;
+  const b=w.balances||w.coins||{};
+  return Number(b.hfc||b.HFC||0);
+}
+
+function updateBalances(){
+  let tot=0;
+  document.querySelectorAll("[data-bal]").forEach(el=>{
+    const uid=el.dataset.bal;
+    const v=getBal(uid);
+    el.textContent=v.toLocaleString();
+    tot+=v;
+  });
+  $("totBal").textContent=tot.toLocaleString();
+  $("totUsers").textContent=Object.keys(usersMap).length;
+}
+
+function render(){
+  const list=Object.values(usersMap).filter(x=>x.id!=="__admin__");
+  const filtered=list.filter(x=>{
+    if(!searchTerm)return true;
+    return (x.username||"").toLowerCase().includes(searchTerm)||(x.email||"").toLowerCase().includes(searchTerm)||x.id.toLowerCase().includes(searchTerm);
+  });
+  $("totCtrl").textContent=Object.keys(controls).length;
+
+  if(!filtered.length){$("usersList").innerHTML='<p style="text-align:center;padding:20px;color:rgba(255,255,255,.6)">Koi user nahi mila.</p>';return;}
+
+  $("usersList").innerHTML=filtered.map(x=>{
+    const c=controls[x.id]||{};
+    const wc=c.winChance!=null?c.winChance:50;
+    const fl=c.forceLoss===true;
+    return `<div class="user-row">
+      <div class="u-head">
+        <div><span class="u-name">${x.username||x.email||x.id}</span> <span class="badge ${c.winChance!=null?'on':'off'}">${c.winChance!=null?'CONTROLLED':'DEFAULT'}</span></div>
+        <div class="u-bal">💰 <span data-bal="${x.id}">0</span> HFC</div>
+      </div>
+      <div class="u-grid">
+        <div>
+          <label>Win Chance: <span class="wc-val" id="wcv-${x.id}">${wc}%</span></label>
+          <input type="range" min="0" max="100" value="${wc}" class="slider" id="wcs-${x.id}" oninput="window.__wc('${x.id}',this.value)">
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end">
+          <label style="font-size:10px">FORCE LOSS</label>
+          <label class="toggle"><input type="checkbox" id="fl-${x.id}" ${fl?"checked":""}><span class="tslider"></span></label>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:10px">
+        <button class="btn primary" onclick="window.__save('${x.id}')">💾 Save Control</button>
+        <button class="btn soft" onclick="window.__reset('${x.id}')">Reset Default</button>
+      </div>
+    </div>`;
+  }).join("");
+  updateBalances();
+}
+
+window.__wc=(uid,v)=>{const el=document.getElementById("wcv-"+uid);if(el)el.textContent=v+"%";};
+
+window.__save=async(uid)=>{
+  const wc=Number(document.getElementById("wcs-"+uid).value);
+  const fl=document.getElementById("fl-"+uid).checked;
+  const u=usersMap[uid]||{};
+  try{
+    controls[uid]={winChance:wc,forceLoss:fl,username:u.username||u.email||uid,updatedAt:new Date().toISOString()};
+    await setDoc(doc(db,"settings","userWinControls"),controls);
+    showMsg("ok","✅ "+(u.username||"User")+" ki win chance "+wc+"% set ho gayi.");
+  }catch(e){showMsg("err","Failed: "+e.message);}
+};
+
+window.__reset=async(uid)=>{
+  try{
+    delete controls[uid];
+    await setDoc(doc(db,"settings","userWinControls"),controls);
+    showMsg("ok","✅ User default par reset ho gaya.");
+  }catch(e){showMsg("err","Failed: "+e.message);}
+};
+</script></body></html>
