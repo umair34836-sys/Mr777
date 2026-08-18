@@ -55,7 +55,7 @@ canvas{width:100%;height:100%;display:block}
 .btn-group .btn{width:100%}
 
 .table{overflow:auto;border-radius:12px;max-height:300px}
-table{width:100%;border-collapse:collapse;min-width:500px}
+table{width:100%;border-collapse:collapse;min-width:600px}
 th,td{text-align:left;padding:8px;border-bottom:1px solid rgba(255,215,0,.3);font-size:12px;color:#fff}
 th{font-size:10px;color:rgba(255,255,255,.85);text-transform:uppercase}
 h2{margin:6px 0 12px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4);font-size:18px}
@@ -75,11 +75,11 @@ h2{margin:6px 0 12px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4);font-siz
 <div class="btn-group"><button id="launch" class="btn primary">🚀 Launch Rocket</button><button id="cash" class="btn cash" disabled>💰 Cash Out</button></div>
 <div id="msg" class="msg"></div>
 </section>
-<section class="card"><h2>Recent Rounds</h2><div class="table"><table><thead><tr><th>Time</th><th>Stake</th><th>Cashed At</th><th>Crash Point</th><th>Outcome</th></tr></thead><tbody id="history"></tbody></table></div></section>
+<section class="card"><h2>Recent Rounds</h2><div class="table"><table><thead><tr><th>Time</th><th>Stake</th><th>Cashed At</th><th>Crash Point</th><th>Outcome</th><th>Profit/Loss</th></tr></thead><tbody id="history"></tbody></table></div></section>
 </main><script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
-import{getFirestore,doc,getDoc,onSnapshot,collection,query,where,limit,runTransaction,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+import{getFirestore,doc,getDoc,setDoc,onSnapshot,collection,query,where,limit,runTransaction,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 function showMsg(t,x){const m=$("msg");m.className="msg show "+t;m.textContent=x;if(t==="ok")setTimeout(()=>{m.className="msg"},4000);}
@@ -100,18 +100,21 @@ onAuthStateChanged(auth,async user=>{
     onSnapshot(walletRef,s=>{const w=s.exists()?s.data():{};$("bal").textContent=readBalanceCaseInsensitive(w.balances||w.coins||{},cfg.coinId).toLocaleString();},()=>{$("bal").textContent="—"});
     onSnapshot(query(collection(db,"games"),where("uid","==",user.uid),where("game","==","crash"),limit(15)),s=>{
       const rows=s.docs.map(d=>d.data()).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));
-      $("history").innerHTML=rows.map(x=>`<tr><td>${x.createdAt?.toDate?.()?.toLocaleString()||"—"}</td><td>${x.stake??"—"} ${x.coinName||""}</td><td>${x.cashedAt?x.cashedAt.toFixed(2)+"x":"—"}</td><td style="color:#ff9d9d">${(x.crashPoint??0).toFixed(2)}x</td><td style="color:${x.outcome==="win"?"#7ee2a8":"#ff9d9d"}">${x.outcome==="win"?"CASHED":"CRASHED"}</td></tr>`).join("")||'<tr><td colspan="5">No rounds yet.</td></tr>';
+      $("history").innerHTML=rows.map(x=>{
+        const won=x.outcome==="win";
+        const profit=won?((x.cashedAt||1)*x.stake-x.stake):(-x.stake);
+        const profitStr=won?`+${profit.toFixed(2)}`:profit.toFixed(2);
+        return `<tr><td>${x.createdAt?.toDate?.()?.toLocaleString()||"—"}</td><td>${x.stake??"—"} ${x.coinName||""}</td><td>${x.cashedAt?x.cashedAt.toFixed(2)+"x":"—"}</td><td style="color:#ff9d9d">${(x.crashPoint??0).toFixed(2)}x</td><td style="color:${won?"#7ee2a8":"#ff9d9d"}">${won?"✅ WON":"❌ LOST"}</td><td style="color:${won?"#7ee2a8":"#ff9d9d"};font-weight:700">${profitStr} ${x.coinName||""}</td></tr>`;
+      }).join("")||'<tr><td colspan="6">No rounds yet.</td></tr>';
     });
     let phase="idle",startTs=0,crashPoint=1,raf=0,pts=[],stake=0,curM=1;
     const growth=ms=>Math.pow(1.00024,ms);
     function genCrash(){const r=Math.random();if(r<0.03)return 1.00;let m=0.97/(1-r);return Math.max(1.00,Math.min(Number(cfg.maxMultiplier)||50,Math.floor(m*100)/100));}
     function draw(m,crashed){
       fit();const w=cv.width,h=cv.height;ctx.clearRect(0,0,w,h);
-      // Grid
       ctx.strokeStyle="rgba(255,215,0,.1)";ctx.lineWidth=1;
       for(let i=1;i<6;i++){ctx.beginPath();ctx.moveTo(0,h*i/6);ctx.lineTo(w,h*i/6);ctx.stroke();}
       for(let i=1;i<8;i++){ctx.beginPath();ctx.moveTo(w*i/8,0);ctx.lineTo(w*i/8,h);ctx.stroke();}
-      // Trail
       if(pts.length>1){
         const maxT=pts[pts.length-1].t||1,maxM=Math.max(m,2);
         ctx.beginPath();
@@ -120,7 +123,6 @@ onAuthStateChanged(auth,async user=>{
         grad.addColorStop(0,crashed?"#ff5d5d":"#ffd700");
         grad.addColorStop(1,crashed?"#ff9d9d":"#ff6a2a");
         ctx.strokeStyle=grad;ctx.lineWidth=4;ctx.stroke();
-        // Rocket/Explosion
         const lp=pts[pts.length-1];const x=30+(lp.t/maxT)*(w-60),y=h-30-((lp.m-1)/(maxM-1))*(h-80);
         ctx.font="32px serif";ctx.fillText(crashed?"💥":"🚀",x-16,y+12);
       }
@@ -145,7 +147,8 @@ onAuthStateChanged(auth,async user=>{
           if(!wSnap.exists())throw new Error("Wallet not found.");
           const wData=wSnap.data();const field=("balances" in wData)?"balances":("coins" in wData)?"coins":"balances";
           const bals=wData[field]||{};const key=readBalanceKey(bals,cfg.coinId);const bal=Number(bals[key])||0;
-          if(stake>bal)throw new Error("Insufficient balance.");
+          // ✅ FIX 1: Floating-point precision fix — allow small epsilon
+          if(stake>bal+0.001)throw new Error("Insufficient balance.");
           const newBal=won?bal-stake+stake*cashMult:bal-stake;
           const gameRef=doc(collection(db,"games"));
           const rec={uid:user.uid,game:"crash",outcome:won?"win":"loss",stake,coinId:key,coinName:cfg.coinName,crashPoint:cp,createdAt:serverTimestamp()};
