@@ -125,35 +125,45 @@ onAuthStateChanged(auth,async user=>{
         if(gs.accuracy!=null)accuracy=Number(gs.accuracy);
         const trapBet=Number(gs.trapBet||500);
         const trapWins=Number(gs.trapWins||5);
+        if(stake>=trapBet)forceLoss=true;
+
+        // ✅ FIX 1: TARGET CHECK — ab PEHLE (risky query se pehle), taake crash isko na roke
         const tSnap=await getDoc(doc(db,"settings","predictorTargets"));
         const targets=tSnap.exists()?tSnap.data():{};
-        if(stake>=trapBet)forceLoss=true;
-        if(!forceLoss){
-          const rec=await getDocs(query(collection(db,"games"),where("uid","==",user.uid),where("game","==","eaglesnake"),orderBy("createdAt","desc"),limit(trapWins)));
-          let cons=0;rec.forEach(d=>{if(d.data().outcome==="win")cons++;});
-          if(cons>=trapWins)forceLoss=true;
-        }
         if(targets[user.uid]&&targets[user.uid].wrongUntil>0)forceLoss=true;
+        console.log("🎯 Target check:",targets[user.uid]||"none","→ forceLoss:",forceLoss);
 
-        // ✅ SYNC FIX: admin-power se per-user control — fresh read with cache busting
+        // ✅ FIX 2: ADMIN-POWER CHECK — ye bhi pehle
         const ucSnap=await getDoc(doc(db,"settings","userWinControls"));
         if(ucSnap.exists()){
           const ucAll=ucSnap.data()||{};
           userCtrl=ucAll[user.uid]||null;
           if(userCtrl&&userCtrl.forceLoss===true)forceLoss=true;
         }
+
+        // ✅ FIX 3: CONSECUTIVE WINS TRAP — orderBy hataya (composite index crash se bacha),
+        // manual sort + ALAG try/catch taake fail hone par bhi upar wale checks safe rahen
+        if(!forceLoss){
+          try{
+            const rec=await getDocs(query(collection(db,"games"),where("uid","==",user.uid),where("game","==","eaglesnake"),limit(50)));
+            const sorted=rec.docs.slice().sort((a,b)=>(b.data().createdAt?.toMillis?.()||0)-(a.data().createdAt?.toMillis?.()||0)).slice(0,trapWins);
+            let cons=0;sorted.forEach(d=>{if(d.data().outcome==="win")cons++;});
+            if(cons>=trapWins)forceLoss=true;
+          }catch(e2){console.error("Trap check:",e2);}
+        }
       }catch(e){console.error("Control check:",e);}
 
-      // ✅ Priority order (synced with admin-power fields):
-      // 1. forceLoss (targets/traps/admin-power.forceLoss) → loss
-      // 2. userCtrl.winChance (admin-power slider) → custom %
-      // 3. co-admin accuracy (predictor global) → global %
-      // 4. cfg.winChance (eaglesnake settings) → default
+      // ✅ Priority order:
+      // 1. forceLoss (targets/traps/admin-power) → hamesha loss
+      // 2. userCtrl.winChance (admin-power) → custom %
+      // 3. co-admin accuracy (predictor) → global %
+      // 4. cfg.winChance (eaglesnake) → default
       let willWin;
       if(forceLoss) willWin=false;
       else if(userCtrl&&userCtrl.winChance!=null) willWin=(rand100()<Number(userCtrl.winChance));
       else if(isCoAdmin&&accuracy!=null) willWin=(rand100()<accuracy);
       else willWin=rollWin(cfg.winChance);
+      console.log("🎲 willWin:",willWin,"(forceLoss:",forceLoss,")");
 
       let result;
       if(willWin){result=side;}
