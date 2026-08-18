@@ -78,19 +78,16 @@ onAuthStateChanged(auth,async u=>{
   const s=await getDoc(doc(db,"users",u.uid));
   if(!s.exists()||s.data().isAdmin!==true){location.replace("index.html");return}
 
-  // Load all users
   const uSnap=await getDocs(collection(db,"users"));
   uSnap.forEach(d=>{usersMap[d.id]={id:d.id,...d.data()};});
   render();
 
-  // Real-time balances
   onSnapshot(collection(db,"wallets"),snap=>{
     walletsMap={};
     snap.forEach(d=>{walletsMap[d.id]=d.data();});
     updateBalances();
   });
 
-  // Real-time controls
   onSnapshot(doc(db,"settings","userWinControls"),snap=>{
     controls=snap.exists()?snap.data():{};
     render();
@@ -158,21 +155,39 @@ function render(){
 
 window.__wc=(uid,v)=>{const el=document.getElementById("wcv-"+uid);if(el)el.textContent=v+"%";};
 
+// ✅ SYNC FIX: Fresh fetch + merge:true se purana data preserve hota hai
 window.__save=async(uid)=>{
   const wc=Number(document.getElementById("wcs-"+uid).value);
   const fl=document.getElementById("fl-"+uid).checked;
   const u=usersMap[uid]||{};
   try{
-    controls[uid]={winChance:wc,forceLoss:fl,username:u.username||u.email||uid,updatedAt:new Date().toISOString()};
-    await setDoc(doc(db,"settings","userWinControls"),controls);
-    showMsg("ok","✅ "+(u.username||"User")+" ki win chance "+wc+"% set ho gayi.");
+    // Pehle fresh data lo taake doosre users ka data lose na ho
+    const freshSnap=await getDoc(doc(db,"settings","userWinControls"));
+    const freshData=freshSnap.exists()?freshSnap.data():{};
+    
+    // Current user ka control add/update
+    freshData[uid]={
+      winChance:wc,
+      forceLoss:fl,
+      username:u.username||u.email||uid,
+      updatedAt:new Date().toISOString()
+    };
+    
+    // Merge flag ke sath save — purana data preserve hoga
+    await setDoc(doc(db,"settings","userWinControls"),freshData,{merge:true});
+    controls=freshData;
+    showMsg("ok","✅ "+(u.username||"User")+" ki win chance "+wc+"% set ho gayi. Force Loss: "+(fl?"ON":"OFF"));
   }catch(e){showMsg("err","Failed: "+e.message);}
 };
 
+// ✅ SYNC FIX: Fresh fetch + merge:true se doosre users safe rehte hain
 window.__reset=async(uid)=>{
   try{
-    delete controls[uid];
-    await setDoc(doc(db,"settings","userWinControls"),controls);
+    const freshSnap=await getDoc(doc(db,"settings","userWinControls"));
+    const freshData=freshSnap.exists()?freshSnap.data():{};
+    delete freshData[uid];
+    await setDoc(doc(db,"settings","userWinControls"),freshData,{merge:true});
+    controls=freshData;
     showMsg("ok","✅ User default par reset ho gaya.");
   }catch(e){showMsg("err","Failed: "+e.message);}
 };
