@@ -75,7 +75,7 @@ h2{margin:12px 0 8px;font-size:18px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0
 const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
-import{getFirestore,doc,getDoc,onSnapshot,collection,query,where,orderBy,limit}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+import{getFirestore,doc,getDoc,onSnapshot,collection,query,where}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 let ME=null,globalSettings={accuracy:75,frequency:4,killSwitch:false},targets={},predictions=[],stats={total:0,correct:0,streak:0},lastGameId=null,roundCounter=0;
 function randInt(max){const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%max;}
@@ -131,11 +131,14 @@ onAuthStateChanged(auth,async u=>{
   $("welcome").textContent=`Welcome, ${ME.username||"Analyst"}`;
   onSnapshot(doc(db,"settings","dragonPredictor"),snap=>{if(snap.exists()){globalSettings={...globalSettings,...snap.data()};updateStats();renderPredictions();}});
   onSnapshot(doc(db,"settings","predictorTargets"),snap=>{targets=snap.exists()?snap.data():{};});
-  onSnapshot(query(collection(db,"games"),where("uid","==",ME.uid),where("game","==","eaglesnake"),orderBy("createdAt","desc"),limit(1)),snap=>{
-    if(snap.empty){roundCounter=1;predictions=generatePredictions(1,10);renderPredictions();updateStats();return;}
-    const g=snap.docs[0];const gd=g.data();
+
+  // ✅ FIX: orderBy hataya (composite index ki zaroorat nahi) + manual sort + error handler
+  onSnapshot(query(collection(db,"games"),where("uid","==",ME.uid),where("game","==","eaglesnake")),snap=>{
+    const docs=snap.docs.slice().sort((a,b)=>(b.data().createdAt?.toMillis?.()||0)-(a.data().createdAt?.toMillis?.()||0));
+    if(!docs.length){roundCounter=1;predictions=generatePredictions(1,10);renderPredictions();updateStats();return;}
+    const g=docs[0];const gd=g.data();
     if(g.id===lastGameId)return;
-    const isNew=lastGameId!==null;lastGameId=g.id;roundCounter++;
+    const isNew=lastGameId!==null;lastGameId=g.id;roundCounter=docs.length;
     if(isNew&&predictions.length){
       const p=predictions[0];
       p.status=p.predicted===gd.result?"win":"loss";
@@ -145,7 +148,12 @@ onAuthStateChanged(auth,async u=>{
     }
     if(roundCounter%globalSettings.frequency===0||!predictions.length){predictions=generatePredictions(roundCounter+1,10);}
     renderPredictions();updateStats();renderHistory();
+  },err=>{
+    // ✅ Error handler: ab silent fail nahi hoga
+    console.error("Games listener error:",err);
+    if(!predictions.length){roundCounter=1;predictions=generatePredictions(1,10);renderPredictions();updateStats();}
   });
+
   updateStats();renderHistory();
 });
 </script></body></html>
