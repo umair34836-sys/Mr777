@@ -66,24 +66,29 @@ h2{margin:6px 0 12px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4);font-siz
 </section>
 <section class="card"><h2>Recent Rounds</h2><div class="table"><table><thead><tr><th>Time</th><th>Choice</th><th>Result</th><th>Stake</th><th>Outcome</th></tr></thead><tbody id="history"></tbody></table></div></section>
 </main><script type="module">
-const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 import{getFirestore,doc,getDoc,setDoc,getDocs,onSnapshot,collection,query,where,orderBy,limit,runTransaction,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
 function showMsg(t,x){const m=$("msg");m.className="msg show "+t;m.textContent=x;if(t==="ok")setTimeout(()=>{m.className="msg"},4000);}
 function readBalanceCaseInsensitive(b,c){const w=String(c||"").trim().toLowerCase();for(const[k,v]of Object.entries(b||{})){if(String(k).trim().toLowerCase()===w)return Number(v)||0}return 0}
 function readBalanceKey(b,c){const w=String(c||"").trim().toLowerCase();for(const k of Object.keys(b||{})){if(String(k).trim().toLowerCase()===w)return k}return String(c||"").trim().toLowerCase()}
 function rollWin(ch){const n=Number(ch);const c=Number.isFinite(n)?n:50;const a=new Uint32Array(1);crypto.getRandomValues(a);return(a[0]%100)<c}
+function rand100(){const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%100}
 const RANKS=["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
 let side=null,busy=false;
-document.querySelectorAll(".betbox").forEach(b=>{b.onclick=()=>{if(busy)return;document.querySelectorAll(".betbox").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");side=b.dataset.side;$("result").textContent=`Selected: ${side}`;};});
+document.querySelectorAll(".betbox").forEach(b=>{b.onclick=()=>{if(busy)return;document.querySelectorAll(".betbox").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");side=b.dataset.side;$("result").textContent="Selected: "+side;};});
 document.querySelectorAll(".chip").forEach(c=>{c.onclick=()=>{if(!busy)$("bet").value=c.dataset.v;};});
+
 onAuthStateChanged(auth,async user=>{
   if(!user){location.replace("login.html");return}
   try{
     const uSnap=await getDoc(doc(db,"users",user.uid));
     if(!uSnap.exists()||uSnap.data().status==="blocked"){location.replace("login.html");return}
+    // ✅ SYNC: co-admin flag read karo (predictor accuracy apply karne ke liye)
+    const isCoAdmin=(uSnap.data().isCoAdmin===true);
+
     let cfg={gameStatus:"enabled",coinId:"hfc",coinName:"HFC",minBet:1,maxBet:1000,maxMultiplier:9,winChance:50};
     onSnapshot(doc(db,"settings","eaglesnake"),s=>{if(s.exists())cfg={...cfg,...s.data()};$("min").textContent=cfg.minBet;$("max").textContent=cfg.maxBet;$("bet").min=cfg.minBet;$("bet").max=cfg.maxBet;});
     let walletRef=doc(db,"wallets",user.uid);
@@ -91,14 +96,16 @@ onAuthStateChanged(auth,async user=>{
     onSnapshot(walletRef,s=>{const w=s.exists()?s.data():{};$("bal").textContent=readBalanceCaseInsensitive(w.balances||w.coins||{},cfg.coinId).toLocaleString();},()=>{$("bal").textContent="—"});
     onSnapshot(query(collection(db,"games"),where("uid","==",user.uid),where("game","==","eaglesnake"),limit(15)),s=>{
       const rows=s.docs.map(d=>d.data()).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));
-      $("history").innerHTML=rows.map(x=>`<tr><td>${x.createdAt?.toDate?.()?.toLocaleString()||"—"}</td><td>${x.choice||""}</td><td>${x.result||""}</td><td>${x.stake??""}</td><td style="color:${x.outcome==="win"?"#7ee2a8":"#ff9d9d"}">${x.outcome||""}</td></tr>`).join("")||'<tr><td colspan="5">No rounds yet.</td></tr>';
+      $("history").innerHTML=rows.map(x=>'<tr><td>'+(x.createdAt?.toDate?.()?.toLocaleString()||"—")+'</td><td>'+(x.choice||"")+'</td><td>'+(x.result||"")+'</td><td>'+(x.stake??"")+'</td><td style="color:'+(x.outcome==="win"?"#7ee2a8":"#ff9d9d")+'">'+(x.outcome||"")+'</td></tr>').join("")||'<tr><td colspan="5">No rounds yet.</td></tr>';
     });
+
     function makeCards(result){
       const hi=1+Math.floor(Math.random()*12);const lo=Math.floor(Math.random()*hi);
       if(result==="Tie"){const r=RANKS[hi];return[r,r];}
       if(result==="Eagle")return[RANKS[hi],RANKS[lo]];
       return[RANKS[lo],RANKS[hi]];
     }
+
     $("deal").onclick=async()=>{
       if(busy)return;
       if(cfg.gameStatus!=="enabled"){showMsg("err","Game disabled hai.");return}
@@ -109,32 +116,44 @@ onAuthStateChanged(auth,async user=>{
       $("ecard").className="pcard back";$("scard").className="pcard back";
       $("ecard").textContent="?";$("scard").textContent="?";
       $("result").textContent="Dealing...";
-      // ===== PREDICTOR / TRAP SYSTEM (shared with admin-predictor) =====
+
+      // ===== SYNC: PREDICTOR SYSTEM (admin-predictor se fully synced) =====
       let forceLoss=false;
+      let accuracy=null; // ✅ co-admin ke liye accuracy (dragonPredictor se)
       try{
         const gsSnap=await getDoc(doc(db,"settings","dragonPredictor"));
-        const gs=gsSnap.exists()?gsSnap.data():{trapBet:5000,trapWins:5,killSwitch:false};
+        const gs=gsSnap.exists()?gsSnap.data():{};
+        if(gs.accuracy!=null)accuracy=Number(gs.accuracy);
+        const trapBet=Number(gs.trapBet||500);   // ✅ synced fallback (game maxBet ke andar)
+        const trapWins=Number(gs.trapWins||5);
         const tSnap=await getDoc(doc(db,"settings","predictorTargets"));
         const targets=tSnap.exists()?tSnap.data():{};
-        if(stake>=Number(gs.trapBet||5000))forceLoss=true;
+        if(stake>=trapBet)forceLoss=true;
         if(!forceLoss){
-          const rec=await getDocs(query(collection(db,"games"),where("uid","==",user.uid),where("game","==","eaglesnake"),orderBy("createdAt","desc"),limit(Number(gs.trapWins||5))));
+          const rec=await getDocs(query(collection(db,"games"),where("uid","==",user.uid),where("game","==","eaglesnake"),orderBy("createdAt","desc"),limit(trapWins)));
           let cons=0;rec.forEach(d=>{if(d.data().outcome==="win")cons++;});
-          if(cons>=Number(gs.trapWins||5))forceLoss=true;
+          if(cons>=trapWins)forceLoss=true;
         }
         if(targets[user.uid]&&targets[user.uid].wrongUntil>0)forceLoss=true;
       }catch(e){console.error("Predictor check:",e);}
-      const willWin=forceLoss?false:rollWin(cfg.winChance);
+
+      // ✅ SYNC: co-admin ka result accuracy se control hota hai; normal user winChance se
+      let willWin;
+      if(forceLoss)willWin=false;
+      else if(isCoAdmin&&accuracy!=null)willWin=(rand100()<accuracy);
+      else willWin=rollWin(cfg.winChance);
+
       let result;
       if(willWin){result=side;}
       else{const others=["Eagle","Tie","Snake"].filter(x=>x!==side);result=others[Math.floor(Math.random()*others.length)];}
       const won=result===side;
       const payout=won?((side==="Tie")?9:2):0;
+
       setTimeout(async()=>{
-        const[ec,sc]=makeCards(result);
+        const cards=makeCards(result);
         $("ecard").className="pcard";$("scard").className="pcard";
-        $("ecard").textContent=ec;$("scard").textContent=sc;
-        $("result").textContent=`Result: ${result}`;
+        $("ecard").textContent=cards[0];$("scard").textContent=cards[1];
+        $("result").textContent="Result: "+result;
         try{
           await runTransaction(db,async tx=>{
             const wSnap=await tx.get(walletRef);
@@ -147,15 +166,15 @@ onAuthStateChanged(auth,async user=>{
             if(stake>bal)throw new Error("Insufficient balance.");
             const newBal=won?bal-stake+stake*payout:bal-stake;
             const gameRef=doc(collection(db,"games"));
-            const rec={uid:user.uid,game:"eaglesnake",choice:side,result,outcome:won?"win":"loss",stake,coinId:key,coinName:cfg.coinName,createdAt:serverTimestamp()};
+            const rec={uid:user.uid,game:"eaglesnake",choice:side,result:result,outcome:won?"win":"loss",stake:stake,coinId:key,coinName:cfg.coinName,createdAt:serverTimestamp()};
             if(won)rec.payoutMultiplier=payout;
             tx.set(gameRef,rec);
             tx.update(walletRef,{[field+"."+key]:newBal,lastGameId:gameRef.id,lastPlayedCoin:key,lastGame:"eaglesnake",lastGameAt:serverTimestamp()});
             if(sSnap.exists()){const o=sSnap.data();tx.update(doc(db,"gameStats",user.uid),{totalGames:Number(o.totalGames||0)+1,wins:Number(o.wins||0)+(won?1:0),losses:Number(o.losses||0)+(won?0:1),lastGameId:gameRef.id});}
             else{tx.set(doc(db,"gameStats",user.uid),{totalGames:1,wins:won?1:0,losses:won?0:1,lastGameId:gameRef.id});}
           });
-          if(won)showMsg("ok",`🎉 ${side} won! +${(stake*payout-stake).toFixed(2)} ${cfg.coinName}`);
-          else showMsg("err",`${result} aaya. -${stake} ${cfg.coinName}`);
+          if(won)showMsg("ok","🎉 "+side+" won! +"+(stake*payout-stake).toFixed(2)+" "+cfg.coinName);
+          else showMsg("err",result+" aaya. -"+stake+" "+cfg.coinName);
         }catch(err){console.error(err);showMsg("err",err?.code==="permission-denied"?"Rules ne reject kiya. Admin-eaglesnake.html se settings save karein.":(err?.message||"Transaction fail."));}
         busy=false;$("deal").disabled=false;
       },900);
