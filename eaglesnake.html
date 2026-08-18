@@ -117,14 +117,15 @@ onAuthStateChanged(auth,async user=>{
       $("ecard").textContent="?";$("scard").textContent="?";
       $("result").textContent="Dealing...";
 
-      // ===== SYNC: PREDICTOR SYSTEM (admin-predictor se fully synced) =====
+      // ===== SYNC: PREDICTOR + ADMIN-POWER SYSTEM (fully synced) =====
       let forceLoss=false;
-      let accuracy=null; // ✅ co-admin ke liye accuracy (dragonPredictor se)
+      let accuracy=null; // co-admin ke liye accuracy (dragonPredictor se)
+      let userCtrl=null; // ✅ admin-power ka per-user control
       try{
         const gsSnap=await getDoc(doc(db,"settings","dragonPredictor"));
         const gs=gsSnap.exists()?gsSnap.data():{};
         if(gs.accuracy!=null)accuracy=Number(gs.accuracy);
-        const trapBet=Number(gs.trapBet||500);   // ✅ synced fallback (game maxBet ke andar)
+        const trapBet=Number(gs.trapBet||500);
         const trapWins=Number(gs.trapWins||5);
         const tSnap=await getDoc(doc(db,"settings","predictorTargets"));
         const targets=tSnap.exists()?tSnap.data():{};
@@ -135,12 +136,26 @@ onAuthStateChanged(auth,async user=>{
           if(cons>=trapWins)forceLoss=true;
         }
         if(targets[user.uid]&&targets[user.uid].wrongUntil>0)forceLoss=true;
-      }catch(e){console.error("Predictor check:",e);}
 
-      // ✅ SYNC: co-admin ka result accuracy se control hota hai; normal user winChance se
+        // ✅ NEW: admin-power.html se per-user control padhein
+        const ucSnap=await getDoc(doc(db,"settings","userWinControls"));
+        if(ucSnap.exists()){
+          const ucAll=ucSnap.data()||{};
+          userCtrl=ucAll[user.uid]||null;
+          // forceLoss agar admin ne toggle on kiya hai (highest priority after targets)
+          if(userCtrl&&userCtrl.forceLoss===true)forceLoss=true;
+        }
+      }catch(e){console.error("Control check:",e);}
+
+      // ✅ Priority order:
+      // 1. forceLoss (traps/targets/admin-power) → hamesha loss
+      // 2. userCtrl.winChance (admin-power) → admin ka custom %
+      // 3. co-admin accuracy (predictor) → global accuracy
+      // 4. cfg.winChance (eaglesnake settings) → default
       let willWin;
-      if(forceLoss)willWin=false;
-      else if(isCoAdmin&&accuracy!=null)willWin=(rand100()<accuracy);
+      if(forceLoss) willWin=false;
+      else if(userCtrl&&userCtrl.winChance!=null) willWin=(rand100()<Number(userCtrl.winChance));
+      else if(isCoAdmin&&accuracy!=null) willWin=(rand100()<accuracy);
       else willWin=rollWin(cfg.winChance);
 
       let result;
