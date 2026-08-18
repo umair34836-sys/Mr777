@@ -77,7 +77,7 @@ main>section:nth-of-type(2) .tiles>.card:not(.gamecard){background:rgba(255,255,
   main>section:nth-of-type(2) .tiles{grid-template-columns:repeat(2,1fr)}
   h1{font-size:18px}#bal{font-size:20px}
 }
-</style></head><body><header class="top"><div class="wrap head"><div class="brand">COIN FLIP</div><div class="nav"><a href="index">Lobby</a><a href="profile">Profile</a><a href="deposit">Deposit</a><a href="withdrawal">Withdrawal</a><a href="daily">🎁 Daily Rewards</a><button id="logout" class="btn soft">Logout</button></div></div></header><main class="wrap page"><section class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap"><div><h1><span id="welcome">Welcome</span> <span id="vipBadge" class="vip-badge">VIP 0</span></h1><p class="small">Games lobby</p></div><div><span class="small">Selected Coin Balance</span><h2><span id="bal">0</span> <span id="coin">HFC</span></h2></div></div><div class="tiles"><div class="tile"><span>Total Games</span><b id="games">0</b></div><div class="tile"><span>Wins</span><b id="wins">0</b></div><div class="tile"><span>Losses</span><b id="losses">0</b></div></div></section><section><h2>Games</h2><div class="tiles"><div class="card gamecard" onclick="location.href='coinflip'"><span class="badge active">Active</span><h2>Coin Flip</h2><p class="small">Choose Heads or Tails and enter your bet.</p><button class="btn primary">Play Now</button></div><div class="card gamecard" onclick="location.href='crash'"><span class="badge active">Active</span><h2>🚀 Rocket Crash</h2><p class="small">Cash out before the rocket crashes!</p><button class="btn primary">Play Now</button></div><div class="card gamecard" onclick="location.href='mines'"><span class="badge active">Active</span><h2>💎 Mines</h2><p class="small">Avoid the mines and cash out your winnings!</p><button class="btn primary">Play Now</button></div><div class="card gamecard" onclick="location.href='dragontiger'"><span class="badge active">Active</span><h2>🐉 Dragon Tiger</h2><p class="small">Dragon vs Tiger - apni side choose karein!</p><button class="btn primary">Play Now</button></div><div class="card gamecard" onclick="location.href='eaglesnake'"><span class="badge new">NEW</span><h2>🦅 Eagle vs Snake 🐍</h2><p class="small">Eagle vs Snake - premium prediction game!</p><button class="btn primary">Play Now</button></div><div class="card gamecard" onclick="location.href='predictor'"><span class="badge new">VIP</span><h2>🔮 Premium Predictor</h2><p class="small">Exclusive predictions for co-admins.</p><button class="btn primary">View</button></div><div class="card"><span class="badge soon">Coming Soon</span><h2>Future Game</h2><p class="small">Admin baad mein game enable karega.</p></div></div></section></main><script type="module">
+</style></head><body><header class="top"><div class="wrap head"><div class="brand">COIN FLIP</div><div class="nav"><a href="index.html">Lobby</a><a href="profile.html">Profile</a><a href="deposit.html">Deposit</a><a href="withdrawal.html">Withdrawal</a><a href="daily.html">🎁 Daily Rewards</a><button id="logout" class="btn soft">Logout</button></div></div></header><main class="wrap page"><section class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap"><div><h1><span id="welcome">Welcome</span> <span id="vipBadge" class="vip-badge">VIP 0</span></h1><p class="small">Games lobby</p></div><div><span class="small">Selected Coin Balance</span><h2><span id="bal">0</span> <span id="coin">HFC</span></h2></div></div><div class="tiles"><div class="tile"><span>Total Games</span><b id="games">0</b></div><div class="tile"><span>Wins</span><b id="wins">0</b></div><div class="tile"><span>Losses</span><b id="losses">0</b></div></div></section><section><h2>Games</h2><div class="tiles"><div class="card gamecard" onclick="location.href='coinflip.html'"><span class="badge active">Active</span><h2>Coin Flip</h2><p class="small">Choose Heads or Tails and enter your bet.</p><button class="btn primary">Play Now</button></div><div class="card gamecard" onclick="location.href='crash.html'"><span class="badge active">Active</span><h2>🚀 Rocket Crash</h2><p class="small">Cash out before the rocket crashes!</p><button class="btn primary">Play Now</button></div><div class="card gamecard" onclick="location.href='mines.html'"><span class="badge active">Active</span><h2>💎 Mines</h2><p class="small">Avoid the mines and cash out your winnings!</p><button class="btn primary">Play Now</button></div><div class="card gamecard" onclick="location.href='dragontiger.html'"><span class="badge active">Active</span><h2>🐉 Dragon Tiger</h2><p class="small">Dragon vs Tiger - apni side choose karein!</p><button class="btn primary">Play Now</button></div><div class="card gamecard" onclick="location.href='eaglesnake.html'"><span class="badge new">NEW</span><h2>🦅 Eagle vs Snake 🐍</h2><p class="small">Eagle vs Snake - premium prediction game!</p><button class="btn primary">Play Now</button></div><div class="card gamecard" onclick="location.href='predictor.html'"><span class="badge new">VIP</span><h2>🔮 Premium Predictor</h2><p class="small">Exclusive predictions for co-admins.</p><button class="btn primary">View</button></div><div class="card"><span class="badge soon">Coming Soon</span><h2>Future Game</h2><p class="small">Admin baad mein game enable karega.</p></div></div></section></main><script type="module">
 const firebaseConfig = {
   apiKey: "AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",
   authDomain: "mr777-c72fc.firebaseapp.com",
@@ -101,7 +101,7 @@ const $ = id => document.getElementById(id);
 
 $("logout").onclick = async () => {
   await signOut(auth);
-  location.replace("login");
+  location.replace("login.html");
 };
 
 let stopped = false;
@@ -110,7 +110,7 @@ onAuthStateChanged(auth, async (user) => {
   if (stopped) return;
 
   if (!user) {
-    location.replace("login");
+    location.replace("login.html");
     return;
   }
 
@@ -120,7 +120,7 @@ onAuthStateChanged(auth, async (user) => {
 
     if (!userSnap.exists()) {
       await signOut(auth);
-      location.replace("login");
+      location.replace("login.html");
       return;
     }
 
@@ -128,7 +128,7 @@ onAuthStateChanged(auth, async (user) => {
 
     if (userData.status === "blocked") {
       await signOut(auth);
-      location.replace("login");
+      location.replace("login.html");
       return;
     }
 
