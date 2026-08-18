@@ -1,296 +1,177 @@
 <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Rocket Crash</title><style>
 *{box-sizing:border-box}
 html,body{height:100%}
-body{
-  margin:0;display:flex;flex-direction:column;overflow:hidden;
-  color:#eaf2ff;font-family:Arial,sans-serif;
-  background:linear-gradient(180deg,#070b18 0%,#0d1430 45%,#0a0f22 100%);
-}
-body::before{
-  content:'';position:fixed;inset:0;pointer-events:none;opacity:.55;
-  background-image:
-    radial-gradient(1px 1px at 20% 30%,#fff,transparent),
-    radial-gradient(1px 1px at 70% 12%,#fff,transparent),
-    radial-gradient(1.5px 1.5px at 40% 70%,#bfe0ff,transparent),
-    radial-gradient(1px 1px at 88% 50%,#fff,transparent),
-    radial-gradient(1px 1px at 55% 40%,#8fb8ff,transparent);
-  background-size:240px 240px;
-}
-.wrap{width:min(720px,96%);margin:auto}
+body{margin:0;display:flex;flex-direction:column;overflow:hidden;background:#0a0e1a;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif}
+.wrap{width:min(1200px,96%);margin:auto}
 
-/* ===== TOP BAR (sirf brand, compact) ===== */
-.top{flex:0 0 auto;background:linear-gradient(180deg,rgba(10,15,34,.96),rgba(10,15,34,.85));border-bottom:1px solid #22305e;backdrop-filter:blur(8px)}
-.head{height:48px;display:flex;align-items:center;justify-content:space-between;gap:8px}
-.brand{font-weight:900;font-size:16px;letter-spacing:.5px;color:#7fd4ff;text-shadow:0 0 14px rgba(80,180,255,.6)}
+/* ===== TOP BAR (Lobby Theme) ===== */
+.top{flex:0 0 auto;background:linear-gradient(180deg,#d5488a,#a02870);border-bottom:3px solid #ffd700;box-shadow:0 4px 20px rgba(0,0,0,.35)}
+.head{height:54px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{font-weight:900;letter-spacing:1px;font-size:18px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4)}
 
-/* ===== NAV = BOTTOM BAR (header overflow fix) ===== */
-.nav{
-  position:fixed;bottom:0;left:0;right:0;z-index:100;
-  display:flex;justify-content:space-around;align-items:center;gap:4px;
-  background:linear-gradient(180deg,#101a3d,#0a1226);
-  border-top:2px solid #2a3a6e;
-  padding:7px 6px calc(7px + env(safe-area-inset-bottom));
-  box-shadow:0 -6px 20px rgba(0,0,0,.5);
-}
-.nav a{color:#9fb4e8;text-decoration:none;font-weight:700;font-size:12px;padding:8px 10px;border-radius:10px;background:rgba(127,212,255,.12);transition:.2s}
-.nav a:hover{background:rgba(127,212,255,.25);color:#7fd4ff}
-.nav .btn{padding:8px 12px;font-size:12px;box-shadow:none;background:rgba(255,120,120,.15);color:#ffb8c0}
+/* ===== BOTTOM NAV (Lobby Theme) ===== */
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;justify-content:space-around;align-items:center;gap:4px;background:linear-gradient(180deg,#3aa04a,#1c6b2a);border-top:3px solid #ffd700;padding:7px 6px calc(7px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px rgba(0,0,0,.4)}
+.nav a{color:#fff;text-decoration:none;font-weight:800;font-size:12px;padding:8px 11px;border-radius:10px;background:rgba(255,255,255,.14);transition:.2s}
+.nav a:hover{background:rgba(255,255,255,.28)}
 
 /* ===== PAGE ===== */
-.page{flex:1;min-height:0;overflow-y:auto;padding:8px 0 64px;-webkit-overflow-scrolling:touch}
+.page{flex:1;min-height:0;overflow-y:auto;padding:8px 0 62px;-webkit-overflow-scrolling:touch}
 
-.card{
-  background:linear-gradient(160deg,rgba(16,24,52,.92),rgba(10,16,36,.92));
-  border:1px solid #22305e;border-radius:16px;padding:10px;margin-bottom:10px;
-  box-shadow:0 8px 24px rgba(0,0,0,.5);
-}
+.card{border:2px solid #ffd700;border-radius:16px;padding:12px;margin-bottom:10px;box-shadow:0 8px 24px rgba(0,0,0,.35);background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.06))}
 
-.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.tile{padding:7px 6px;border:1px solid #2a3a6e;border-radius:10px;background:rgba(18,26,56,.8);text-align:center}
-.tile span{font-size:9px;color:#8fa3d8;text-transform:uppercase;letter-spacing:.5px;font-weight:700}
-.tile b{display:block;font-size:14px;margin-top:2px;color:#7fd4ff}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
+.tile{padding:8px 6px;border:1px solid rgba(255,215,0,.5);border-radius:12px;background:rgba(0,0,0,.25);text-align:center}
+.tile span{font-size:9px;color:rgba(255,255,255,.85);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.tile b{display:block;font-size:16px;margin-top:2px;font-weight:900;color:#ffd700}
 
-/* Bet input (inline margin override) */
-.field{margin:6px 0}
-.field[style]{margin:8px auto !important}
-.field label{display:block;font-size:10px;font-weight:700;margin-bottom:4px;color:#8fa3d8;text-transform:uppercase}
-.field input{width:100%;padding:9px;border:1px solid #2a3a6e;border-radius:10px;background:#0b1226;color:#eaf2ff;font-size:16px;font-weight:700}
-.field input:focus{outline:none;border-color:#7fd4ff;box-shadow:0 0 0 3px rgba(80,180,255,.15)}
+.field{margin:10px 0}
+.field label{display:block;font-size:10px;font-weight:800;margin-bottom:4px;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.9)}
+.field input{width:100%;padding:10px;border:1px solid rgba(255,215,0,.5);border-radius:10px;background:rgba(0,0,0,.3);color:#fff;font-size:15px;font-weight:700}
+.field input:focus{outline:none;border-color:#ffd700;box-shadow:0 0 0 3px rgba(255,215,0,.2)}
 
-/* Buttons (compact) */
-.btn{border:0;border-radius:12px;padding:11px 14px;font-weight:800;cursor:pointer;font-size:14px;transition:.2s}
-.btn:disabled{opacity:.45;cursor:not-allowed}
-.primary{background:linear-gradient(180deg,#43e08a,#0f9d58);color:#06301c;box-shadow:0 4px 16px rgba(40,220,130,.35)}
-.cash{background:linear-gradient(180deg,#ff9d3d,#e05b00);color:#fff;box-shadow:0 4px 16px rgba(255,150,60,.35)}
-.soft{background:#1a2450;color:#cdd8ff}
-.center .btn{width:48%;max-width:220px;margin:0 .5%}
+.btn{border:0;border-radius:12px;padding:13px 18px;font-weight:800;cursor:pointer;font-size:15px;transition:.2s}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.primary{background:linear-gradient(180deg,#ffd700,#f0a000);color:#5a2a00;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.cash{background:linear-gradient(180deg,#ff6a2a,#d02a1a);color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.primary:hover:not(:disabled){box-shadow:0 6px 20px rgba(0,0,0,.5)}
 
-.msg{display:none;padding:10px;border-radius:10px;margin:10px auto 0;font-size:13px;font-weight:700;max-width:560px}
-.show{display:block}
-.ok{background:#0e2b1e;color:#7ee2a8;border:1px solid #1e4d34}
-.err{background:#33141a;color:#ff9d9d;border:1px solid #5a2025}
-.small{font-size:12px;color:#8fa3d8}
+.msg{display:none;padding:10px;border-radius:10px;margin:10px 0;font-size:13px;font-weight:700}
+.show{display:block}.ok{background:#0e2b1e;color:#7ee2a8;border:1px solid #1e4d34}.err{background:#33141a;color:#ff9d9d;border:1px solid #5a2025}
+.small{font-size:12px;color:rgba(255,255,255,.85)}
 
-/* ===== STAGE (chhota taake fit aaye) ===== */
-.stage{
-  position:relative;height:clamp(150px,32vh,300px);border-radius:14px;overflow:hidden;
-  border:1px solid #2a3a6e;
-  background:
-    radial-gradient(120% 90% at 70% -20%, rgba(70,40,140,.5), transparent 60%),
-    radial-gradient(90% 70% at 20% 110%, rgba(20,90,180,.35), transparent 60%),
-    linear-gradient(180deg,#0b1226,#0a0f22);
-  box-shadow:inset 0 0 50px rgba(20,60,160,.15);
-}
+/* ===== STAGE (Aviator Style) ===== */
+.stage{position:relative;height:clamp(200px,40vh,400px);border-radius:16px;overflow:hidden;border:2px solid #ffd700;background:radial-gradient(ellipse at center,#1a1f3a 0%,#0a0e1a 100%);box-shadow:inset 0 0 60px rgba(255,100,50,.15);margin-bottom:12px}
 canvas{width:100%;height:100%;display:block}
 
-.mult{
-  position:absolute;top:30%;left:0;right:0;text-align:center;
-  font-size:clamp(38px,12vw,70px);font-weight:900;color:#fff;
-  text-shadow:0 4px 30px #000,0 0 26px rgba(255,255,255,.35);
+.mult{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;font-size:clamp(48px,15vw,90px);font-weight:900;color:#fff;text-shadow:0 4px 30px rgba(0,0,0,.8),0 0 40px rgba(255,255,255,.4);z-index:10;transition:all .3s}
+.mult.crash{color:#ff5d6c;text-shadow:0 4px 30px rgba(255,93,108,.8)}
+.mult.win{color:#43e08a;text-shadow:0 4px 30px rgba(67,224,138,.8)}
+.mult.flying{color:#ffd700;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.05)}}
+
+.status{position:absolute;top:12px;left:50%;transform:translateX(-50%);padding:8px 20px;background:rgba(0,0,0,.7);border:2px solid #ffd700;border-radius:20px;font-weight:800;font-size:14px;color:#ffd700;z-index:10}
+
+.btn-group{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.btn-group .btn{width:100%}
+
+.table{overflow:auto;border-radius:12px;max-height:300px}
+table{width:100%;border-collapse:collapse;min-width:500px}
+th,td{text-align:left;padding:8px;border-bottom:1px solid rgba(255,215,0,.3);font-size:12px;color:#fff}
+th{font-size:10px;color:rgba(255,255,255,.85);text-transform:uppercase}
+h2{margin:6px 0 12px;color:#ffd700;text-shadow:0 2px 6px rgba(0,0,0,.4);font-size:18px}
+
+@media(max-width:640px){
+  .head{height:48px}.brand{font-size:15px}
+  .nav a{font-size:11px;padding:7px 9px}
+  .tiles{grid-template-columns:1fr}
+  .stage{height:clamp(180px,35vh,300px)}
+  .mult{font-size:clamp(36px,12vw,60px)}
+  .btn-group{grid-template-columns:1fr}
 }
-.mult.crash{color:#ff5d6c}
-.mult.win{color:#43e08a}
-
-.center{text-align:center}
-h2{margin:6px 0 12px;color:#eaf2ff}
-
-/* History (compact scroll) */
-.table{overflow:auto;border-radius:12px;max-height:180px}
-table{width:100%;border-collapse:collapse;min-width:520px}
-th,td{text-align:left;padding:8px;border-bottom:1px solid #1a2450;font-size:12px}
-th{font-size:10px;color:#8fa3d8;text-transform:uppercase;letter-spacing:.5px}
-tbody tr:hover{background:rgba(80,180,255,.05)}
-
-@media(max-width:480px){
-  .head{height:44px}
-  .brand{font-size:14px}
-  .nav a{font-size:11px;padding:7px 8px}
-  .tile b{font-size:12px}
-  .stage{height:clamp(140px,30vh,260px)}
-}
-</style></head><body><header class="top"><div class="wrap head"><div class="brand">🚀 ROCKET CRASH</div><div class="nav"><a href="index.html">Lobby</a><a href="coinflip.html">Coin Flip</a><a href="profile.html">Profile</a><a href="deposit.html">Deposit</a><button id="logout" class="btn soft">Logout</button></div></div></header><main class="wrap page"><section class="card"><div class="tiles"><div class="tile"><span>Balance</span><b id="bal">0</b></div><div class="tile"><span>Min Bet</span><b id="min">1</b></div><div class="tile"><span>Max Bet</span><b id="max">1000</b></div></div><div class="field" style="max-width:380px;margin:20px auto"><label>Bet Amount</label><input id="bet" type="number" min="1" step=".01" value="1"></div><div class="stage"><canvas id="cv"></canvas><div id="mult" class="mult">1.00x</div></div><p class="small center" style="margin-top:10px">Rocket crash hone se pehle Cash Out karo! Max multiplier: <b id="maxm">—</b></p><div class="center" style="margin-top:12px"><button id="launch" class="btn primary">🚀 Launch Rocket</button> <button id="cash" class="btn cash" disabled>💰 Cash Out</button></div><div id="msg" class="msg"></div></section><section class="card"><h2 style="color:#e8e6f0">Recent Rounds</h2><div class="table"><table><thead><tr><th>Time</th><th>Stake</th><th>Cashed At</th><th>Crash Point</th><th>Outcome</th></tr></thead><tbody id="history"></tbody></table></div></section></main><script type="module">const firebaseConfig={
-  apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",
-  authDomain:"mr777-c72fc.firebaseapp.com",
-  projectId:"mr777-c72fc",
-  storageBucket:"mr777-c72fc.firebasestorage.app",
-  messagingSenderId:"1027130368908",
-  appId:"1:1027130368908:web:7e3cf883e137935523eca9",
-  measurementId:"G-3GTQHMNF9"
-};
-
+</style></head><body><header class="top"><div class="wrap head"><div class="brand">🚀 ROCKET CRASH</div><div class="nav"><a href="index.html">Lobby</a><a href="profile.html">Profile</a></div></div></header><main class="wrap page">
+<section class="card"><div class="tiles"><div class="tile"><span>Balance</span><b id="bal">0</b></div><div class="tile"><span>Min Bet</span><b id="min">1</b></div><div class="tile"><span>Max Bet</span><b id="max">1000</b></div></div>
+<div class="field"><label>Bet Amount</label><input id="bet" type="number" min="1" step=".01" value="10"></div>
+<div class="stage"><canvas id="cv"></canvas><div class="status" id="status">Waiting...</div><div id="mult" class="mult">1.00x</div></div>
+<div class="btn-group"><button id="launch" class="btn primary">🚀 Launch Rocket</button><button id="cash" class="btn cash" disabled>💰 Cash Out</button></div>
+<div id="msg" class="msg"></div>
+</section>
+<section class="card"><h2>Recent Rounds</h2><div class="table"><table><thead><tr><th>Time</th><th>Stake</th><th>Cashed At</th><th>Crash Point</th><th>Outcome</th></tr></thead><tbody id="history"></tbody></table></div></section>
+</main><script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-import{getAuth,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
-import{getFirestore,doc,getDoc,onSnapshot,collection,query,where,limit,orderBy,runTransaction,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
-
+import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+import{getFirestore,doc,getDoc,onSnapshot,collection,query,where,limit,runTransaction,serverTimestamp}from"https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+const firebaseConfig={apiKey:"AIzaSyDa5yMuNWOpx23lBqmIGw77CzXztxLlEpA",authDomain:"mr777-c72fc.firebaseapp.com",projectId:"mr777-c72fc",storageBucket:"mr777-c72fc.firebasestorage.app",messagingSenderId:"1027130368908",appId:"1:1027130368908:web:7e3cf883e137935523eca9",measurementId:"G-3GTQHMNF9"};
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
-$("logout").onclick=async()=>{await signOut(auth);location.replace("login.html")};
-
 function showMsg(t,x){const m=$("msg");m.className="msg show "+t;m.textContent=x;if(t==="ok")setTimeout(()=>{m.className="msg"},4000);}
 function readBalanceCaseInsensitive(b,c){const w=String(c||"").trim().toLowerCase();for(const[k,v]of Object.entries(b||{})){if(String(k).trim().toLowerCase()===w)return Number(v)||0}return 0}
 function readBalanceKey(b,c){const w=String(c||"").trim().toLowerCase();for(const k of Object.keys(b||{})){if(String(k).trim().toLowerCase()===w)return k}return String(c||"").trim().toLowerCase()}
-
 const cv=$("cv"),ctx=cv.getContext("2d");
 function fit(){cv.width=cv.clientWidth;cv.height=cv.clientHeight;}
 window.addEventListener("resize",fit);
-
 onAuthStateChanged(auth,async user=>{
   if(!user){location.replace("login.html");return}
   try{
     const uSnap=await getDoc(doc(db,"users",user.uid));
-    if(!uSnap.exists()||uSnap.data().status==="blocked"){await signOut(auth);location.replace("login.html");return}
-
+    if(!uSnap.exists()||uSnap.data().status==="blocked"){location.replace("login.html");return}
     let cfg={gameStatus:"enabled",coinId:"hfc",coinName:"HFC",minBet:1,maxBet:1000,maxMultiplier:50};
-    const cf=await getDoc(doc(db,"settings","coinflip"));
-    if(cf.exists()) cfg={...cfg,coinId:cf.data().coinId||cfg.coinId,coinName:cf.data().coinName||cfg.coinName};
-    const cs=await getDoc(doc(db,"settings","crash"));
-    if(cs.exists()) cfg={...cfg,...cs.data()};
-
-    $("min").textContent=cfg.minBet;$("max").textContent=cfg.maxBet;
-    $("maxm").textContent=cfg.maxMultiplier+"x";
-    $("bet").min=cfg.minBet;$("bet").max=cfg.maxBet;$("bet").value=cfg.minBet;
-
-    onSnapshot(doc(db,"wallets",user.uid),s=>{
-      const w=s.exists()?s.data():{};
-      $("bal").textContent=readBalanceCaseInsensitive(w.balances||w.coins||{},cfg.coinId).toLocaleString();
-    },()=>{$("bal").textContent="—"});
-
-    onSnapshot(query(collection(db,"games"),where("uid","==",user.uid),limit(100)),s=>{
-      const rows=s.docs.map(d=>d.data()).filter(x=>x.game==="crash")
-        .sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0)).slice(0,20);
-      $("history").innerHTML=rows.map(x=>`<tr>
-        <td>${x.createdAt?.toDate?.()?.toLocaleString()||"—"}</td>
-        <td>${x.stake??"—"} ${x.coinName||""}</td>
-        <td>${x.cashedAt?x.cashedAt.toFixed(2)+"x":"—"}</td>
-        <td style="color:#ff9d9d">${(x.crashPoint??0).toFixed(2)}x</td>
-        <td style="color:${x.outcome==="win"?"#7ee2a8":"#ff9d9d"}">${x.outcome==="win"?"CASHED":"CRASHED"}</td>
-      </tr>`).join("")||'<tr><td colspan="5">No rounds yet.</td></tr>';
-    },()=>{$("history").innerHTML='<tr><td colspan="5">History unavailable.</td></tr>'});
-
+    onSnapshot(doc(db,"settings","crash"),s=>{if(s.exists())cfg={...cfg,...s.data()};$("min").textContent=cfg.minBet;$("max").textContent=cfg.maxBet;$("bet").min=cfg.minBet;$("bet").max=cfg.maxBet;});
+    let walletRef=doc(db,"wallets",user.uid);
+    if(!(await getDoc(walletRef)).exists()){try{await setDoc(walletRef,{balances:{hfc:0},createdAt:serverTimestamp()});}catch(e){}}
+    onSnapshot(walletRef,s=>{const w=s.exists()?s.data():{};$("bal").textContent=readBalanceCaseInsensitive(w.balances||w.coins||{},cfg.coinId).toLocaleString();},()=>{$("bal").textContent="—"});
+    onSnapshot(query(collection(db,"games"),where("uid","==",user.uid),where("game","==","crash"),limit(15)),s=>{
+      const rows=s.docs.map(d=>d.data()).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));
+      $("history").innerHTML=rows.map(x=>`<tr><td>${x.createdAt?.toDate?.()?.toLocaleString()||"—"}</td><td>${x.stake??"—"} ${x.coinName||""}</td><td>${x.cashedAt?x.cashedAt.toFixed(2)+"x":"—"}</td><td style="color:#ff9d9d">${(x.crashPoint??0).toFixed(2)}x</td><td style="color:${x.outcome==="win"?"#7ee2a8":"#ff9d9d"}">${x.outcome==="win"?"CASHED":"CRASHED"}</td></tr>`).join("")||'<tr><td colspan="5">No rounds yet.</td></tr>';
+    });
     let phase="idle",startTs=0,crashPoint=1,raf=0,pts=[],stake=0,curM=1;
     const growth=ms=>Math.pow(1.00024,ms);
-    function genCrash(){
-      const r=Math.random();
-      if(r<0.03) return 1.00;
-      let m=0.97/(1-r);
-      return Math.max(1.00,Math.min(Number(cfg.maxMultiplier)||50,Math.floor(m*100)/100));
-    }
+    function genCrash(){const r=Math.random();if(r<0.03)return 1.00;let m=0.97/(1-r);return Math.max(1.00,Math.min(Number(cfg.maxMultiplier)||50,Math.floor(m*100)/100));}
     function draw(m,crashed){
-      fit();
-      const w=cv.width,h=cv.height;
-      ctx.clearRect(0,0,w,h);
-      ctx.strokeStyle="#232a4d";ctx.lineWidth=1;
-      for(let i=1;i<5;i++){ctx.beginPath();ctx.moveTo(0,h*i/5);ctx.lineTo(w,h*i/5);ctx.stroke();}
+      fit();const w=cv.width,h=cv.height;ctx.clearRect(0,0,w,h);
+      // Grid
+      ctx.strokeStyle="rgba(255,215,0,.1)";ctx.lineWidth=1;
+      for(let i=1;i<6;i++){ctx.beginPath();ctx.moveTo(0,h*i/6);ctx.lineTo(w,h*i/6);ctx.stroke();}
+      for(let i=1;i<8;i++){ctx.beginPath();ctx.moveTo(w*i/8,0);ctx.lineTo(w*i/8,h);ctx.stroke();}
+      // Trail
       if(pts.length>1){
         const maxT=pts[pts.length-1].t||1,maxM=Math.max(m,2);
         ctx.beginPath();
-        pts.forEach((p,i)=>{
-          const x=20+(p.t/maxT)*(w-50);
-          const y=h-25-((p.m-1)/(maxM-1))*(h-60);
-          i?ctx.lineTo(x,y):ctx.moveTo(x,y);
-        });
-        ctx.strokeStyle=crashed?"#ff5d5d":"#ffb84d";ctx.lineWidth=3;ctx.stroke();
-        const lp=pts[pts.length-1];
-        const x=20+(lp.t/maxT)*(w-50),y=h-25-((lp.m-1)/(maxM-1))*(h-60);
-        ctx.font="26px serif";ctx.fillText(crashed?"💥":"🚀",x-13,y+9);
+        pts.forEach((p,i)=>{const x=30+(p.t/maxT)*(w-60);const y=h-30-((p.m-1)/(maxM-1))*(h-80);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});
+        const grad=ctx.createLinearGradient(0,0,w,0);
+        grad.addColorStop(0,crashed?"#ff5d5d":"#ffd700");
+        grad.addColorStop(1,crashed?"#ff9d9d":"#ff6a2a");
+        ctx.strokeStyle=grad;ctx.lineWidth=4;ctx.stroke();
+        // Rocket/Explosion
+        const lp=pts[pts.length-1];const x=30+(lp.t/maxT)*(w-60),y=h-30-((lp.m-1)/(maxM-1))*(h-80);
+        ctx.font="32px serif";ctx.fillText(crashed?"💥":"🚀",x-16,y+12);
       }
     }
     function loop(){
-      const t=performance.now()-startTs;
-      curM=growth(t);
-      if(curM>=crashPoint){
-        pts.push({t,m:crashPoint});draw(crashPoint,true);
-        return end(false,crashPoint,null);
-      }
+      const t=performance.now()-startTs;curM=growth(t);
+      if(curM>=crashPoint){pts.push({t,m:crashPoint});draw(crashPoint,true);return end(false,crashPoint,null);}
       pts.push({t,m:curM});draw(curM,false);
-      $("mult").textContent=curM.toFixed(2)+"x";
-      $("mult").className="mult";
+      $("mult").textContent=curM.toFixed(2)+"x";$("mult").className="mult flying";
       $("cash").textContent=`💰 Cash Out ${(stake*curM).toFixed(2)}`;
+      $("status").textContent="🚀 FLYING...";
       raf=requestAnimationFrame(loop);
     }
     async function end(won,cp,cashMult){
-      phase="ended";cancelAnimationFrame(raf);
-      $("cash").disabled=true;$("bet").disabled=false;
-      const mEl=$("mult");
-      if(won){mEl.textContent=cashMult.toFixed(2)+"x";mEl.className="mult win";}
-      else{mEl.textContent="CRASHED @ "+cp.toFixed(2)+"x";mEl.className="mult crash";}
-
+      phase="ended";cancelAnimationFrame(raf);$("cash").disabled=true;$("bet").disabled=false;
+      const mEl=$("mult"),sEl=$("status");
+      if(won){mEl.textContent=cashMult.toFixed(2)+"x";mEl.className="mult win";sEl.textContent="✅ CASHED OUT!";}
+      else{mEl.textContent="CRASHED @ "+cp.toFixed(2)+"x";mEl.className="mult crash";sEl.textContent="💥 CRASHED!";}
       try{
         await runTransaction(db,async tx=>{
-          const walletRef=doc(db,"wallets",user.uid);
-          const statsRef=doc(db,"gameStats",user.uid);
-          const wSnap=await tx.get(walletRef);
-          const sSnap=await tx.get(statsRef);
-          if(!wSnap.exists()) throw new Error("Wallet not found.");
-          const wData=wSnap.data();
-          const field=("balances" in wData)?"balances":("coins" in wData)?"coins":"balances";
-          const bals=wData[field]||{};
-          const key=readBalanceKey(bals,cfg.coinId);
-          const bal=Number(bals[key])||0;
-          if(stake>bal) throw new Error("Insufficient balance.");
-          const newBal=won ? bal-stake+stake*cashMult : bal-stake;
-
+          const wSnap=await tx.get(walletRef);const sSnap=await tx.get(doc(db,"gameStats",user.uid));
+          if(!wSnap.exists())throw new Error("Wallet not found.");
+          const wData=wSnap.data();const field=("balances" in wData)?"balances":("coins" in wData)?"coins":"balances";
+          const bals=wData[field]||{};const key=readBalanceKey(bals,cfg.coinId);const bal=Number(bals[key])||0;
+          if(stake>bal)throw new Error("Insufficient balance.");
+          const newBal=won?bal-stake+stake*cashMult:bal-stake;
           const gameRef=doc(collection(db,"games"));
-          const rec={
-            uid:user.uid,game:"crash",
-            outcome:won?"win":"loss",
-            stake,coinId:key,coinName:cfg.coinName,
-            crashPoint:cp,
-            createdAt:serverTimestamp()
-          };
+          const rec={uid:user.uid,game:"crash",outcome:won?"win":"loss",stake,coinId:key,coinName:cfg.coinName,crashPoint:cp,createdAt:serverTimestamp()};
           if(won){rec.cashedAt=cashMult;rec.payoutMultiplier=cashMult;}
-          tx.set(gameRef,rec);
-
-          tx.update(walletRef,{
-            [field+"."+key]:newBal,
-            lastGameId:gameRef.id,
-            lastPlayedCoin:key,
-            lastGame:"crash",
-            lastGameAt:serverTimestamp()
-          });
-
-          if(sSnap.exists()){
-            const o=sSnap.data();
-            tx.update(statsRef,{
-              totalGames:Number(o.totalGames||0)+1,
-              wins:Number(o.wins||0)+(won?1:0),
-              losses:Number(o.losses||0)+(won?0:1),
-              lastGameId:gameRef.id
-            });
-          }else{
-            tx.set(statsRef,{totalGames:1,wins:won?1:0,losses:won?0:1,lastGameId:gameRef.id});
-          }
+          tx.set(gameRef,rec);tx.update(walletRef,{[field+"."+key]:newBal,lastGameId:gameRef.id,lastPlayedCoin:key,lastGame:"crash",lastGameAt:serverTimestamp()});
+          if(sSnap.exists()){const o=sSnap.data();tx.update(doc(db,"gameStats",user.uid),{totalGames:Number(o.totalGames||0)+1,wins:Number(o.wins||0)+(won?1:0),losses:Number(o.losses||0)+(won?0:1),lastGameId:gameRef.id});}
+          else{tx.set(doc(db,"gameStats",user.uid),{totalGames:1,wins:won?1:0,losses:won?0:1,lastGameId:gameRef.id});}
         });
-        if(won) showMsg("ok",`Cashed out @ ${cashMult.toFixed(2)}x! +${(stake*cashMult-stake).toFixed(2)} ${cfg.coinName}`);
+        if(won)showMsg("ok",`Cashed out @ ${cashMult.toFixed(2)}x! +${(stake*cashMult-stake).toFixed(2)} ${cfg.coinName}`);
         else showMsg("err",`Rocket crashed @ ${cp.toFixed(2)}x! -${stake} ${cfg.coinName}`);
-      }catch(err){
-        console.error(err);
-        showMsg("err",err?.code==="permission-denied"?"Rules ne transaction reject kiya. Naye rules publish karein aur admin-crash.html se settings save karein.":(err?.message||"Transaction fail."));
-      }finally{
-        $("launch").disabled=false;
-      }
+      }catch(err){console.error(err);showMsg("err",err?.code==="permission-denied"?"Rules ne reject kiya. Admin-crash.html se settings save karein.":(err?.message||"Transaction fail."));}
+      finally{$("launch").disabled=false;}
     }
-
     $("launch").onclick=()=>{
-      if(phase==="flying") return;
-      if(cfg.gameStatus!=="enabled"){showMsg("err","Game disabled hai.");return}
-      stake=Number($("bet").value);
-      if(!Number.isFinite(stake)||stake<Number(cfg.minBet)||stake>Number(cfg.maxBet)){showMsg("err","Bet limits ke andar enter karo.");return}
-      phase="flying";pts=[];startTs=performance.now();
-      crashPoint=genCrash();curM=1;
-      $("launch").disabled=true;$("cash").disabled=false;$("bet").disabled=true;
-      $("msg").className="msg";
-      raf=requestAnimationFrame(loop);
+      if(phase==="flying")return;if(cfg.gameStatus!=="enabled"){showMsg("err","Game disabled hai.");return}
+      stake=Number($("bet").value);if(!Number.isFinite(stake)||stake<Number(cfg.minBet)||stake>Number(cfg.maxBet)){showMsg("err","Bet limits ke andar enter karo.");return}
+      phase="flying";pts=[];startTs=performance.now();crashPoint=genCrash();curM=1;
+      $("launch").disabled=true;$("cash").disabled=false;$("bet").disabled=true;$("msg").className="msg";
+      $("status").textContent="🚀 LAUNCHING...";raf=requestAnimationFrame(loop);
     };
     $("cash").onclick=()=>{
-      if(phase!=="flying") return;
-      phase="cashing";cancelAnimationFrame(raf);
-      const cashMult=Math.max(1,Math.floor(curM*100)/100);
-      pts.push({t:performance.now()-startTs,m:cashMult});
-      draw(cashMult,false);
-      end(true,crashPoint,cashMult);
+      if(phase!=="flying")return;phase="cashing";cancelAnimationFrame(raf);
+      const cashMult=Math.max(1,Math.floor(curM*100)/100);pts.push({t:performance.now()-startTs,m:cashMult});
+      draw(cashMult,false);end(true,crashPoint,cashMult);
     };
-
-    fit();draw(1,false);
+    fit();draw(1,false);$("status").textContent="⏳ READY TO LAUNCH";
   }catch(err){console.error(err);$("bal").textContent="—";}
 });
 </script></body></html>
