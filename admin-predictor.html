@@ -132,13 +132,38 @@ onAuthStateChanged(auth,async u=>{
     }catch(e){}
   }
   function populateTargetSelect(){document.getElementById("targetSelect").innerHTML='<option value="">-- Select Co-Admin --</option>'+coAdmins.map(ca=>'<option value="'+ca.id+'">'+(ca.username||ca.email)+'</option>').join("");}
+  
+  // ✅ EMERGENCY OVERRIDE FIX: Fresh fetch + merge pattern
   $("setTarget").onclick=async()=>{
-    const uid=$("targetSelect").value;const rounds=Number($("targetRounds").value);
+    const uid=$("targetSelect").value;
+    const rounds=Number($("targetRounds").value);
     if(!uid){showMsg("err","Co-admin select karein.");return}
     if(!rounds||rounds<1){showMsg("err","Valid rounds enter karein.");return}
-    try{targets[uid]={wrongUntil:rounds,reason:"Manual target",setAt:new Date().toISOString()};await setDoc(doc(db,"settings","predictorTargets"),targets);showMsg("ok","🎯 "+rounds+" rounds tak ghalat predictions + force-loss.");renderCoAdmins();}
-    catch(e){showMsg("err","Failed: "+e.message);}
+    try{
+      // 1. Fresh fetch — purana data lose nahi hoga
+      const freshSnap=await getDoc(doc(db,"settings","predictorTargets"));
+      const freshTargets=freshSnap.exists()?freshSnap.data():{};
+      
+      // 2. Is user ka target add/update
+      const u=coAdmins.find(c=>c.id===uid);
+      freshTargets[uid]={
+        wrongUntil:rounds,
+        reason:"Manual target",
+        username:u?u.username||u.email:"Unknown",
+        setAt:new Date().toISOString()
+      };
+      
+      // 3. Merge flag ke sath save — doosre targets safe rehte hain
+      await setDoc(doc(db,"settings","predictorTargets"),freshTargets,{merge:true});
+      
+      // 4. Local state update
+      targets=freshTargets;
+      
+      showMsg("ok","🎯 "+(u?u.username:"User")+" ko "+rounds+" rounds tak force-loss + ghalat predictions.");
+      renderCoAdmins();
+    }catch(e){showMsg("err","Failed: "+e.message);}
   };
+  
   $("clearTarget").onclick=async()=>{
     if(!confirm("Sab targets clear karein?"))return;
     targets={};try{await setDoc(doc(db,"settings","predictorTargets"),{});showMsg("ok","✅ All targets cleared.");renderCoAdmins();}catch(e){showMsg("err","Failed: "+e.message);}
